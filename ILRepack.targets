@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Target Name="Definitons">
+        <ItemGroup>
+            <AssemblyFile Include="$(TargetDir)$(TargetName).dll"/>
+            <InputAssemblies Include="@(AssemblyFile)"/>
+
+            <NugetAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'Archipelago.MultiClient.Net'"/>
+            <!--<NugetAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'BepInEx'"/>-->
+            
+            <InputAssemblies Include="@(NugetAssemblies)"/>
+        </ItemGroup>
+    </Target>
+
+  
+    <!--When in Release mode, pack the libraries into the dll  BeforeTargets="MoveDllToMods" DependsOnTargets="Definitons"-->
+    <Target Name="ILRepacker" AfterTargets="Build" BeforeTargets="MoveDllToMods" DependsOnTargets="Definitons">
+        <ILRepack
+                Parallel="true"
+                InputAssemblies="@(InputAssemblies)"
+                TargetKind="Dll"
+                OutputFile="@(AssemblyFile)"
+                Internalize="false"
+                LibraryPath="@(LibraryPaths)"
+        />
+
+    </Target>
+</Project>

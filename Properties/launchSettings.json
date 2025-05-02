@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "RepoAP": {
+      "commandName": "Project"
+    },
+    "REPO Run": {
+      "commandName": "Executable",
+      "executablePath": "D:\\SteamLibrary\\steamapps\\common\\REPO\\REPO.exe"
+    }
+  }
+}
