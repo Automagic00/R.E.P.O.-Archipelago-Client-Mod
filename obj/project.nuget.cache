@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ofZyt7a2AA+UAeNRsmvNfPl1T0XtXJwVM3s9Fo9OYqZhymBc45cIF4QWiO1VBrpbHzGlIjhjZGmhRwcssVY8Yw==",
+  "dgSpecHash": "DvoONnhDT4wys9tnlNa4gxAhQIsnGSLSRTcKFWdIjN0kwenIuFnUvc0oX8edJ6j4L5/BgdtdVhJkYFpJmyTjDg==",
   "success": true,
-  "projectFilePath": "D:\\UnityModding\\REPO\\Plugins\\AP\\RepoAP\\RepoAP.csproj",
+  "projectFilePath": "D:\\UnityModding\\REPO\\Plugins\\AP\\R.E.P.O.-Archipelago-Client-Mod\\RepoAP.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Devin\\.nuget\\packages\\archipelago.multiclient.net\\6.6.0\\archipelago.multiclient.net.6.6.0.nupkg.sha512",
     "C:\\Users\\Devin\\.nuget\\packages\\bepinex.baselib\\5.4.20\\bepinex.baselib.5.4.20.nupkg.sha512",

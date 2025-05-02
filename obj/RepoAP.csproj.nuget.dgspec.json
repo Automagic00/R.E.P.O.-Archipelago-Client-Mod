@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\UnityModding\\REPO\\Plugins\\AP\\RepoAP\\RepoAP.csproj": {}
+    "D:\\UnityModding\\REPO\\Plugins\\AP\\R.E.P.O.-Archipelago-Client-Mod\\RepoAP.csproj": {}
   },
   "projects": {
-    "D:\\UnityModding\\REPO\\Plugins\\AP\\RepoAP\\RepoAP.csproj": {
+    "D:\\UnityModding\\REPO\\Plugins\\AP\\R.E.P.O.-Archipelago-Client-Mod\\RepoAP.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\UnityModding\\REPO\\Plugins\\AP\\RepoAP\\RepoAP.csproj",
+        "projectUniqueName": "D:\\UnityModding\\REPO\\Plugins\\AP\\R.E.P.O.-Archipelago-Client-Mod\\RepoAP.csproj",
         "projectName": "RepoAP",
-        "projectPath": "D:\\UnityModding\\REPO\\Plugins\\AP\\RepoAP\\RepoAP.csproj",
+        "projectPath": "D:\\UnityModding\\REPO\\Plugins\\AP\\R.E.P.O.-Archipelago-Client-Mod\\RepoAP.csproj",
         "packagesPath": "C:\\Users\\Devin\\.nuget\\packages\\",
-        "outputPath": "D:\\UnityModding\\REPO\\Plugins\\AP\\RepoAP\\obj\\",
+        "outputPath": "D:\\UnityModding\\REPO\\Plugins\\AP\\R.E.P.O.-Archipelago-Client-Mod\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
