@@ -23,6 +23,7 @@ namespace RepoAP
         public Dictionary<long, ItemInfo> shopItemsScouted = new Dictionary<long, ItemInfo>();
         public JArray pellysRequired = new JArray();
         public long levelQuota;
+        public long upgradeLocations;
     }
 
     static class APSave
@@ -80,14 +81,15 @@ namespace RepoAP
             {
                 return;
             }
-            var test1 = Plugin.connection.slotData["pellys_required"];
+            /*var test1 = Plugin.connection.slotData["pellys_required"];
             var test2 = Plugin.connection.slotData["level_quota"];
             Debug.Log(test1.GetType());
-            Debug.Log(test2.GetType());
+            Debug.Log(test2.GetType());*/
 
             saveData.levelQuota = (long)Plugin.connection.slotData["level_quota"];
             Debug.Log("Between");
             saveData.pellysRequired = (JArray)Plugin.connection.slotData["pellys_required"];
+            saveData.upgradeLocations = (long)Plugin.connection.slotData["upgrade_locations"];
 
             
         }

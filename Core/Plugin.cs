@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace RepoAP
 {
-    [BepInPlugin("REPOPlugins.Automagic.Archipelago", "Archipelago Randomizer", "0.0.1")]
+    [BepInPlugin("Automagic.ArchipelagoREPO", "Archipelago Randomizer", "0.0.2")]
     [BepInDependency("nickklmao.menulib")]
 
     public class Plugin : BaseUnityPlugin
@@ -15,14 +15,7 @@ namespace RepoAP
         public static PlayerController _player;
 
         //Connection GUI
-        float alphaAmount = 0f;
-        bool showFadingLabel = false;
-        UnityEngine.Color originalColor;
-        string fadingLabelContent = "";
         public static bool showMenu = true;
-        private Rect windowRect = new Rect(0, 0, 200, 150);
-        private UnityEngine.Color backgroundColor = UnityEngine.Color.grey;
-        float windowWidth = 200;
 
 
         //Conection Info

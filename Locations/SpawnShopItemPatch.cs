@@ -39,7 +39,7 @@ namespace RepoAP
 			for (int i = itemList.Count - 1; i >= 0; i--)
 			{
 				Item item;
-				if ((itemList[i].itemName.Contains("Upgrade") && !itemList[i].name.Contains("Counted")) && Plugin.LastShopItemChecked <= 100)
+				if ((itemList[i].itemName.Contains("Upgrade") && !itemList[i].name.Contains("Counted")) && Plugin.LastShopItemChecked <= APSave.saveData.upgradeLocations)
 				{
 					Debug.Log("Replacing  " + itemList[i].itemName);
 					item = StatsManager.instance.itemDictionary[ItemNames.apItem];
@@ -99,6 +99,7 @@ namespace RepoAP
         {
 			if (___itemName.Contains("Archipelago"))
             {
+				__instance.gameObject.AddComponent<CustomRPCs>();
 				if (SemiFunc.IsMasterClientOrSingleplayer())
 				{
 					if (RunManager.instance.levelCurrent.name.Contains("Shop"))
@@ -113,13 +114,18 @@ namespace RepoAP
 						ItemInfo itemInfo = APSave.GetScoutedShopItem(LocationData.AddBaseId(Int64.Parse(name)));
 						Debug.Log("2");
 						___itemName = $"{itemInfo.Player}'s {itemInfo.ItemName}";
-
+						Debug.Log("3");
 						if (GameManager.instance.gameMode == 1)
 						{
+							Debug.Log("4");
 							FieldInfo field = AccessTools.Field(typeof(ItemUpgrade), "photonView");
+							Debug.Log("5");
 							PhotonView photonView = (PhotonView)field.GetValue(__instance.GetComponent<ItemUpgrade>());
-
-							photonView.RPC("UpdateItemNameRPC", RpcTarget.All, new object[] {___itemName, __instance.gameObject});
+							Debug.Log("6");
+							CustomRPCs.CallUpdateItemNameRPC(___itemName, __instance.gameObject);
+							Debug.Log("7");
+							
+							Debug.Log("8");
 							return;
 						}
 					}

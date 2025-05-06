@@ -12,16 +12,34 @@ namespace RepoAP
 {
     class CustomRPCs : MonoBehaviour
     {
-        [PunRPC]
-        public static void UpdateItemNameRPC(string name, GameObject inst)
+        /*public static void AppendMethods()
         {
-            if (inst.GetComponent<ItemUpgrade>() && inst.GetComponent<ItemAttributes>())
+            MethodInfo updateItemNameRPC = typeof(CustomRPCs).GetMethod("UpdateItemNameRPC");
+            if (updateItemNameRPC != null)
             {
-                ItemAttributes att = inst.GetComponent<ItemAttributes>();
 
-                FieldInfo field = AccessTools.Field(typeof(ItemAttributes), "itemName");
-                field.SetValue(att, name);
             }
+        }*/
+
+        public static void CallUpdateItemNameRPC(string name, GameObject inst)
+        {
+            Debug.Log("Calling RPC");
+            PhotonView photonView = inst.GetComponent<PhotonView>();
+            object[] p = new object[] { name};
+            photonView.RPC(nameof(CustomRPCs.UpdateItemNameRPC), RpcTarget.All, p);
+        }
+
+
+        [PunRPC]
+        public void UpdateItemNameRPC(string name, PhotonMessageInfo info)
+        {
+            Debug.Log("RPC Called");
+            var inst = info.photonView.gameObject.GetComponent<ItemAttributes>();
+            //ItemAttributes att = inst.GetComponent<ItemAttributes>();
+
+            FieldInfo field = AccessTools.Field(typeof(ItemAttributes), "itemName");
+            field.SetValue(inst, name);
+
         }
     }
 }
