@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace RepoAP
 {
-    [HarmonyPatch(typeof(ExtractionPoint), "HaulGoalSet")]
+    /*[HarmonyPatch(typeof(ExtractionPoint), "HaulGoalSet")]
     class TestPatches
     {
         [HarmonyPrefix]
@@ -17,7 +17,7 @@ namespace RepoAP
         {
             value = 1;
         }
-    }
+    }*/
 
     /*[HarmonyPatch(typeof(PunManager), "SpawnShopItem")]
     class ShopPatch
