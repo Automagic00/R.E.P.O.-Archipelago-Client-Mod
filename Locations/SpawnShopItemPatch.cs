@@ -22,7 +22,8 @@ namespace RepoAP
 				return;
             }
 			Plugin.LastShopItemChecked = 0;
-			Plugin.ShopItemsBought = APSave.GetShopLocationsChecked();
+			
+			APSave.UpdateAvailableItems();
         }
     }
 
@@ -39,7 +40,7 @@ namespace RepoAP
 			for (int i = itemList.Count - 1; i >= 0; i--)
 			{
 				Item item;
-				if ((itemList[i].itemName.Contains("Upgrade") && !itemList[i].name.Contains("Counted")) && Plugin.LastShopItemChecked <= APSave.saveData.upgradeLocations)
+				if ((itemList[i].itemName.Contains("Upgrade") && !itemList[i].name.Contains("Counted")) && /*Plugin.LastShopItemChecked <= APSave.saveData.upgradeLocations &&*/ Plugin.ShopItemsAvailable.Count > 0)
 				{
 					Debug.Log("Replacing  " + itemList[i].itemName);
 					item = StatsManager.instance.itemDictionary[ItemNames.apItem];
@@ -61,21 +62,30 @@ namespace RepoAP
 					{
 						var inst = PhotonNetwork.InstantiateRoomObject(text, itemVolume.transform.position, rotation, 0, null);
 						Plugin.LastShopItemChecked++;
-						while (Plugin.ShopItemsBought.Contains(Plugin.LastShopItemChecked))
+						/*while (Plugin.ShopItemsBought.Contains(Plugin.LastShopItemChecked))
 						{
 							Plugin.LastShopItemChecked++;
-						}
-						inst.name += "_Counted_" + Plugin.LastShopItemChecked;
+						}*/
+						System.Random rand = new System.Random();
+						int randomIndex = rand.Next(Plugin.ShopItemsAvailable.Count);
+						int itemID = Plugin.ShopItemsAvailable[randomIndex];
+						inst.name += "_Counted_" + itemID;
+						Plugin.ShopItemsAvailable.RemoveAt(randomIndex);
 					}
 					else
 					{
                         var inst = UnityEngine.Object.Instantiate<GameObject>(item.prefab, itemVolume.transform.position, rotation);
 						Plugin.LastShopItemChecked++;
-						while (Plugin.ShopItemsBought.Contains(Plugin.LastShopItemChecked))
+						/*while (Plugin.ShopItemsBought.Contains(Plugin.LastShopItemChecked))
 						{
 							Plugin.LastShopItemChecked++;
-						}
-						inst.name += "_Counted_" + Plugin.LastShopItemChecked;
+						}*/
+						System.Random rand = new System.Random();
+						int randomIndex = rand.Next(Plugin.ShopItemsAvailable.Count);
+						int itemID = Plugin.ShopItemsAvailable[randomIndex];
+						inst.name += "_Counted_" + itemID;
+						Plugin.ShopItemsAvailable.RemoveAt(randomIndex);
+						//inst.name += "_Counted_" + Plugin.LastShopItemChecked;
 					}
 					itemList.RemoveAt(i);
 					if (!isSecret)
@@ -122,7 +132,7 @@ namespace RepoAP
 							Debug.Log("5");
 							PhotonView photonView = (PhotonView)field.GetValue(__instance.GetComponent<ItemUpgrade>());
 							Debug.Log("6");
-							CustomRPCs.CallUpdateItemNameRPC(___itemName, __instance.gameObject);
+							Plugin.customRPCManager.CallUpdateItemNameRPC(___itemName, __instance.gameObject);
 							Debug.Log("7");
 							
 							Debug.Log("8");

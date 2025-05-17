@@ -2,6 +2,7 @@
 using HarmonyLib;
 using UnityEngine;
 using System.Collections.Generic;
+using Photon.Pun;
 
 namespace RepoAP
 {
@@ -13,6 +14,8 @@ namespace RepoAP
 
         public static ArchipelagoConnection connection;
         public static PlayerController _player;
+        public static CustomRPCs customRPCManager;
+        public static GameObject customRPCManagerObject;
 
         //Connection GUI
         public static bool showMenu = true;
@@ -32,7 +35,8 @@ namespace RepoAP
 
         //Item tracking
         public static int LastShopItemChecked = 0;
-        public static List<int> ShopItemsBought;
+        public static List<int> ShopItemsBought = new List<int>();
+        public static List<int> ShopItemsAvailable = new List<int>();
 
         private void Awake()
         {
@@ -56,7 +60,10 @@ namespace RepoAP
         {
             Debug.Log("In Start");
             connection = new ArchipelagoConnection();
-
+            customRPCManagerObject = new GameObject();
+            customRPCManager = customRPCManagerObject.AddComponent<CustomRPCs>();
+            customRPCManagerObject.AddComponent<PhotonView>();
+            DontDestroyOnLoad(customRPCManager);
 
         }
         public static ArchipelagoConnection GetConnection()

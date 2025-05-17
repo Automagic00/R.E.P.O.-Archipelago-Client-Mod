@@ -307,7 +307,9 @@ namespace RepoAP
                 //Make sure player isnt in a non-game Level
                 if (!nonGameLevels.Contains( RunManager.instance.levelCurrent))
                 {
-                    ItemData.AddItemToInventory(networkItem.ItemId);
+                    ItemData.AddItemToInventory(networkItem.ItemId,false);
+
+                    Plugin.customRPCManager.CallFocusTextRPC($"Recieved {itemName}", Plugin.customRPCManagerObject);
                 }
 
                 //ItemSwapData.GetItem(networkItem.ItemId);

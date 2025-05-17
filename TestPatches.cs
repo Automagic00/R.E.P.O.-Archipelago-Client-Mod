@@ -40,7 +40,7 @@ namespace RepoAP
         }
     }*/
 
-    /*[HarmonyPatch(typeof(PlayerController), "Update")]
+    [HarmonyPatch(typeof(PlayerController), "Update")]
     class DebugKeys
     {
         [HarmonyPrefix]
@@ -89,10 +89,58 @@ namespace RepoAP
             }
             if (Input.GetKeyDown(KeyCode.F6))
             {
-                Debug.Log("Pelly Req Count");
-                Debug.Log(APSave.saveData.pellysRequired.Count);
+                string completionOutput = "-- Completetion Data --";
+                completionOutput += $"\nLevel Quota: {APSave.saveData.levelQuota}";
+
+                completionOutput += $"\nPellys Required: ";
+
+                foreach (var pelly in APSave.saveData.pellysRequired)
+                {
+                    completionOutput += ($"\n- {pelly.ToString()}");
+                }
+                completionOutput += ("\n\nPellys Gathered: ");
+                foreach (string pelly in APSave.saveData.pellysGathered)
+                {
+                    completionOutput += ($"\n- {pelly}");
+                }
+                completionOutput += "\n\nValuables Gathered: ";
+                foreach (string valuable in APSave.saveData.valuablesGathered)
+                {
+                    completionOutput += $"\n- {valuable}";
+                }
+                completionOutput += "\n\nValuables Missing: ";
+                foreach (string valuable in LocationNames.all_valuables)
+                {
+                    if (!APSave.saveData.valuablesGathered.Contains(valuable))
+                    {
+                        completionOutput += $"\n- Missing {valuable}";
+                    }
+                }
+                completionOutput += "\n\nMonster Souls Missing: ";
+                foreach (string soul in LocationNames.all_monster_souls)
+                {
+                    if (!APSave.saveData.monsterSoulsGathered.Contains(soul))
+                    {
+                        completionOutput += $"\n- Missing {soul}";
+                    }
+                }
+                completionOutput += "\n\nMonster Souls Gathered: ";
+                foreach (string soul in APSave.saveData.monsterSoulsGathered)
+                {
+                    completionOutput += $"\n- {soul}";
+                }
+
+                Debug.Log(completionOutput);
+            }
+            if (Input.GetKeyDown(KeyCode.F8))
+            {
+                Debug.Log(RunManager.instance.levelCurrent.name);
+            }
+            if (Input.GetKeyDown(KeyCode.F9))
+            {
+                Debug.Log(APSave.saveData.shopStockRecieved);
             }
         }
-    }  */ 
+    } 
 
 }

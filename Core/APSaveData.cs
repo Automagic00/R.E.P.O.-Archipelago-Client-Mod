@@ -16,14 +16,21 @@ namespace RepoAP
         public APConnectionData connectionData = new APConnectionData();
         public List<long> locationsChecked = new List<long>(); //By Location ID
         public List<string> pellysGathered = new List<string>();
+        public List<string> valuablesGathered = new List<string>();
+        public List<string> monsterSoulsGathered = new List<string>();
         public List<int> shopItemsPurchased = new List<int>();
+        public long shopStockSlotData;
+        public int shopStockRecieved;
         public Dictionary<long, int> itemsRecieved = new Dictionary<long, int>();
         public Dictionary<string, bool> levelsUnlocked = new Dictionary<string, bool>();
         public int itemRecievedIndex = 0;
         public Dictionary<long, ItemInfo> shopItemsScouted = new Dictionary<long, ItemInfo>();
         public JArray pellysRequired = new JArray();
+        public bool pellySpawning;
         public long levelQuota;
         public long upgradeLocations;
+        public bool valuableHunt;
+        public bool monsterHunt;
     }
 
     static class APSave
@@ -61,6 +68,8 @@ namespace RepoAP
             {
                 es3Settings = new ES3Settings(path, ES3.EncryptionType.None);
                 saveData = ES3.Load<APSaveData>(saveKey, saveData, es3Settings);
+                SaveSlotDataToFile();
+                ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
             }
         }
 
@@ -87,10 +96,12 @@ namespace RepoAP
             Debug.Log(test2.GetType());*/
 
             saveData.levelQuota = (long)Plugin.connection.slotData["level_quota"];
-            Debug.Log("Between");
             saveData.pellysRequired = (JArray)Plugin.connection.slotData["pellys_required"];
+            saveData.pellySpawning = (bool)Plugin.connection.slotData["pelly_spawning"];
             saveData.upgradeLocations = (long)Plugin.connection.slotData["upgrade_locations"];
-
+            saveData.shopStockSlotData = (long)Plugin.connection.slotData["shop_stock"];
+            saveData.valuableHunt = (bool)Plugin.connection.slotData["valuable_hunt"];
+            saveData.monsterHunt = (bool)Plugin.connection.slotData["monster_hunt"];
             
         }
 
@@ -165,6 +176,41 @@ namespace RepoAP
             }
             return ES3.Load<APSaveData>(saveKey, es3Settings).itemRecievedIndex;
         }
+
+        public static void AddStockRecieved()
+        {
+            if (Plugin.connection.session == null)
+            {
+                return;
+            }
+            if (saveData.itemsRecieved.ContainsKey(ItemData.AddBaseId(18)))
+            {
+                saveData.shopStockRecieved = saveData.itemsRecieved[ItemData.AddBaseId(18)];
+            }
+            else
+            {
+                saveData.shopStockRecieved = 0;
+            }
+            //Save
+            ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
+            //Debug.Log("Saved " + itemId);
+        }
+
+        public static void UpdateAvailableItems()
+        {
+            Plugin.ShopItemsAvailable = new List<int>();
+            Plugin.ShopItemsBought = GetShopLocationsChecked();
+
+            for (int i = 1; i <= (APSave.saveData.shopStockSlotData * (APSave.saveData.shopStockRecieved + 1)); i++)
+            {
+                Debug.Log($"Stocking item {i}");
+                if (!Plugin.ShopItemsBought.Contains(i))
+                {
+                    Plugin.ShopItemsAvailable.Add(i);
+                }
+            }
+        }
+
         public static Dictionary<long, int> GetItemsRecieved()
         {
             if (Plugin.connection.session == null)
@@ -267,13 +313,48 @@ namespace RepoAP
             ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
         }
 
+        //For when the player extracts a Valuable
+        public static void AddValuableGathered(string name)
+        {
+            name = name.Replace("Arctic ", "").Replace("Wizard ", "").Replace("Valuable ", "").Replace("(Clone)", "");
+            if (Plugin.connection.session == null)
+            {
+                return;
+            }
+            if (!saveData.valuablesGathered.Contains(name))
+            {
+                saveData.valuablesGathered.Add(name);
+            }
+            ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
+        }
+
+        //For when the player extracts a Monster Soul
+        public static void AddMonsterSoulGathered(string name)
+        {
+            name = name.Replace("(Clone)", "");
+            if (Plugin.connection.session == null)
+            {
+                return;
+            }
+            if (!saveData.monsterSoulsGathered.Contains(name))
+            {
+                saveData.monsterSoulsGathered.Add(name);
+            }
+            ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
+        }
+
+
         public static bool CheckCompletion()
         {
             if (Plugin.connection.session == null)
             {
                 return false;
             }
+            
+            
             Debug.Log("CheckComplete");
+
+
             //Check if Level Quota is Met
             Debug.Log($"Current Level: {StatsManager.instance.GetRunStatLevel()}\nQuota: {saveData.levelQuota}");
             if (StatsManager.instance.GetRunStatLevel() < saveData.levelQuota)
@@ -283,14 +364,15 @@ namespace RepoAP
             }
 
             var pellys = saveData.pellysRequired;
-            List<string> levels = new List<string>() { LocationNames.headman_manor, LocationNames.mcjannek, LocationNames.swiftbroom };
+            List<string> levels = new List<string>() {"Manor", "Arctic", "Wizard" };
+            
             //Check if Pelly Hunt is Complete
-            Debug.Log("\nPellys Required:");
+            Debug.Log("Pellys Required:");
             foreach(var pelly in saveData.pellysRequired)
             {
                 Debug.Log($"-{pelly.ToString()} {saveData.pellysRequired.Count}");
             }
-            Debug.Log("\nPellys Gathered:");
+            Debug.Log("Pellys Gathered:");
             foreach (string pelly in saveData.pellysGathered)
             {
                 Debug.Log($"-{pelly}");
@@ -305,6 +387,54 @@ namespace RepoAP
                         Debug.Log($"Pelly hunt not complete.");
                         return false;
                     }
+                }
+            }
+
+            //Check if Monster Hunt is complete
+            if(saveData.monsterHunt)
+            {
+                bool monsterHuntComplete = true;
+                Debug.Log("Monster Hunt");
+                foreach(var soul in LocationNames.all_monster_souls)
+                {
+                    if (!saveData.monsterSoulsGathered.Contains(soul))
+                    {
+                        Debug.Log($"{soul} has not been extracted");
+                        monsterHuntComplete = false;
+                    }
+                    else
+                    {
+                        Debug.Log($"{soul} hunted");
+                    }
+                }
+
+                if(monsterHuntComplete == false)
+                {
+                    return false;
+                }
+            }
+
+            //Check if Valuable Hunt is complete
+            if(saveData.valuableHunt)
+            {
+                bool valuableHuntComplete = true;
+                Debug.Log("Valuable Hunt");
+                foreach (var valuable in LocationNames.all_valuables)
+                {
+                    if (!saveData.monsterSoulsGathered.Contains(valuable))
+                    {
+                        Debug.Log($"{valuable} has not been extracted");
+                        valuableHuntComplete = false;
+                    }
+                    else
+                    {
+                        Debug.Log($"{valuable} extracted");
+                    }
+                }
+
+                if (valuableHuntComplete == false)
+                {
+                    return false;
                 }
             }
 

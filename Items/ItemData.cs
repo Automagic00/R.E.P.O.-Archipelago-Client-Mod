@@ -10,7 +10,7 @@ namespace RepoAP
     class ItemData
     {
         static int baseID = 75912022;
-        public static void AddItemToInventory(long itemId)
+        public static void AddItemToInventory(long itemId, bool repeatedAdditions)
         {
             
             string itemName = IdToItemName(RemoveBaseId(itemId));
@@ -19,12 +19,27 @@ namespace RepoAP
             List<string> levelNames = new List<string> { LocationNames.mcjannek, LocationNames.headman_manor, LocationNames.swiftbroom };
             if (levelNames.Contains(itemName))
             {
+                if (!repeatedAdditions)
+                {
+                    return;
+                }
+
                 APSave.AddLevelRecieved(itemName);
+            }
+            else if (itemName == ItemNames.shopStock)
+            {
+                if (!repeatedAdditions)
+                {
+                    return;
+                }
+                APSave.AddStockRecieved();
+                APSave.UpdateAvailableItems();
             }
             else
             {
                 StatsManager.instance.itemsPurchased[itemName]++;
             }
+            
         }
 
         private static string IdToItemName(long itemId)
@@ -45,6 +60,7 @@ namespace RepoAP
                 case 15: itemName = ItemNames.upgradePlayerCount; break;
                 case 16: itemName = ItemNames.upgradeDoubleJump; break;
                 case 17: itemName = ItemNames.upgradeTumbleLaunch; break;
+                case 18: itemName = ItemNames.shopStock; break;
             }
 
             return itemName;

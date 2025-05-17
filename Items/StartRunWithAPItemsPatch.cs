@@ -28,7 +28,7 @@ namespace RepoAP.Items
 
                 for (int i = 0; i < item.Value; i++)
                 {
-                    ItemData.AddItemToInventory(item.Key);
+                    ItemData.AddItemToInventory(item.Key,true);
                 }
             }
         }

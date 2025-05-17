@@ -48,6 +48,25 @@ namespace RepoAP
 						Plugin.connection.ActivateCheck(LocationData.PellyNameToID( RoundDirector.instance.dollarHaulList[0].name + RunManager.instance.levelCurrent.name));
 						APSave.AddPellyGathered(RoundDirector.instance.dollarHaulList[0].name + RunManager.instance.levelCurrent.name);
                     }
+					else if (RoundDirector.instance.dollarHaulList[0].name.Contains("Soul"))
+                    {
+						long id = LocationData.MonsterSoulNameToID(RoundDirector.instance.dollarHaulList[0].name);
+						if (0 != LocationData.RemoveBaseId(id))
+						{
+							Plugin.connection.ActivateCheck(id);
+							APSave.AddMonsterSoulGathered(RoundDirector.instance.dollarHaulList[0].name);
+						}
+					}
+					else if (RoundDirector.instance.dollarHaulList[0].name.Contains("Valuable"))
+                    {
+						long id = LocationData.ValuableNameToID(RoundDirector.instance.dollarHaulList[0].name);
+						if (0 != LocationData.RemoveBaseId(id))
+						{
+							Plugin.connection.ActivateCheck(id);
+							APSave.AddValuableGathered(RoundDirector.instance.dollarHaulList[0].name);
+						}
+						
+					}
 
 
 					RoundDirector.instance.dollarHaulList[0].GetComponent<PhysGrabObject>().DestroyPhysGrabObject();

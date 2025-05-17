@@ -49,5 +49,6 @@ namespace RepoAP
         static public string upgradeTumbleLaunch = "Item Upgrade Player Tumble Launch";
         static public string valuableTracker = "Item Valuable Tracker";
         static public string apItem = "Item Upgrade AP Item";
+        static public string shopStock = "Progressive Shop Stock";
     }
 }
