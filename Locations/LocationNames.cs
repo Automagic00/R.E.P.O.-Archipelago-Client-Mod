@@ -85,8 +85,8 @@ namespace RepoAP
         //-- Swiftbroom Academy --
         public const string chomp_book = "Chomp Book";
         public const string love_potion = "Love Potion";
-        public const string cube_of_knowledge = "Cube Of Knowledge";
-        public const string staff = "Dumgolf's Staff";
+        public const string cube_of_knowledge = "Cube of Knowledge";
+        public const string staff = "Dumgolfs Staff";
         public const string large_sword = "Sword";
         public const string broom = "Broom";
         public const string hourglass = "Time Glass";
