@@ -19,7 +19,7 @@ namespace RepoAP
             List<string> levelNames = new List<string> { LocationNames.mcjannek, LocationNames.headman_manor, LocationNames.swiftbroom };
             if (levelNames.Contains(itemName))
             {
-                if (!repeatedAdditions)
+                if (repeatedAdditions)
                 {
                     return;
                 }
@@ -28,7 +28,7 @@ namespace RepoAP
             }
             else if (itemName == ItemNames.shopStock)
             {
-                if (!repeatedAdditions)
+                if (repeatedAdditions)
                 {
                     return;
                 }

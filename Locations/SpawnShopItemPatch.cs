@@ -22,7 +22,6 @@ namespace RepoAP
 				return;
             }
 			Plugin.LastShopItemChecked = 0;
-			
 			APSave.UpdateAvailableItems();
         }
     }
