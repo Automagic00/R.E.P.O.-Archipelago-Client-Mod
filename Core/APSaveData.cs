@@ -421,7 +421,7 @@ namespace RepoAP
                 Debug.Log("Valuable Hunt");
                 foreach (var valuable in LocationNames.all_valuables)
                 {
-                    if (!saveData.monsterSoulsGathered.Contains(valuable))
+                    if (!saveData.valuablesGathered.Contains(valuable))
                     {
                         Debug.Log($"{valuable} has not been extracted");
                         valuableHuntComplete = false;

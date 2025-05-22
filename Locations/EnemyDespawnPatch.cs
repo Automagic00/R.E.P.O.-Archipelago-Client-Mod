@@ -30,7 +30,7 @@ namespace RepoAP
 
                 //if orb is already named, move on
                 if (!orb.name.Contains("Enemy Valuable")) { continue; }
-                orb.name = ___enemyName + " soul";
+                orb.name = ___enemyName + " Soul";
             }
         }
     }
