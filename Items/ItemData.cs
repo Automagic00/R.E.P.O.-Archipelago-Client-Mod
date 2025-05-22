@@ -19,11 +19,6 @@ namespace RepoAP
             List<string> levelNames = new List<string> { LocationNames.mcjannek, LocationNames.headman_manor, LocationNames.swiftbroom };
             if (levelNames.Contains(itemName))
             {
-                if (repeatedAdditions)
-                {
-                    return;
-                }
-
                 APSave.AddLevelRecieved(itemName);
             }
             else if (itemName == ItemNames.shopStock)

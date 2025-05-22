@@ -24,8 +24,6 @@ namespace RepoAP.Items
 
             foreach (var item in itemsRecieved)
             {
-                Debug.Log(item.Key + " : " + item.Value);
-
                 for (int i = 0; i < item.Value; i++)
                 {
                     ItemData.AddItemToInventory(item.Key,true);

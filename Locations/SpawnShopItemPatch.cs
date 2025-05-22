@@ -119,22 +119,17 @@ namespace RepoAP
 							name = new string(name.Where(x => char.IsDigit(x)).ToArray());
 						}
 						___itemName += " " + name;
-						Debug.Log(LocationData.AddBaseId(Int64.Parse(name)));
+						//Debug.Log(LocationData.AddBaseId(Int64.Parse(name)));
 						ItemInfo itemInfo = APSave.GetScoutedShopItem(LocationData.AddBaseId(Int64.Parse(name)));
-						Debug.Log("2");
+
 						___itemName = $"{itemInfo.Player}'s {itemInfo.ItemName}";
-						Debug.Log("3");
+
 						if (GameManager.instance.gameMode == 1)
 						{
-							Debug.Log("4");
+
 							FieldInfo field = AccessTools.Field(typeof(ItemUpgrade), "photonView");
-							Debug.Log("5");
 							PhotonView photonView = (PhotonView)field.GetValue(__instance.GetComponent<ItemUpgrade>());
-							Debug.Log("6");
 							Plugin.customRPCManager.CallUpdateItemNameRPC(___itemName, __instance.gameObject);
-							Debug.Log("7");
-							
-							Debug.Log("8");
 							return;
 						}
 					}

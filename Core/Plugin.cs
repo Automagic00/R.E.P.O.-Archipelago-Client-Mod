@@ -6,7 +6,7 @@ using Photon.Pun;
 
 namespace RepoAP
 {
-    [BepInPlugin("Automagic.ArchipelagoREPO", "Archipelago Randomizer", "0.1.3")]
+    [BepInPlugin("Automagic.ArchipelagoREPO", "Archipelago Randomizer", "0.1.4")]
     [BepInDependency("nickklmao.menulib")]
 
     public class Plugin : BaseUnityPlugin

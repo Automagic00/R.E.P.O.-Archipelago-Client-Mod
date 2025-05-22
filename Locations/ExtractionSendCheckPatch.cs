@@ -12,68 +12,89 @@ namespace RepoAP
 	/// <summary>
 	/// Send checks to AP server based on items getting Extracted
 	/// </summary>
+	/// 
 
-    [HarmonyPatch(typeof(ExtractionPoint), "DestroyTheFirstPhysObjectsInHaulList")]
-    class ExtractionSendCheckPatch
+	class ExtractSendCheck
     {
-
-		static FieldInfo field = AccessTools.Field(typeof(RoundDirector), "totalHaul");
 		static int totalHaul;
-
-        [HarmonyPrefix]
-        static bool ExtractPatch()
+		public static void Send(FieldInfo totalHaulField)
         {
-			//Exit it not connected to an AP Server
-			if (Plugin.connection == null)
-            {
-				return true;
-            }
-
-			totalHaul = (int)field.GetValue(RoundDirector.instance);
+			totalHaul = (int)totalHaulField.GetValue(RoundDirector.instance);
 
 			//Only Run if singleplayer or host machine
 			if (SemiFunc.IsMasterClientOrSingleplayer())
 			{
 				if (RoundDirector.instance.dollarHaulList.Count == 0)
 				{
-					return false;
+					return;
 				}
-				if (RoundDirector.instance.dollarHaulList[0] && RoundDirector.instance.dollarHaulList[0].GetComponent<PhysGrabObject>())
+				foreach (var valuableObject in RoundDirector.instance.dollarHaulList)
 				{
-					field.SetValue(RoundDirector.instance, totalHaul + (int)RoundDirector.instance.dollarHaulList[0].GetComponent<ValuableObject>().dollarValueCurrent);
+					Debug.Log($"Extracting {valuableObject.name}");
+					if (valuableObject && valuableObject.GetComponent<PhysGrabObject>())
+					{
+						totalHaulField.SetValue(RoundDirector.instance, totalHaul + (int)valuableObject.GetComponent<ValuableObject>().dollarValueCurrent);
 
-					//If extracted item is a pelly, send a corresponding check
-					if (RoundDirector.instance.dollarHaulList[0].name.Contains("Pelly"))
-                    {
-						Plugin.connection.ActivateCheck(LocationData.PellyNameToID( RoundDirector.instance.dollarHaulList[0].name + RunManager.instance.levelCurrent.name));
-						APSave.AddPellyGathered(RoundDirector.instance.dollarHaulList[0].name + RunManager.instance.levelCurrent.name);
-                    }
-					else if (RoundDirector.instance.dollarHaulList[0].name.Contains("Soul"))
-                    {
-						long id = LocationData.MonsterSoulNameToID(RoundDirector.instance.dollarHaulList[0].name);
-						if (0 != LocationData.RemoveBaseId(id))
+						//If extracted item is a pelly, send a corresponding check
+						if (valuableObject.name.Contains("Pelly"))
 						{
-							Plugin.connection.ActivateCheck(id);
-							APSave.AddMonsterSoulGathered(RoundDirector.instance.dollarHaulList[0].name);
+							Plugin.connection.ActivateCheck(LocationData.PellyNameToID(valuableObject.name + RunManager.instance.levelCurrent.name));
+							APSave.AddPellyGathered(valuableObject.name + RunManager.instance.levelCurrent.name);
+						}
+						else if (valuableObject.name.Contains("Soul"))
+						{
+							long id = LocationData.MonsterSoulNameToID(valuableObject.name);
+							if (0 != LocationData.RemoveBaseId(id))
+							{
+								Plugin.connection.ActivateCheck(id);
+								APSave.AddMonsterSoulGathered(valuableObject.name);
+							}
+						}
+						else if (valuableObject.name.Contains("Valuable"))
+						{
+							long id = LocationData.ValuableNameToID(valuableObject.name);
+							if (0 != LocationData.RemoveBaseId(id))
+							{
+								Plugin.connection.ActivateCheck(id);
+								APSave.AddValuableGathered(valuableObject.name);
+							}
+
 						}
 					}
-					else if (RoundDirector.instance.dollarHaulList[0].name.Contains("Valuable"))
-                    {
-						long id = LocationData.ValuableNameToID(RoundDirector.instance.dollarHaulList[0].name);
-						if (0 != LocationData.RemoveBaseId(id))
-						{
-							Plugin.connection.ActivateCheck(id);
-							APSave.AddValuableGathered(RoundDirector.instance.dollarHaulList[0].name);
-						}
-						
-					}
-
-
-					RoundDirector.instance.dollarHaulList[0].GetComponent<PhysGrabObject>().DestroyPhysGrabObject();
-					RoundDirector.instance.dollarHaulList.RemoveAt(0);
 				}
 			}
-			return false;
 		}
     }
+
+
+    [HarmonyPatch(typeof(ExtractionPoint))]
+    class ExtractionSendCheckPatch
+    {
+
+		static FieldInfo field = AccessTools.Field(typeof(RoundDirector), "totalHaul");
+		static int totalHaul;
+
+        [HarmonyPrefix, HarmonyPatch("DestroyAllPhysObjectsInHaulList")]
+        static void ExtractAllPatch()
+        {
+			//Exit it not connected to an AP Server
+			if (Plugin.connection == null)
+            {
+				return;
+            }
+
+			ExtractSendCheck.Send(field);
+		}
+		[HarmonyPrefix, HarmonyPatch("DestroyTheFirstPhysObjectsInHaulList")]
+		static void ExtractFirstPatch()
+		{
+			//Exit it not connected to an AP Server
+			if (Plugin.connection == null)
+			{
+				return;
+			}
+
+			ExtractSendCheck.Send(field);
+		}
+	}
 }

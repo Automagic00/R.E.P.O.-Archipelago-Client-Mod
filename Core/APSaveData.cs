@@ -203,7 +203,7 @@ namespace RepoAP
 
             for (int i = 1; i <= (APSave.saveData.shopStockSlotData * (APSave.saveData.shopStockRecieved + 1)); i++)
             {
-                Debug.Log($"Stocking item {i}");
+                //Debug.Log($"Stocking item {i}");
                 if (!Plugin.ShopItemsBought.Contains(i))
                 {
                     Plugin.ShopItemsAvailable.Add(i);

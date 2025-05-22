@@ -62,45 +62,45 @@ namespace RepoAP
 		{
 			Debug.LogWarning("Building Popup");
 			REPOPopupPage repoPage = MenuAPI.CreateREPOPopupPage("Archipelago", REPOPopupPage.PresetSide.Right, shouldCachePage: false, pageDimmerVisibility: true, spacing: 1.5f);
-			Debug.LogWarning("1");
+			
 			repoPage.AddElement(parent => MenuAPI.CreateREPOLabel("<size=12>Only host player must be connected to AP Server.", parent, new Vector2(380f, 275f)));
-			Debug.LogWarning("2");
+			
 			repoPage.AddElement(parent => MenuAPI.CreateREPOLabel(Plugin.connection.session != null ? "<size=12><color=#00ad2e>Connected" : "<size=12><color=#7a000e>Not Connected", parent, new Vector2(400f, 225f)));
-			Debug.LogWarning("3");
+			
 			repoPage.AddElement(parent => MenuAPI.CreateREPOInputField("Address", (string input) =>
 			{
 				Plugin.apAdress = input;
 			}, parent, new Vector2(400f, 200f), placeholder: Plugin.apAdress));
-			Debug.LogWarning("4");
+
 			repoPage.AddElement(parent => MenuAPI.CreateREPOInputField("Port", (string input) =>
 			{
 				Plugin.apPort = input;
 			}, parent, new Vector2(400f, 175f), placeholder: Plugin.apPort));
-			Debug.LogWarning("5");
+
 			repoPage.AddElement(parent => MenuAPI.CreateREPOInputField("Password", (string input) =>
 			{
 				Plugin.apPassword = input;
 			}, parent, new Vector2(400f, 150f), placeholder: Plugin.apPassword));
-			Debug.LogWarning("6");
+
 			repoPage.AddElement(parent => MenuAPI.CreateREPOInputField("Player Slot", (string input) =>
 			{
 				Plugin.apSlot = input;
 			}, parent, new Vector2(400f, 125f), placeholder: Plugin.apSlot));
-			Debug.LogWarning("7");
+
 			repoPage.AddElement(parent => MenuAPI.CreateREPOButton("Connect", () =>
 			{
 				Plugin.connection.TryConnect(Plugin.apAdress, Int32.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
 				repoPage.ClosePage(false);
 				BuildPopup();
 			}, parent, new Vector2(378f, 25f)));
-			Debug.LogWarning("8");
+
 			repoPage.AddElement(parent => MenuAPI.CreateREPOButton("Close", () =>
 			{
 				repoPage.ClosePage(true);
 			}, parent, new Vector2(590f, 25f)));
-			Debug.LogWarning("9");
+
 			repoPage.OpenPage(true);
-			Debug.LogWarning("10");
+
 		}
 	}
 }
