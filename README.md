@@ -15,7 +15,7 @@ More information at https://archipelago.gg/
 3) On the Profile page of the Thunderstore Mod manager, click "Edit config" then click edit on "BepInEx/config/BepInEx.cfg". You may need to run the game modded first for this to appear.
 4) Under the "Chainloader" section, set "HideManagerGameObject" to true and click save.
 5) Click the Run Modded button to launch R.E.P.O.
-6) On the main menu click the Archipelago button and enter the server address, port, server password, and player slot name into the listed fields.
+6) On the main menu, click the Archipelago button and enter the server address, port, server password, and player slot name into the listed fields.
 7) After a successful connection, start a new save file and begin playing.
 
 #### Manual Client Install Instructions
@@ -26,19 +26,21 @@ More information at https://archipelago.gg/
 5) Under [Chainloader] set HideManagerGameObject to true. Then save and close the file.
 3) Download the latest release of the client plugin.
 4) Extract the contents of the downloaded zip folder into the BepInEx/Plugins folder.
-6) Download MenuLib and REPOLib from Thunderstore and add it into  your plugins folder.
+6) Download MenuLib and REPOLib from Thunderstore and add them to your plugins folder.
 7) Launch R.E.P.O.
-8) On the main menu click the Archipelago button and enter the server address, port, server password, and player slot name into the listed fields.
+8) On the main menu, click the Archipelago button and enter the server address, port, server password, and player slot name into the listed fields.
 9) After a successful connection, start a new save file and begin playing.
 
 #### Randomized Items
 - Upgrades
 - Levels
+- Shop Stock
 
 #### Randomized Locations
-- Upgrades
+- Shop Items
 - Pelly Extraction
+- Valuable Extraction
+- Monster Soul Extraction
 
 #### Known Issues
-- Pellys can get stuck in the enviroment
-- Non-host players dont see what the AP shop items contain
+- Item Received notification doesn't handle multiple successive notifications well
