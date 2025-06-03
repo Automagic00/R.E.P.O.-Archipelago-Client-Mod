@@ -23,10 +23,10 @@ namespace RepoAP
             }
             else if (itemName == ItemNames.shopStock)
             {
-                if (repeatedAdditions)
+                /*if (repeatedAdditions)
                 {
                     return;
-                }
+                }*/
                 APSave.AddStockRecieved();
                 APSave.UpdateAvailableItems();
             }
