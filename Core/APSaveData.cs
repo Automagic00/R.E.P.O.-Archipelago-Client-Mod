@@ -20,10 +20,10 @@ namespace RepoAP
         public List<string> monsterSoulsGathered = new List<string>();
         public List<int> shopItemsPurchased = new List<int>();
         public long shopStockSlotData;
-        public int shopStockRecieved;
-        public Dictionary<long, int> itemsRecieved = new Dictionary<long, int>();
+        public int shopStockReceived;
+        public Dictionary<long, int> itemsReceived = new Dictionary<long, int>();
         public Dictionary<string, bool> levelsUnlocked = new Dictionary<string, bool>();
-        public int itemRecievedIndex = 0;
+        public int itemReceivedIndex = 0;
         public Dictionary<long, ItemInfo> shopItemsScouted = new Dictionary<long, ItemInfo>();
         public JArray pellysRequired = new JArray();
         public bool pellySpawning;
@@ -143,53 +143,53 @@ namespace RepoAP
             return shopLocs;
         }
 
-        public static void AddItemRecieved(long itemId)
+        public static void AddItemReceived(long itemId)
         {
             if (Plugin.connection.session == null)
             {
                 return;
             }
             //If Key Exists, add 1
-            if (saveData.itemsRecieved.ContainsKey(itemId))
+            if (saveData.itemsReceived.ContainsKey(itemId))
             {
-                saveData.itemsRecieved[itemId]++;
+                saveData.itemsReceived[itemId]++;
                 
             }
             //If not, set to 1
             else
             {
-                saveData.itemsRecieved.Add(itemId, 1);
+                saveData.itemsReceived.Add(itemId, 1);
             }
 
             //Increase Item Index
-            saveData.itemRecievedIndex++;
+            saveData.itemReceivedIndex++;
 
             //Save
             ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
             //Debug.Log("Saved " + itemId);
         }
-        public static int GetItemRecievedIndex()
+        public static int GetItemReceivedIndex()
         {
             if (Plugin.connection.session == null)
             {
                 return 0;
             }
-            return ES3.Load<APSaveData>(saveKey, es3Settings).itemRecievedIndex;
+            return ES3.Load<APSaveData>(saveKey, es3Settings).itemReceivedIndex;
         }
 
-        public static void AddStockRecieved()
+        public static void AddStockReceived()
         {
             if (Plugin.connection.session == null)
             {
                 return;
             }
-            if (saveData.itemsRecieved.ContainsKey(ItemData.AddBaseId(18)))
+            if (saveData.itemsReceived.ContainsKey(ItemData.AddBaseId(ItemData.shopStockID)))
             {
-                saveData.shopStockRecieved = saveData.itemsRecieved[ItemData.AddBaseId(18)];
+                saveData.shopStockReceived = saveData.itemsReceived[ItemData.AddBaseId(ItemData.shopStockID)];
             }
             else
             {
-                saveData.shopStockRecieved = 0;
+                saveData.shopStockReceived = 0;
             }
             //Save
             ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
@@ -201,7 +201,7 @@ namespace RepoAP
             Plugin.ShopItemsAvailable = new List<int>();
             Plugin.ShopItemsBought = GetShopLocationsChecked();
 
-            for (int i = 1; i <= (APSave.saveData.shopStockSlotData * (APSave.saveData.shopStockRecieved + 1)); i++)
+            for (int i = 1; i <= (APSave.saveData.shopStockSlotData * (APSave.saveData.shopStockReceived + 1)); i++)
             {
                 //Debug.Log($"Stocking item {i}");
                 if (!Plugin.ShopItemsBought.Contains(i))
@@ -211,16 +211,16 @@ namespace RepoAP
             }
         }
 
-        public static Dictionary<long, int> GetItemsRecieved()
+        public static Dictionary<long, int> GetItemsReceived()
         {
             if (Plugin.connection.session == null)
             {
                 return null;
             }
-            return ES3.Load<APSaveData>(saveKey, es3Settings).itemsRecieved;
+            return ES3.Load<APSaveData>(saveKey, es3Settings).itemsReceived;
         }
 
-        public static void AddLevelRecieved(string levelName)
+        public static void AddLevelReceived(string levelName)
         {
             if (Plugin.connection.session == null)
             {
@@ -232,13 +232,13 @@ namespace RepoAP
             }
             else
             {
-                Debug.LogError(levelName + " has already been recieved!");
+                Debug.LogError(levelName + " has already been received!");
             }
 
             ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
         }
 
-        public static Dictionary<string,bool> GetLevelsRecieved()
+        public static Dictionary<string,bool> GetLevelsReceived()
         {
             if (Plugin.connection.session == null)
             {
@@ -316,7 +316,7 @@ namespace RepoAP
         //For when the player extracts a Valuable
         public static void AddValuableGathered(string name)
         {
-            name = name.Replace("Arctic ", "").Replace("Wizard ", "").Replace("Valuable ", "").Replace("(Clone)", "");
+            name = LocationData.GetBaseName(name);
             if (Plugin.connection.session == null)
             {
                 return;
@@ -331,7 +331,7 @@ namespace RepoAP
         //For when the player extracts a Monster Soul
         public static void AddMonsterSoulGathered(string name)
         {
-            name = name.Replace("(Clone)", "");
+            name = LocationData.GetBaseName(name);
             if (Plugin.connection.session == null)
             {
                 return;
@@ -364,7 +364,6 @@ namespace RepoAP
             }
 
             var pellys = saveData.pellysRequired;
-            List<string> levels = new List<string>() {"Manor", "Arctic", "Wizard" };
             
             //Check if Pelly Hunt is Complete
             Debug.Log("Pellys Required:");
@@ -380,7 +379,7 @@ namespace RepoAP
 
             foreach (string pelly in pellys)
             {
-                foreach(string level in levels)
+                foreach(string level in LocationNames.all_levels_short)
                 {
                     if (!saveData.pellysGathered.Exists(x => x.Contains(level) && x.Contains(pelly)))
                     {
