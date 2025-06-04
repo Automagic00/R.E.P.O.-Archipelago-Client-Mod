@@ -10,17 +10,18 @@ namespace RepoAP
     [HarmonyPatch(typeof(RunManager), "SetRunLevel")]
     class LevelLockPatch
     {
+        static internal int levelIndex = -1;
         [HarmonyPostfix]
         static void SetRunLevelPre(RunManager __instance)
         {
-            if (APSave.GetLevelsRecieved().Count == 0 || Plugin.connection.session == null)
+            if (APSave.GetLevelsReceived().Count == 0 || Plugin.connection.session == null)
             {
                 Debug.LogError("No Levels found in Save!");
                 return;
             }
 
             //Get what levels the player has unlocked
-            var levels = APSave.GetLevelsRecieved();
+            var levels = APSave.GetLevelsReceived();
 
             //Add levels to a list
             List<string> levelList = new();
@@ -30,8 +31,12 @@ namespace RepoAP
                 levelList.Add(level.Key);
             }
 
-            //Choose a random level from list
-            var levelChoiceName = levelList[Random.RandomRangeInt(0, levelList.Count)];
+            //Choose a random level from list at first
+            //And than cycle through the available levels
+            if (levelIndex < 0) levelIndex = Random.RandomRangeInt(0, levelList.Count);
+            else levelIndex = (levelIndex + 1) % levelList.Count;
+
+            var levelChoiceName = levelList[levelIndex];
             Level levelChoice = null;
             Debug.Log("Setting level to " + levelChoiceName);
             //Set level to choice
@@ -45,9 +50,11 @@ namespace RepoAP
                 {
                     Debug.Log(level.NarrativeName + " != " + levelChoiceName);
                 }
+
                 //Headman Manor : Level - Manor
                 //Swiftbroom Academy : Level - Wizard
                 //McJannek Station : Level - Arctic
+                //Museum of Human Art : Level - Museum
                 //Debug.Log($"{level.NarrativeName} : {level.name}");
             }
             __instance.levelCurrent = levelChoice;

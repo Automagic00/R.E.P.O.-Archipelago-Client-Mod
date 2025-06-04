@@ -20,9 +20,9 @@ namespace RepoAP.Items
             }
 
             Debug.Log("Start Run With AP Items");
-            var itemsRecieved = APSave.GetItemsRecieved();
+            var itemsReceived = APSave.GetItemsReceived();
 
-            foreach (var item in itemsRecieved)
+            foreach (var item in itemsReceived)
             {
                 for (int i = 0; i < item.Value; i++)
                 {

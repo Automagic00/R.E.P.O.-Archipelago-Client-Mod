@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,9 +11,9 @@ namespace RepoAP
     class LocationNames
     {
         //Pelly Names
-        static public string standard_pelly = "Standard Pelly";
-        static public string glass_pelly = "Glass Pelly";
-        static public string gold_pelly = "Gold Pelly";
+        static public string standard_pelly = "Standard";
+        static public string glass_pelly = "Glass";
+        static public string gold_pelly = "Gold";
 
         //Shop Location Names
         static public string upgrade_pur = "Upgrade Purchase";
@@ -21,6 +22,7 @@ namespace RepoAP
         static public string swiftbroom = "Swiftbroom Academy ";
         static public string headman_manor = "Headman Manor ";
         static public string mcjannek = "McJannek Station ";
+        static public string museum = "Museum of Human Art ";
 
         //---- Valuables ----
         //-- All --
@@ -95,6 +97,58 @@ namespace RepoAP
         public const string griffin = "Griffin Statue";
         public const string power_crystal = "Power Crystal";
 
+        //-- Museum of Human Art --
+        public const string egg = "Egg";
+        public const string car = "Car";
+        public const string banana_bow = "Banana Bow";
+        public const string boombox = "Boombox";
+        public const string cool_brain = "Cool brain";
+        public const string cubic_tower = "Cubic Tower";
+        public const string fish = "Fish";
+        public const string silverfish = "Silverfish";
+        public const string goldfish = "Goldfish";
+        public const string golden_swirl = "Golden Swirl";
+        public const string pacifier = "Pacifier";
+        public const string baby_head = "Baby Head";
+        public const string monkeybox = "MonkeyBox";
+        public const string flesh_blob = "Flesh Blob";
+        public const string tooth = "Tooth";
+        public const string goldtooth = "GoldTooth";
+        public const string toast = "Toast";
+        public const string horse = "Horse";
+        public const string blender = "Blender";
+        public const string mug_deluxe = "Uranium Mug Deluxe";
+        public const string gumball = "Gumball";
+        public const string traffic_light = "Traffic Light";
+        public const string milk = "Milk";
+        public const string handface = "Handface";
+        public const string gem_burger = "Gem Burger";
+        public const string wire_figure = "Wire Figure";
+        public const string rubendoll = "Ruben Doll";
+
+        public static readonly ReadOnlyCollection<string> all_pellys = new ReadOnlyCollection<string>(new List<string>()
+        {
+           standard_pelly,
+           glass_pelly,
+           gold_pelly
+        });
+
+        public static readonly ReadOnlyCollection<string> all_levels_short = new ReadOnlyCollection<string>(new List<string>()
+        {
+           "Wizard",
+           "Manor",
+           "Arctic",
+           "Museum"
+        });
+
+        public static readonly ReadOnlyCollection<string> all_levels = new ReadOnlyCollection<string>(new List<string>
+        {
+            swiftbroom,
+            headman_manor,
+            mcjannek,
+            museum
+        });
+
         public static readonly ReadOnlyCollection<string> all_valuables = new ReadOnlyCollection<string>(new List<string>
         {
             diamond,
@@ -114,14 +168,12 @@ namespace RepoAP
             small_vase,
             champagne,
             clown_doll,
-            radio,
-            ship_in_a_bottle,
             trophy,
             vase,
-            tv,
             large_vase,
             animal_crate,
             bonsai,
+
             music_box,
             gramophone,
             rhino,
@@ -132,6 +184,10 @@ namespace RepoAP
             grandfather_clock,
             dinosaur_skeleton,
             golden_statue,
+            tv,
+            radio,
+            ship_in_a_bottle,
+
             desktop_computer,
             fan,
             explosive_barrel,
@@ -150,6 +206,7 @@ namespace RepoAP
             sample_cooler,
             leg_ice,
             skeleton_ice,
+
             chomp_book,
             love_potion,
             cube_of_knowledge,
@@ -161,6 +218,34 @@ namespace RepoAP
             goblin_head,
             griffin,
             power_crystal,
+            
+            egg,
+            car,
+            banana_bow,
+            boombox,
+            cool_brain,
+            cubic_tower,
+            fish,
+            silverfish,
+            goldfish,
+            golden_swirl,
+            pacifier,
+            baby_head,
+            monkeybox,
+            flesh_blob,
+            tooth,
+            goldtooth,
+            toast,
+            horse,
+            blender,
+            mug_deluxe,
+            gumball,
+            traffic_light,
+            milk,
+            handface,
+            gem_burger,
+            wire_figure,
+            rubendoll
         });
 
         // ---- Monster Souls ----

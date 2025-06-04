@@ -138,7 +138,7 @@ namespace RepoAP
             }
             if (Input.GetKeyDown(KeyCode.F9))
             {
-                Debug.Log(APSave.saveData.shopStockRecieved);
+                Debug.Log(APSave.saveData.shopStockReceived);
             }
         }
     } 

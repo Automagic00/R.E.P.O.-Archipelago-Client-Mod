@@ -289,7 +289,7 @@ namespace RepoAP
 
                 var itemDisplayName = itemName + " (" + networkItem.ItemName + ") at index " + pendingItem.index;
 
-                if (APSave.GetItemRecievedIndex() > pendingItem.index)
+                if (APSave.GetItemReceivedIndex() > pendingItem.index)
                 {
                     incomingItems.TryDequeue(out _);
                     //TunicRandomizer.Tracker.SetCollectedItem(itemName, false);
@@ -300,16 +300,16 @@ namespace RepoAP
 
                 //CrabFile.current.SetInt($"randomizer processed item index {pendingItem.index}", 1);
                 Debug.Log("ItemHandler " + networkItem.ItemId);
-                APSave.AddItemRecieved(networkItem.ItemId);
+                APSave.AddItemReceived(networkItem.ItemId);
 
                 List<Level> nonGameLevels = new List<Level> { RunManager.instance.levelMainMenu, RunManager.instance.levelLobby, RunManager.instance.levelLobbyMenu };
 
-                //Make sure player isnt in a non-game Level
+                //Make sure player isn't in a non-game Level
                 if (!nonGameLevels.Contains( RunManager.instance.levelCurrent))
                 {
                     ItemData.AddItemToInventory(networkItem.ItemId,false);
 
-                    Plugin.customRPCManager.CallFocusTextRPC($"Recieved {itemName}", Plugin.customRPCManagerObject);
+                    Plugin.customRPCManager.CallFocusTextRPC($"Received {itemName}", Plugin.customRPCManagerObject);
                 }
 
                 //ItemSwapData.GetItem(networkItem.ItemId);

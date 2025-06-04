@@ -11,8 +11,13 @@ namespace RepoAP
         [HarmonyPatch(nameof(PhysGrabObject.GrabStarted)),HarmonyPostfix]
         static void OrbInfoTextEnabler(PhysGrabObject __instance)
         {
-            if (!__instance.gameObject.name.Contains("soul")) { return; }
-            SemiFunc.UIItemInfoText(null, __instance.gameObject.name);
-        }
+            string name = __instance.gameObject.name;
+
+            if (name.Contains("Soul") || name.Contains("Valuable"))
+            {
+                name = LocationData.GetBaseName(name);
+                SemiFunc.UIItemInfoText(null, name);
+            }
+      }
     }
 }
