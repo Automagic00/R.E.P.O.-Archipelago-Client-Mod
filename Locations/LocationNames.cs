@@ -106,7 +106,7 @@ namespace RepoAP
         public const string cubic_tower = "Cubic Tower";
         public const string fish = "Fish";
         public const string silverfish = "Silverfish";
-        public const string goldfish = "Goldfish";
+        public const string goldfish = "GoldFish";
         public const string golden_swirl = "Golden Swirl";
         public const string pacifier = "Pacifier";
         public const string baby_head = "Baby Head";
@@ -124,7 +124,12 @@ namespace RepoAP
         public const string handface = "Handface";
         public const string gem_burger = "Gem Burger";
         public const string wire_figure = "Wire Figure";
-        public const string rubendoll = "Ruben Doll";
+        public const string rubendoll = "RubenDoll";
+        public const string duck_man = "duck man";
+        public const string cocktail = "Cocktail";
+        public const string cube_ball = "Cube ball";
+        public const string ladybug = "ladybug";
+        public const string cubic_sculpture = "Cubic Sculpture";
 
         public static readonly ReadOnlyCollection<string> all_pellys = new ReadOnlyCollection<string>(new List<string>()
         {
@@ -245,7 +250,13 @@ namespace RepoAP
             handface,
             gem_burger,
             wire_figure,
-            rubendoll
+            rubendoll,
+
+            duck_man,
+            cocktail,
+            cube_ball,
+            ladybug,
+            cubic_sculpture
         });
 
         // ---- Monster Souls ----
