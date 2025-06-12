@@ -101,8 +101,10 @@ namespace RepoAP
             {
                 connection.outgoingItemHandler.MoveNext();
             }
-
-            //}
+            if (connection.messageHandler != null)
+            {
+                connection.messageHandler.MoveNext();
+            }
         }
 
         public static void UpdateAPAddress(string input)

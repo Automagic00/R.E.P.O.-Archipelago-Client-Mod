@@ -29,17 +29,17 @@ namespace RepoAP
             photonView.RPC(nameof(CustomRPCs.UpdateItemNameRPC), RpcTarget.All, p);
         }
 
-        public void CallFocusTextRPC(string message, GameObject inst)
+        public void CallFocusTextRPC(string message, Color mainCol, Color flashCol, float lingerTime, GameObject inst)
         {
             if (GameManager.instance.gameMode == 1)
             {
                 PhotonView photonView = inst.GetComponent<PhotonView>();
-                object[] p = new object[] { message };
+                object[] p = new object[] { message, mainCol, flashCol, lingerTime };
                 photonView.RPC(nameof(CustomRPCs.FocusTextRPC), RpcTarget.All, p);
             }
             else
             {
-                FocusTextOffline(message);
+                FocusTextOffline(message, mainCol, flashCol, lingerTime);
             }
 
         }
@@ -57,13 +57,13 @@ namespace RepoAP
 
         }
         [PunRPC]
-        public void FocusTextRPC(string message)
+        public void FocusTextRPC(string message, Color mainCol, Color flashCol, float lingerTime)
         {
-            SemiFunc.UIFocusText(message, Color.white, Color.green, 3f);
+            SemiFunc.UIFocusText(message, mainCol, flashCol, lingerTime);
         }
-        public void FocusTextOffline(string message)
+        public void FocusTextOffline(string message, Color mainCol, Color flashCol, float lingerTime)
         {
-            SemiFunc.UIFocusText(message, Color.white, Color.green, 3f);
+            SemiFunc.UIFocusText(message, mainCol, flashCol, lingerTime);
         }
     }
 }

@@ -204,7 +204,7 @@ namespace RepoAP
             for (int i = 1; i <= (APSave.saveData.shopStockSlotData * (APSave.saveData.shopStockReceived + 1)); i++)
             {
                 //Debug.Log($"Stocking item {i}");
-                if (!Plugin.ShopItemsBought.Contains(i))
+                if (!Plugin.ShopItemsBought.Contains(i) && Plugin.connection.session.Locations.AllMissingLocations.Contains(ItemData.AddBaseId(i)))
                 {
                     Plugin.ShopItemsAvailable.Add(i);
                 }
@@ -350,7 +350,8 @@ namespace RepoAP
             {
                 return false;
             }
-            
+            var locationsChecked = Plugin.connection.session.Locations.AllLocationsChecked;
+            var locationsMissing = Plugin.connection.session.Locations.AllMissingLocations;
             
             Debug.Log("CheckComplete");
 
@@ -375,6 +376,15 @@ namespace RepoAP
             foreach (string pelly in saveData.pellysGathered)
             {
                 Debug.Log($"-{pelly}");
+            }
+
+            foreach (long locID in locationsMissing)
+            {
+                string locName = Plugin.connection.session.Locations.GetLocationNameFromId(locID);
+                if (locName.Contains("Pelly"))
+                {
+                    Debug.Log("Missing " + locName);
+                }
             }
 
             foreach (string pelly in pellys)

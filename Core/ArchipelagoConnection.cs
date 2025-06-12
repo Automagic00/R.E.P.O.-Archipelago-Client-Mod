@@ -23,6 +23,10 @@ namespace RepoAP
         public IEnumerator<bool> incomingItemHandler;
         public IEnumerator<bool> outgoingItemHandler;
         public IEnumerator<bool> checkItemsReceived;
+        public IEnumerator<bool> messageHandler;
+
+        private float messageDelay = 0;
+        //private float messageTimeStamp = Time.;
 
         public bool sentCompletion = false;
         public bool sentRelease = false;
@@ -33,12 +37,31 @@ namespace RepoAP
         public int ItemIndex = 0;
         private ConcurrentQueue<(ItemInfo NetworkItem, int index)> incomingItems;
         private ConcurrentQueue<ItemInfo> outgoingItems;
+        private ConcurrentQueue<messageData> messageItems;
+
+        private struct messageData
+        {
+            public messageData(string m, UnityEngine.Color fc, UnityEngine.Color mc, float t)
+            {
+                message = m;
+                flashCol = fc;
+                mainCol = mc;
+                time = t;
+            }
+            public string message {get;}
+            public UnityEngine.Color flashCol { get; }
+            public UnityEngine.Color mainCol { get; }
+            public float time { get; }
+
+        }
+
+
         public bool connected
         {
             get { return session != null ? session.Socket.Connected : false; }
         }
 
-        public void TryConnect(string adress, int port, string pass, string player)
+        public async void TryConnect(string adress, int port, string pass, string player)
         {
             Debug.Log("TryConnect");
             if (connected)
@@ -67,13 +90,17 @@ namespace RepoAP
             incomingItemHandler = IncomingItemHandler();
             outgoingItemHandler = OutgoingItemHandler();
             checkItemsReceived = CheckItemsReceived();
+            messageHandler = MessageHandler();
             incomingItems = new ConcurrentQueue<(ItemInfo NetworkItem, int index)>();
             outgoingItems = new ConcurrentQueue<ItemInfo>();
+            messageItems = new ConcurrentQueue<messageData>();
 
 
             try
             {
-                result = session.TryConnectAndLogin("R.E.P.O", player, ItemsHandlingFlags.AllItems, requestSlotData: true, password: pass);
+                await session.ConnectAsync();
+                result = await session.LoginAsync("R.E.P.O", player, ItemsHandlingFlags.AllItems, requestSlotData: true, password: pass);
+                //result = session.TryConnectAndLogin("R.E.P.O", player, ItemsHandlingFlags.AllItems, requestSlotData: true, password: pass);
             }
             catch (Exception e)
             {
@@ -87,6 +114,15 @@ namespace RepoAP
                 Debug.Log("Successfully connected to Archipelago Multiworld server!");
                 APSave.Init();
                 APSave.ScoutShopItems();
+
+                //Send a message if in a gameplay level
+                if (!SemiFunc.MenuLevel())
+                {
+                    messageData md = new messageData($"Successfully Connected!", UnityEngine.Color.white, UnityEngine.Color.green, 3f);
+
+
+                    messageItems.Enqueue(md);
+                }
 
                 deathLinkService = session.CreateDeathLinkService();
 
@@ -157,10 +193,23 @@ namespace RepoAP
             }
         }
 
+        public void ClientDisconnected()
+        {
+            try
+            {
+                messageData md = new messageData($"Client Disconnected! Trying to Reconnect...", UnityEngine.Color.white, UnityEngine.Color.red, 4f);
+                TryConnect(Plugin.apAdress, int.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
+            }
+            catch(Exception e)
+            {
+                Debug.Log("Failure in reconnecting: " + e.Message);
+            }
+        }
+
         public void ActivateCheck(long locationID)
         {
             Debug.Log("Checked Location " + locationID);
-            session.Locations.CompleteLocationChecks(locationID);
+            session.Locations.CompleteLocationChecksAsync(locationID);
 
 
             Debug.Log("TrySave");
@@ -242,6 +291,22 @@ namespace RepoAP
                 }
             }
         }
+        private IEnumerator<bool> MessageHandler()
+        {
+            while (connected)
+            {
+                messageDelay -= Time.deltaTime;
+                if (!messageItems.TryDequeue(out var messageData) || messageDelay > 0)
+                {
+                    yield return true;
+                    continue;
+                }
+
+                messageDelay = 3.5f;
+                Plugin.customRPCManager.CallFocusTextRPC(messageData.message, messageData.mainCol, messageData.flashCol, messageData.time, Plugin.customRPCManagerObject);
+                yield return true;
+            }
+        }
         private IEnumerator<bool> OutgoingItemHandler()
         {
             while (connected)
@@ -309,7 +374,11 @@ namespace RepoAP
                 {
                     ItemData.AddItemToInventory(networkItem.ItemId,false);
 
-                    Plugin.customRPCManager.CallFocusTextRPC($"Received {itemName}", Plugin.customRPCManagerObject);
+                    messageData md = new messageData($"Recieved {itemName}", UnityEngine.Color.green, UnityEngine.Color.white, 3f);
+
+
+                    messageItems.Enqueue(md);
+                    //Plugin.customRPCManager.CallFocusTextRPC($"Received {itemName}", Plugin.customRPCManagerObject);
                 }
 
                 //ItemSwapData.GetItem(networkItem.ItemId);

@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using HarmonyLib;
+
+namespace RepoAP
+{
+    [HarmonyPatch(typeof(PlayerController),"Update")]
+    class CheckForDisconnect
+    {
+        [HarmonyPostfix]
+        static void CheckDC()
+        {
+            //If player is in a gameplay level and not connected
+            if (!SemiFunc.MenuLevel() && !Plugin.connection.connected)
+            {
+
+            }
+        }
+    }
+
+}
