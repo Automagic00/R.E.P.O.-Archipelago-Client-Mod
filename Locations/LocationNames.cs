@@ -130,6 +130,13 @@ namespace RepoAP
         public const string cube_ball = "Cube ball";
         public const string ladybug = "ladybug";
         public const string cubic_sculpture = "Cubic Sculpture";
+        public const string pimpleguy = "PimpleGuy";
+        public const string plane = "Plane";
+        public const string teeth_bot = "Teeth Bot";
+        public const string worm = "Worm";
+        public const string vinyl = "Vinyl";
+        public const string tray = "Tray";
+        public const string tall_guy = "Tall Guy";
 
         public static readonly ReadOnlyCollection<string> all_pellys = new ReadOnlyCollection<string>(new List<string>()
         {
@@ -256,7 +263,14 @@ namespace RepoAP
             cocktail,
             cube_ball,
             ladybug,
-            cubic_sculpture
+            cubic_sculpture,
+            pimpleguy,
+            plane,
+            teeth_bot,
+            worm,
+            vinyl,
+            tray,
+            tall_guy
         });
 
         // ---- Monster Souls ----
