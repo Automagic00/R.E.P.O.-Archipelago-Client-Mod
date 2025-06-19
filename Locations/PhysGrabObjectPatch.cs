@@ -9,6 +9,7 @@ using UnityEngine.Experimental.AI;
 using static ModulePropSwitch;
 using static System.Collections.Specialized.BitVector32;
 
+
 namespace RepoAP
 {
     [HarmonyPatch(typeof(PhysGrabObject))]
@@ -23,8 +24,10 @@ namespace RepoAP
 
             bool hasSoul = name.Contains("Soul");
             bool hasValuable = name.Contains("Valuable");
+            bool hasPelly = name.Contains("Pelly");
+            bool notSurplus = name.Contains("Surplus");
 
-            if ((hasSoul || hasValuable))
+            if (!notSurplus && (hasSoul || hasValuable || hasPelly))
             {
                 string label = "";
 
@@ -41,6 +44,12 @@ namespace RepoAP
                         wasCollected = APSave.WasMonsterSoulGathered(name);
                         huntObjective = APSave.saveData.monsterHunt;
                     }
+                    else if( hasPelly)
+                    {
+                        id = LocationData.PellyNameToID(name);
+                        wasCollected = APSave.WasPellyGathered(name, RunManager.instance.levelCurrent.name);
+                        huntObjective = APSave.IsPellyRequired(name);
+                    }
                     else if (hasValuable)
                     {
                         id = LocationData.ValuableNameToID(name);
@@ -48,22 +57,28 @@ namespace RepoAP
                         huntObjective = APSave.saveData.valuableHunt;
                     }
 
-                    // Only display "EXTRACTED" when we are hunting 
+                    ItemInfo iInfo = APSave.GetScoutedLocation(id);
+
+                    // Only display "EXTRACTED" when we are hunting the item class
                     if (huntObjective && wasCollected)
                     {
                         label = $"<br><color={poscol}>extracted";
                     }
-                    else if(huntObjective && !APSave.saveData.valuablesScouted.ContainsKey(id))
+                    else if (huntObjective && iInfo == null)
                     {
                         label = $"<br><color={negcol}>not extracted";
                     }
-                    else if(!wasCollected && APSave.saveData.valuablesScouted.ContainsKey(id))
+                    else if (!wasCollected && iInfo != null)
                     {
-                        ItemInfo iInfo = APSave.saveData.valuablesScouted[id];
-                        label = $"<br><color={negcol}>{iInfo.Player}'s {iInfo.ItemName}";
+                        try
+                        {
+                            label = $"<br><color={negcol}>{iInfo.Player}'s {iInfo.ItemName}";
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.Log($"OrbInfoTextEnabler: {e.Message}");
+                        }
                     }
-
-                    Plugin.connection.ScoutLocation(id);
                 }
 
                 name = LocationData.GetBaseName(name);
