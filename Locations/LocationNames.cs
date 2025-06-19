@@ -105,7 +105,7 @@ namespace RepoAP
         public const string cool_brain = "Cool brain";
         public const string cubic_tower = "Cubic Tower";
         public const string fish = "Fish";
-        public const string silverfish = "Silverfish";
+        public const string silverfish = "SilverFish";
         public const string goldfish = "GoldFish";
         public const string golden_swirl = "Golden Swirl";
         public const string pacifier = "Pacifier";
