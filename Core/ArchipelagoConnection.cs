@@ -246,9 +246,17 @@ namespace RepoAP
 
         public void ScoutLocation(long id)
         {
-            if (session != null)
+            if (session != null && !APSave.saveData.valuablesScouted.ContainsKey(id))
             {
-                session.Locations.ScoutLocationsAsync(id);
+                session.Locations.ScoutLocationsAsync(id)
+                    .ContinueWith(locationInfoPacket =>
+                    {
+                        foreach (ItemInfo itemInfo in locationInfoPacket.Result.Values)
+                        {
+                            APSave.saveData.valuablesScouted.Add(id, itemInfo);
+                            break;
+                        }
+                    });
             }
         }
 
@@ -374,7 +382,7 @@ namespace RepoAP
                 {
                     ItemData.AddItemToInventory(networkItem.ItemId,false);
 
-                    messageData md = new messageData($"Recieved {itemName}", UnityEngine.Color.green, UnityEngine.Color.white, 3f);
+                    messageData md = new messageData($"Received {itemName}", UnityEngine.Color.green, UnityEngine.Color.white, 3f);
 
 
                     messageItems.Enqueue(md);

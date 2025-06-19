@@ -25,6 +25,7 @@ namespace RepoAP
         public Dictionary<string, bool> levelsUnlocked = new Dictionary<string, bool>();
         public int itemReceivedIndex = 0;
         public Dictionary<long, ItemInfo> shopItemsScouted = new Dictionary<long, ItemInfo>();
+        public Dictionary<long, ItemInfo> valuablesScouted = new Dictionary<long, ItemInfo>();
         public JArray pellysRequired = new JArray();
         public bool pellySpawning;
         public long levelQuota;
@@ -343,6 +344,17 @@ namespace RepoAP
             ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
         }
 
+        public static bool WasValuableGathered(string name)
+        {
+            name = LocationData.GetBaseName(name);
+            return saveData.valuablesGathered.Contains(name);
+        }
+
+        public static bool WasMonsterSoulGathered(string name)
+        {
+            name = LocationData.GetBaseName(name);
+            return saveData.monsterSoulsGathered.Contains(name);
+        }
 
         public static bool CheckCompletion()
         {
