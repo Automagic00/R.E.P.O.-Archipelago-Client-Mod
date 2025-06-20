@@ -39,13 +39,13 @@ namespace RepoAP
                     bool wasCollected = false;
                     bool huntObjective = false;
 
-                    if (hasSoul)
+                    if(!isPeeper && hasSoul)
                     {
                         id = LocationData.MonsterSoulNameToID(name);
                         wasCollected = APSave.WasMonsterSoulGathered(name);
                         huntObjective = APSave.saveData.monsterHunt;
                     }
-                    else if( hasPelly)
+                    else if(hasPelly)
                     {
                         id = LocationData.PellyNameToID(name);
                         wasCollected = APSave.WasPellyGathered(name, RunManager.instance.levelCurrent.name);
