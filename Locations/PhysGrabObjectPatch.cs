@@ -25,9 +25,10 @@ namespace RepoAP
             bool hasSoul = name.Contains("Soul");
             bool hasValuable = name.Contains("Valuable");
             bool hasPelly = name.Contains("Pelly");
-            bool notSurplus = name.Contains("Surplus");
+            bool isSurplus = name.Contains("Surplus");
+            bool isPeeper = name.Contains("Peeper");
 
-            if (!notSurplus && (hasSoul || hasValuable || hasPelly))
+            if (!isSurplus && (hasSoul || hasValuable || hasPelly))
             {
                 string label = "";
 
@@ -57,7 +58,7 @@ namespace RepoAP
                         huntObjective = APSave.saveData.valuableHunt;
                     }
 
-                    ItemInfo iInfo = APSave.GetScoutedLocation(id);
+                    ItemInfo iInfo = isPeeper ? null : APSave.GetScoutedLocation(id);
 
                     // Only display "EXTRACTED" when we are hunting the item class
                     if (huntObjective && wasCollected)

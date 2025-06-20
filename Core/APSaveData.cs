@@ -376,7 +376,7 @@ namespace RepoAP
 
         public static bool IsPellyRequired(string pelly)
         {
-            return saveData.pellysRequired.Any(x => x.Contains(pelly));
+            return saveData.pellysRequired.Any(x => pelly.Contains(x.ToString()));
         }
 
         public static bool CheckCompletion()
