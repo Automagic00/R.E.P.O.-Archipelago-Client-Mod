@@ -65,7 +65,7 @@ namespace RepoAP
 			
 			repoPage.AddElement(parent => MenuAPI.CreateREPOLabel("<size=12>Only host player must be connected to AP Server.", parent, new Vector2(380f, 275f)));
 			
-			repoPage.AddElement(parent => MenuAPI.CreateREPOLabel(Plugin.connection.session != null ? "<size=12><color=#00ad2e>Connected" : "<size=12><color=#7a000e>Not Connected", parent, new Vector2(400f, 225f)));
+			repoPage.AddElement(parent => MenuAPI.CreateREPOLabel(Plugin.connection.connected ? "<size=12><color=#00ad2e>Connected" : "<size=12><color=#7a000e>Not Connected", parent, new Vector2(400f, 225f)));
 			
 			repoPage.AddElement(parent => MenuAPI.CreateREPOInputField("Address", (string input) =>
 			{
@@ -91,7 +91,8 @@ namespace RepoAP
 			{
 				Plugin.connection.TryConnect(Plugin.apAdress, Int32.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
 				repoPage.ClosePage(false);
-				BuildPopup();
+				BuildConnectingPopUp();
+				//BuildPopup();
 			}, parent, new Vector2(378f, 25f)));
 
 			repoPage.AddElement(parent => MenuAPI.CreateREPOButton("Close", () =>
@@ -101,6 +102,15 @@ namespace RepoAP
 
 			repoPage.OpenPage(true);
 
+		}
+
+		public static void BuildConnectingPopUp()
+        {
+			REPOPopupPage repoPage = MenuAPI.CreateREPOPopupPage("Connecting to Server...", shouldCachePage: false, presetSide: REPOPopupPage.PresetSide.Right, pageDimmerVisibility: true);
+
+			//repoPage.AddElement(parent => MenuAPI.CreateREPOLabel("<size=12>Connecting...", parent, new Vector2(10, 10)));
+			Plugin.connection.connectingPage = repoPage;
+			repoPage.OpenPage(true);
 		}
 	}
 }

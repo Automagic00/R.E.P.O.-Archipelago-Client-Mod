@@ -140,6 +140,28 @@ namespace RepoAP
             {
                 Debug.Log(APSave.saveData.shopStockReceived);
             }
+
+            if (Input.GetKeyDown(KeyCode.F10))
+            {
+                string output = "--- Valuable Weights ---";
+                foreach(var levelValuables in LevelGenerator.Instance.Level.ValuablePresets)
+                {
+                    var allValuables = levelValuables.tiny;
+                    allValuables.AddRange(levelValuables.small);
+                    allValuables.AddRange(levelValuables.medium);
+                    allValuables.AddRange(levelValuables.big);
+                    allValuables.AddRange(levelValuables.wide);
+                    allValuables.AddRange(levelValuables.tall);
+                    allValuables.AddRange(levelValuables.veryTall);
+
+
+                    foreach (var val in allValuables)
+                    {
+                        output += $"\n{val.name} - {LevelGenerator.Instance.Level.name}: {val.GetComponent<ValuableObject>().physAttributePreset}".Replace("PhysAttribute","").Replace("()","");
+                    }
+                }
+                Debug.Log(output);
+            }
         }
     } 
 

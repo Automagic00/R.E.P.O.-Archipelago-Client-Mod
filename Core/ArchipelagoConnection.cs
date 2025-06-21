@@ -13,11 +13,14 @@ using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Models;
 using Archipelago.MultiClient.Net.Packets;
 using UnityEngine;
+using MenuLib;
+using MenuLib.MonoBehaviors;
 
 namespace RepoAP
 {
     public class ArchipelagoConnection
     {
+        public REPOPopupPage connectingPage;
         
         public ArchipelagoSession session;
         public IEnumerator<bool> incomingItemHandler;
@@ -61,7 +64,7 @@ namespace RepoAP
             get { return session != null ? session.Socket.Connected : false; }
         }
 
-        public async void TryConnect(string adress, int port, string pass, string player)
+        public async Task TryConnect(string adress, int port, string pass, string player)
         {
             Debug.Log("TryConnect");
             if (connected)
@@ -161,6 +164,12 @@ namespace RepoAP
                 }
                 TryDisconnect();
             }
+
+            if (SemiFunc.MenuLevel())
+            {
+                connectingPage.ClosePage(false);
+                MenuBuilder.BuildPopup();
+            }
         }
 
 
@@ -193,12 +202,14 @@ namespace RepoAP
             }
         }
 
-        public void ClientDisconnected()
+        public async Task ClientDisconnected()
         {
             try
             {
                 messageData md = new messageData($"Client Disconnected! Trying to Reconnect...", UnityEngine.Color.white, UnityEngine.Color.red, 4f);
-                TryConnect(Plugin.apAdress, int.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
+
+                messageItems.Enqueue(md);
+                await TryConnect(Plugin.apAdress, int.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
             }
             catch(Exception e)
             {
@@ -293,10 +304,16 @@ namespace RepoAP
         }
         private IEnumerator<bool> MessageHandler()
         {
-            while (connected)
+            while (!SemiFunc.MenuLevel())
             {
                 messageDelay -= Time.deltaTime;
-                if (!messageItems.TryDequeue(out var messageData) || messageDelay > 0)
+                if (messageDelay > 0)
+                {
+                    yield return true;
+                    continue;
+                }
+
+                if (!messageItems.TryDequeue(out var messageData) )
                 {
                     yield return true;
                     continue;

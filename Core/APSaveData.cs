@@ -105,6 +105,43 @@ namespace RepoAP
             
         }
 
+        public static void SyncServerLocationsToSave()
+        {
+            if (!Plugin.connection.connected)
+            {
+                return;
+            }
+
+            var sesh = Plugin.connection.session;
+
+            var locsChecked = sesh.Locations.AllLocationsChecked;
+
+            foreach (var serverLoc in locsChecked)
+            {
+                if (!GetLocationsChecked().Contains(serverLoc))
+                {
+                    AddLocationChecked(serverLoc);
+                }
+
+                string locName = sesh.Locations.GetLocationNameFromId(serverLoc);
+
+                if (locName.Contains("Pelly"))
+                {
+                    AddPellyGathered(locName);
+                }
+
+                if (locName.Contains("Valuable"))
+                {
+                    AddValuableGathered(LocationData.ValuableIDToName(serverLoc));
+                }
+
+                if (locName.Contains("Soul"))
+                {
+                    AddMonsterSoulGathered(LocationData.MonsterSoulIDToName(serverLoc));
+                }
+            }
+        }
+
         public static void AddLocationChecked(long locToAdd)
         {
             if (Plugin.connection.session == null)
@@ -306,6 +343,16 @@ namespace RepoAP
             {
                 return;
             }
+
+            
+            if (LocationNames.all_levels.Any(x => name.Contains(x)))
+            {
+                string replace = LocationNames.all_levels.FirstOrDefault(x => name.Contains(x));
+                int index = LocationNames.all_levels.IndexOf(replace);
+                name.Replace(replace, LocationNames.all_levels_short[index]);
+            }
+            name = name.Replace(" ", "").Replace("Valuable", "").Replace("(Clone)", "").ToLower();
+
             if (!saveData.pellysGathered.Contains(name))
             {
                 saveData.pellysGathered.Add(name);

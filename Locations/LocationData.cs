@@ -55,6 +55,14 @@ namespace RepoAP
 
             return baseID + id;
         }
+
+        public static string MonsterSoulIDToName(long id)
+        {
+            id -= baseID;
+            id -= monsterOffset;
+            string name = LocationNames.all_monster_souls[(int)id];
+            return name;
+        }
         public static long ValuableNameToID(string name)
         {
             long id = 0;
@@ -74,6 +82,16 @@ namespace RepoAP
 
             return baseID + id;
         }
+
+        public static string ValuableIDToName(long id)
+        {
+            id -= baseID;
+            id -= valuableOffset;
+            string name = LocationNames.all_valuables[(int)id];
+            return name;
+
+        }
+
         public static long PellyNameToID(string name)
         {
             int offset = 100;

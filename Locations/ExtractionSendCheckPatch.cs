@@ -28,7 +28,7 @@ namespace RepoAP
                if (valuableObject.name.Contains("Pelly"))
                {
                   Plugin.connection.ActivateCheck(LocationData.PellyNameToID(valuableObject.name + RunManager.instance.levelCurrent.name));
-                  APSave.AddPellyGathered(valuableObject.name + RunManager.instance.levelCurrent.name);
+                  APSave.AddPellyGathered(RunManager.instance.levelCurrent.name+valuableObject.name);
                }
                else if (valuableObject.name.Contains("Soul"))
                {
