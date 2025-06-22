@@ -3,6 +3,7 @@ using HarmonyLib;
 using UnityEngine;
 using System.Collections.Generic;
 using Photon.Pun;
+using System.Threading.Tasks;
 
 namespace RepoAP
 {
@@ -13,6 +14,7 @@ namespace RepoAP
     {
 
         public static ArchipelagoConnection connection;
+        public static Task reconnectTask = null;
         public static PlayerController _player;
         public static CustomRPCs customRPCManager;
         public static GameObject customRPCManagerObject;
