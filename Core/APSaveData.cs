@@ -391,27 +391,36 @@ namespace RepoAP
         }
 
 
-        public static bool CheckCompletion()
+        public static bool CheckCompletion(out string status)
         {
             if (Plugin.connection.session == null)
             {
+                status = string.Empty;
                 return false;
             }
             var locationsChecked = Plugin.connection.session.Locations.AllLocationsChecked;
             var locationsMissing = Plugin.connection.session.Locations.AllMissingLocations;
+
+            bool goalMet = true;
+            var completedLevels = StatsManager.instance.GetRunStatLevel();
+
+            status = "";
             
             Debug.Log("CheckComplete");
 
-
             //Check if Level Quota is Met
-            Debug.Log($"Current Level: {StatsManager.instance.GetRunStatLevel()}\nQuota: {saveData.levelQuota}");
-            if (StatsManager.instance.GetRunStatLevel() < saveData.levelQuota)
+            Debug.Log($"Current Level: {completedLevels}\nQuota: {saveData.levelQuota}");
+            if (completedLevels < saveData.levelQuota)
             {
                 Debug.Log($"Level Quota not met");
-                return false;
+                goalMet = false;
             }
 
+            status = $"{{truck}} Levels - {completedLevels}/{saveData.levelQuota}{(completedLevels >= saveData.levelQuota ? " {check}" : " {X}")}";
+
             var pellys = saveData.pellysRequired;
+            var totalCount = saveData.pellysRequired.Count * LocationNames.all_levels_short.Count;
+            var collectedCount = 0;
             
             //Check if Pelly Hunt is Complete
             Debug.Log("Pellys Required:");
@@ -441,62 +450,67 @@ namespace RepoAP
                     if (!saveData.pellysGathered.Exists(x => x.Contains(level) && x.Contains(pelly)))
                     {
                         Debug.Log($"Pelly hunt not complete.");
-                        return false;
+                        goalMet = false;
+                        
+                    }
+                    else
+                    {
+                        collectedCount++;
                     }
                 }
             }
 
+            status += $"<br>{{?}} Pelly - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
+
             //Check if Monster Hunt is complete
-            if(saveData.monsterHunt)
+            if (saveData.monsterHunt)
             {
-                bool monsterHuntComplete = true;
+                totalCount = LocationNames.all_monster_souls.Count;
+                collectedCount = 0;
                 Debug.Log("Monster Hunt");
                 foreach(var soul in LocationNames.all_monster_souls)
                 {
                     if (!saveData.monsterSoulsGathered.Contains(soul))
                     {
                         Debug.Log($"{soul} has not been extracted");
-                        monsterHuntComplete = false;
+                        goalMet = false;
                     }
                     else
                     {
                         Debug.Log($"{soul} hunted");
+                        collectedCount++;
                     }
                 }
 
-                if(monsterHuntComplete == false)
-                {
-                    return false;
-                }
+                status += $"<br>{{ghost}} Souls - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
             }
 
             //Check if Valuable Hunt is complete
             if(saveData.valuableHunt)
             {
-                bool valuableHuntComplete = true;
+                totalCount = LocationNames.all_valuables.Count;
+                collectedCount = 0;
                 Debug.Log("Valuable Hunt");
                 foreach (var valuable in LocationNames.all_valuables)
                 {
                     if (!saveData.valuablesGathered.Contains(valuable))
                     {
                         Debug.Log($"{valuable} has not been extracted");
-                        valuableHuntComplete = false;
+                        goalMet = false;
                     }
                     else
                     {
                         Debug.Log($"{valuable} extracted");
+                        collectedCount++;
                     }
                 }
 
-                if (valuableHuntComplete == false)
-                {
-                    return false;
-                }
+                status += $"<br>{{$$$}} Valuables - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
             }
 
-            //If nothing else fails
-            Debug.Log("All Goals Complete.");
-            return true;
+            if(goalMet) Debug.Log("All Goals Complete.");
+
+            return goalMet;
         }
     }
 

@@ -1,4 +1,14 @@
-﻿using System;
+using Archipelago.MultiClient.Net;
+using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
+using Archipelago.MultiClient.Net.Enums;
+using Archipelago.MultiClient.Net.Helpers;
+using Archipelago.MultiClient.Net.MessageLog.Messages;
+using Archipelago.MultiClient.Net.MessageLog.Parts;
+using Archipelago.MultiClient.Net.Models;
+using Archipelago.MultiClient.Net.Packets;
+using Mono.Cecil.Cil;
+using RepoAP.Core;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -83,6 +93,8 @@ namespace RepoAP
                 {
                     session = ArchipelagoSessionFactory.CreateSession(adress, port);
                     Debug.Log("Session at " + session.ToString());
+
+                    session.MessageLog.OnMessageReceived += MessageLog_OnMessageReceived;
                 }
                 catch
                 {
@@ -98,6 +110,7 @@ namespace RepoAP
             outgoingItems = new ConcurrentQueue<ItemInfo>();
             messageItems = new ConcurrentQueue<messageData>();
 
+            // setup
 
             try
             {
@@ -122,8 +135,6 @@ namespace RepoAP
                 if (!SemiFunc.MenuLevel())
                 {
                     messageData md = new messageData($"Successfully Connected!", UnityEngine.Color.white, UnityEngine.Color.green, 3f);
-
-
                     messageItems.Enqueue(md);
                 }
 
@@ -172,6 +183,35 @@ namespace RepoAP
             }
         }
 
+        private string RGBtoHtmlStr( Archipelago.MultiClient.Net.Models.Color col )
+        {
+            byte[] byteColor = { col.R, col.G, col.B };
+            return BitConverter.ToString(byteColor).Replace("-", string.Empty);
+        }
+
+        private void MessageLog_OnMessageReceived(LogMessage message)
+        {
+            string msg = string.Empty;
+
+            foreach (MessagePart part in message.Parts)
+            {
+                var msgPart = string.Empty;
+                var hexColor = string.Empty;
+
+                hexColor = RGBtoHtmlStr(part.Color);
+                if (hexColor != string.Empty) msg += "<color=#" + hexColor + "><b>" + part.Text + "</b></color>";
+                else msg += part.Text;
+            }
+
+            HandleAPTruckScreenMessages.TruckScreenChatPatch.AddMessage("AP", msg);
+        }
+
+        private void OnItemReceived(ReceivedItemsHelper helper)
+        {
+            ItemInfo nextItem = helper.DequeueItem();
+
+            Debug.Log($"OnItemReceived: {nextItem.ToString()}");
+        }
 
         public void TryDisconnect()
         {
@@ -302,6 +342,7 @@ namespace RepoAP
                 }
             }
         }
+
         private IEnumerator<bool> MessageHandler()
         {
             while (!SemiFunc.MenuLevel())
