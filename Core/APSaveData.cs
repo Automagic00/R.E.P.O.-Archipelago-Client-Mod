@@ -24,7 +24,7 @@ namespace RepoAP
         public Dictionary<long, int> itemsReceived = new Dictionary<long, int>();
         public Dictionary<string, bool> levelsUnlocked = new Dictionary<string, bool>();
         public int itemReceivedIndex = 0;
-        public Dictionary<long, ItemInfo> shopItemsScouted = new Dictionary<long, ItemInfo>();
+        public Dictionary<long, ItemInfo> locationsScouted = new Dictionary<long, ItemInfo>();
         public JArray pellysRequired = new JArray();
         public bool pellySpawning;
         public long levelQuota;
@@ -284,56 +284,70 @@ namespace RepoAP
             return ES3.Load<APSaveData>(saveKey, es3Settings).levelsUnlocked;
         }
 
-        public static async void ScoutShopItems()
+        public static async void ScoutLocations()
         {
             if (Plugin.connection.session == null)
             {
                 return;
             }
-            long[] idsToScout = new long[100] ;
-            for (int i = 1; i <= 100; i++)
-            {
-                //Debug.Log("Adding "+ LocationData.AddBaseId(i));
-                idsToScout[i-1] = LocationData.AddBaseId(i);
-            }
-            //Debug.Log(idsToScout);
+
+            Debug.Log("Scouting Locations...");
+
+            int shop_item_count = 100;
+            int pelly_count = LocationNames.all_pellys.Count * LocationNames.all_levels.Count;
+            int valuable_count = LocationNames.all_valuables.Count;
+            int monster_count = LocationNames.all_monster_souls.Count;
+
+            Debug.Log($"Checking {shop_item_count} shop items...");
+            Debug.Log($"Checking {pelly_count} pelly statues...");
+            Debug.Log($"Checking {valuable_count} valuables...");
+            Debug.Log($"Checking {monster_count} monster souls...");
+
+            long[] idsToScout = new long[shop_item_count + pelly_count+valuable_count+monster_count];
+
+            int p = 0;
+
+            // Shop Items
+            for (int i = 1; i <= shop_item_count; i++) idsToScout[p++] = LocationData.AddBaseId(i);
+
+            // Pellys
+            for (int i = 1; i <= pelly_count; i++) idsToScout[p++] = LocationData.AddBaseId(LocationData.pellyOffset + i);
+
+            // Valuables
+            for (int i = 1; i <= valuable_count; i++) idsToScout[p++] = LocationData.AddBaseId(LocationData.valuableOffset + i);
+
+            // Souls
+            for (int i = 1; i <= monster_count; i++) idsToScout[p++] = LocationData.AddBaseId(LocationData.monsterOffset + i);
+
             try
             {
                 var scout = await Plugin.connection.session.Locations.ScoutLocationsAsync(idsToScout);
-                saveData.shopItemsScouted = new Dictionary<long, ItemInfo>();
-                //Debug.Log(scout.Values.Count);
+                saveData.locationsScouted = new Dictionary<long, ItemInfo>();
                 foreach (ItemInfo item in scout.Values)
                 {
-                    //Debug.Log("Saving " + item.LocationId + " " + item.ItemDisplayName);
-                    saveData.shopItemsScouted.Add(item.LocationId, item);
+                    saveData.locationsScouted.Add(item.LocationId, item);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.LogError(e);
             }
 
-            /*foreach(var item in saveData.shopItemsScouted.Values)
-            {
-                Debug.Log("InSaveData " + item.LocationId + " " + item.ItemDisplayName);
-            }*/
             ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
+        }
+
+        public static ItemInfo GetScoutedLocation(long id)
+        {
+            if (Plugin.connection.session != null && APSave.saveData.locationsScouted.ContainsKey(id))
+            {
+                return saveData.locationsScouted[id];
+            }
+            return null;
         }
 
         public static ItemInfo GetScoutedShopItem(long id)
         {
-            if (Plugin.connection.session == null)
-            {
-                return null;
-            }
-            var shopItems = saveData.shopItemsScouted;
-
-            /*foreach (var item in shopItems.Values)
-            {
-                Debug.Log($"{item.LocationId} : {item.ItemDisplayName}");
-            }*/
-            
-            return shopItems[id];
+            return GetScoutedLocation(id);
         }
 
         //For when the player extracts a Pelly
@@ -390,6 +404,27 @@ namespace RepoAP
             ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
         }
 
+        public static bool WasValuableGathered(string name)
+        {
+            name = LocationData.GetBaseName(name);
+            return saveData.valuablesGathered.Contains(name);
+        }
+
+        public static bool WasMonsterSoulGathered(string name)
+        {
+            name = LocationData.GetBaseName(name);
+            return saveData.monsterSoulsGathered.Contains(name);
+        }
+
+        public static bool WasPellyGathered(string pelly, string level)
+        {
+            return saveData.pellysGathered.Exists(x => x.Contains(level) && x.Contains(pelly));
+        }
+
+        public static bool IsPellyRequired(string pelly)
+        {
+            return saveData.pellysRequired.Any(x => pelly.Contains(x.ToString()));
+        }
 
         public static bool CheckCompletion()
         {
