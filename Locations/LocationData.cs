@@ -11,8 +11,9 @@ namespace RepoAP
     static class LocationData
     {
         const int baseID = 75912022;
-        const int valuableOffset = 200;
-        const int monsterOffset = 500;
+        public const int pellyOffset = 100;
+        public const int valuableOffset = 200;
+        public const int monsterOffset = 500;
         static Dictionary<long, string> idToName;
         static Dictionary<string, long> nameToId;
         static long[] ids;
@@ -94,7 +95,7 @@ namespace RepoAP
 
         public static long PellyNameToID(string name)
         {
-            int offset = 100;
+            int offset = pellyOffset;
             int idx = 1;
             foreach (string level in LocationNames.all_levels_short)
             {

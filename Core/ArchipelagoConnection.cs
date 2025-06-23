@@ -13,16 +13,12 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Archipelago.MultiClient.Net;
-using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
-using Archipelago.MultiClient.Net.Enums;
-using Archipelago.MultiClient.Net.Models;
-using Archipelago.MultiClient.Net.Packets;
 using UnityEngine;
+using UnityEngine.UIElements;
 using MenuLib;
 using MenuLib.MonoBehaviors;
 
@@ -129,7 +125,7 @@ namespace RepoAP
 
                 Debug.Log("Successfully connected to Archipelago Multiworld server!");
                 APSave.Init();
-                APSave.ScoutShopItems();
+                APSave.ScoutLocations();
 
                 //Send a message if in a gameplay level
                 if (!SemiFunc.MenuLevel())
@@ -259,22 +255,31 @@ namespace RepoAP
 
         public void ActivateCheck(long locationID)
         {
-            Debug.Log("Checked Location " + locationID);
-            session.Locations.CompleteLocationChecksAsync(locationID);
+            if (!APSave.saveData.locationsChecked.Contains(locationID))
+            {
+                Debug.Log("Checked Location " + locationID);
+                session.Locations.CompleteLocationChecksAsync(locationID);
 
+                //Debug.Log("TrySave");
+                APSave.AddLocationChecked(locationID);
 
-            Debug.Log("TrySave");
-            APSave.AddLocationChecked(locationID);
-            
-            Debug.Log("TrySync");
-            session.Locations.ScoutLocationsAsync(locationID)
-                .ContinueWith(locationInfoPacket =>
+                //Debug.Log("TrySync");
+                if (APSave.saveData.locationsScouted.ContainsKey(locationID))
                 {
-                    foreach (ItemInfo itemInfo in locationInfoPacket.Result.Values)
-                    {
-                        outgoingItems.Enqueue(itemInfo);
-                    }
-                });
+                    outgoingItems.Enqueue(APSave.saveData.locationsScouted[locationID]);
+                }
+                else
+                {
+                    session.Locations.ScoutLocationsAsync(locationID)
+                        .ContinueWith(locationInfoPacket =>
+                        {
+                            foreach (ItemInfo itemInfo in locationInfoPacket.Result.Values)
+                            {
+                                outgoingItems.Enqueue(itemInfo);
+                            }
+                        });
+                }
+            }
         }
         
         public void SyncLocations()
@@ -292,14 +297,6 @@ namespace RepoAP
                 {
                     ActivateCheck(long.Parse(location));
                 }*/
-            }
-        }
-
-        public void ScoutLocation(long id)
-        {
-            if (session != null)
-            {
-                session.Locations.ScoutLocationsAsync(id);
             }
         }
 
@@ -432,7 +429,7 @@ namespace RepoAP
                 {
                     ItemData.AddItemToInventory(networkItem.ItemId,false);
 
-                    messageData md = new messageData($"Recieved {itemName}", UnityEngine.Color.green, UnityEngine.Color.white, 3f);
+                    messageData md = new messageData($"Received {itemName}", UnityEngine.Color.green, UnityEngine.Color.white, 3f);
 
 
                     messageItems.Enqueue(md);
