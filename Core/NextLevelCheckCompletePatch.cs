@@ -1,10 +1,13 @@
-﻿using System;
+﻿using HarmonyLib;
+using RepoAP.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HarmonyLib;
 using UnityEngine;
+using UnityEngine.Events;
+using static ChatManager;
 
 namespace RepoAP
 {
@@ -15,7 +18,8 @@ namespace RepoAP
         static void CheckComplete()
         {
             Debug.Log("Truck Go To Next");
-            bool complete = APSave.CheckCompletion();
+            string status;
+            bool complete = APSave.CheckCompletion(out status);
             if (complete)
             {
                 Plugin.connection.SendCompletion();
