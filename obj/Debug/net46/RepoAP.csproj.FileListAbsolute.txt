@@ -1,6 +1,0 @@
-D:\UnityModding\REPO\Plugins\AP\RepoAP\obj\Debug\net46\RepoAP.csproj.AssemblyReference.cache
-D:\UnityModding\REPO\Plugins\AP\RepoAP\obj\Debug\net46\MyPluginInfo.cs
-D:\UnityModding\REPO\Plugins\AP\RepoAP\obj\Debug\net46\RepoAP.GeneratedMSBuildEditorConfig.editorconfig
-D:\UnityModding\REPO\Plugins\AP\RepoAP\obj\Debug\net46\RepoAP.AssemblyInfoInputs.cache
-D:\UnityModding\REPO\Plugins\AP\RepoAP\obj\Debug\net46\RepoAP.AssemblyInfo.cs
-D:\UnityModding\REPO\Plugins\AP\RepoAP\obj\Debug\net46\RepoAP.csproj.CoreCompileInputs.cache
