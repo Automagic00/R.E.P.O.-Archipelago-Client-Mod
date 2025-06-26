@@ -34,6 +34,7 @@ More information at https://archipelago.gg/
 #### Randomized Items
 - Upgrades
 - Levels
+- Unlock Items in Shop
 - Shop Stock
 
 #### Randomized Locations
@@ -43,4 +44,5 @@ More information at https://archipelago.gg/
 - Monster Soul Extraction
 
 #### Known Issues
-- Item Received notification doesn't handle multiple successive notifications well
+- Unsecure socket notification in server. This is from an upstream library and causes no gameplay issues currently.
+- Truck messages will currently be displayed redundantly if there is more than one host (connected) player in the same lobby.
