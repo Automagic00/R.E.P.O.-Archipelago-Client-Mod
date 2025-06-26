@@ -162,6 +162,16 @@ namespace RepoAP
                 }
                 Debug.Log(output);
             }
+
+            if (Input.GetKeyDown(KeyCode.F11))
+            {
+                var items = APSave.GetItemsReceived();
+
+                foreach (var item in items)
+                {
+                    Debug.Log(ItemData.itemIDToName[ItemData.RemoveBaseId(item.Key)]);
+                }
+            }
         }
     } 
 

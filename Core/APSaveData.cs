@@ -257,6 +257,21 @@ namespace RepoAP
             return ES3.Load<APSaveData>(saveKey, es3Settings).itemsReceived;
         }
 
+        public static bool IsItemReceived(long id, int count=1)
+        {
+            if (!Plugin.connection.connected)
+            {
+                return false;
+            }
+            var itemsReceived = ES3.Load<APSaveData>(saveKey, es3Settings).itemsReceived;
+            bool output = false;
+            if (itemsReceived.ContainsKey(id) && itemsReceived[id] >= count)
+            {
+                output = true;
+            }
+            return output;
+        }
+
         public static void AddLevelReceived(string levelName)
         {
             if (Plugin.connection.session == null)

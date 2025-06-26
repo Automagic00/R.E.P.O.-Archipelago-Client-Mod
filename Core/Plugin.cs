@@ -66,6 +66,7 @@ namespace RepoAP
             customRPCManager = customRPCManagerObject.AddComponent<CustomRPCs>();
             customRPCManagerObject.AddComponent<PhotonView>();
             DontDestroyOnLoad(customRPCManager);
+            ItemData.CreateItemDataTable();
 
         }
         public static ArchipelagoConnection GetConnection()
