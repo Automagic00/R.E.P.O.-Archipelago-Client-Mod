@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace RepoAP
 {
+	//test
 	[HarmonyPatch(typeof(ExtractionPoint), "DestroyAllPhysObjectsInShoppingList")]
     class ShopSendCheckPatch
     {
@@ -68,6 +69,15 @@ namespace RepoAP
 						if (itemAttributes.item.itemType == SemiFunc.itemType.item_upgrade && itemAttributes.item.itemAssetName != ItemNames.apItem)
 						{
 							StatsManager.instance.AddItemsUpgradesPurchased(itemAttributes.item.itemAssetName);
+						}
+						if (itemAttributes.item.itemType == SemiFunc.itemType.power_crystal)
+						{
+							Dictionary<string, int> runStats = StatsManager.instance.runStats;
+							runStats["chargingStationChargeTotal"] = runStats["chargingStationChargeTotal"] + 17;
+							if (StatsManager.instance.runStats["chargingStationChargeTotal"] > 100)
+							{
+								StatsManager.instance.runStats["chargingStationChargeTotal"] = 100;
+							}
 						}
 						itemAttributes.GetComponent<PhysGrabObject>().DestroyPhysGrabObject();
 						list.Add(itemAttributes);

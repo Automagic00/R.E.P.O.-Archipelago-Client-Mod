@@ -479,9 +479,33 @@ namespace RepoAP
                 Debug.Log($"-{pelly.ToString()} {saveData.pellysRequired.Count}");
             }
             Debug.Log("Pellys Gathered:");
-            foreach (string pelly in saveData.pellysGathered)
+            /*foreach (string pelly in saveData.pellysGathered)
             {
                 Debug.Log($"-{pelly}");
+            }*/
+            foreach (long locID in locationsChecked)
+            {
+                string locName = Plugin.connection.session.Locations.GetLocationNameFromId(locID);
+                if (locName.Contains("Pelly"))
+                {
+                    Debug.Log($"-{locName}");
+
+                    foreach (string level in LocationNames.all_levels)
+                    {
+                        Debug.Log(level);
+                        locName = locName.Replace(level, "");
+                    }
+                    Debug.Log(locName);
+                    if (saveData.pellysRequired.Any(x => locName.Contains(x.ToString())))
+                    {
+                        collectedCount++;
+                    }
+                }
+            }
+            if (collectedCount < totalCount)
+            {
+                Debug.Log($"Pelly hunt not complete.");
+                goalMet = false;
             }
 
             foreach (long locID in locationsMissing)
@@ -493,22 +517,23 @@ namespace RepoAP
                 }
             }
 
-            foreach (string pelly in pellys)
+            
+
+            /*foreach (string pelly in pellys)
             {
                 foreach(string level in LocationNames.all_levels_short)
                 {
-                    if (!saveData.pellysGathered.Exists(x => x.Contains(level) && x.Contains(pelly)))
+                    if (!saveData.pellysGathered.Exists(x => x.Contains(level.ToLower()) && x.Contains(pelly.ToLower())))
                     {
                         Debug.Log($"Pelly hunt not complete.");
                         goalMet = false;
-                        
                     }
                     else
                     {
                         collectedCount++;
                     }
                 }
-            }
+            }*/
 
             status += $"<br>{{?}} Pelly - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RepoAP
 {
-    [BepInPlugin("Automagic.ArchipelagoREPO", "Archipelago Randomizer", "0.2.0")]
+    [BepInPlugin("Automagic.ArchipelagoREPO", "Archipelago Randomizer", "0.2.1")]
     [BepInDependency("nickklmao.menulib")]
 
     public class Plugin : BaseUnityPlugin
