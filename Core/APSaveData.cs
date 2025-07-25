@@ -284,7 +284,7 @@ namespace RepoAP
             }
             else
             {
-                Debug.LogError(levelName + " has already been received!");
+                Debug.LogWarning(levelName + " has already been received!");
             }
 
             ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
