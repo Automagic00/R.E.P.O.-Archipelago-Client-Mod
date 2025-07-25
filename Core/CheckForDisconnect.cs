@@ -15,7 +15,7 @@ namespace RepoAP
         static void CheckDC()
         {
             //If player is in a gameplay level and not connected
-            if (!SemiFunc.MenuLevel() && !Plugin.connection.connected)
+            if (!RunManager.instance.levelCurrent.name.Contains("Menu") && !RunManager.instance.levelCurrent.name.Contains("Splash") && !Plugin.connection.connected)
             {
                 if (Plugin.reconnectTask == null)
                 {

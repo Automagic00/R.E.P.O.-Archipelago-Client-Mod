@@ -17,7 +17,8 @@ namespace RepoAP
 		[HarmonyPostfix]
 		static void SetNumber()
         {
-			if (RunManager.instance.levelCurrent.name.Contains("Menu"))
+			Debug.Log("Current Level: " + (RunManager.instance.levelCurrent.name));
+			if (RunManager.instance.levelCurrent.name.Contains("Menu") || RunManager.instance.levelCurrent.name.Contains("Splash"))
             {
 				return;
             }
