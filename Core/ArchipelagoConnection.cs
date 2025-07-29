@@ -97,10 +97,7 @@ namespace RepoAP
                     Debug.Log("Failed to create archipelago session!");
                 }
             }
-
-            incomingItemHandler = IncomingItemHandler();
-            outgoingItemHandler = OutgoingItemHandler();
-            checkItemsReceived = CheckItemsReceived();
+            
             messageHandler = MessageHandler();
             incomingItems = new ConcurrentQueue<(ItemInfo NetworkItem, int index)>();
             outgoingItems = new ConcurrentQueue<ItemInfo>();
@@ -171,6 +168,10 @@ namespace RepoAP
                 }
                 TryDisconnect();
             }
+            
+            incomingItemHandler = IncomingItemHandler();
+            outgoingItemHandler = OutgoingItemHandler();
+            checkItemsReceived = CheckItemsReceived();
 
             if (SemiFunc.MenuLevel())
             {
