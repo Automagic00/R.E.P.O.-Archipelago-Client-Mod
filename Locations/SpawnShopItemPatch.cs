@@ -302,7 +302,7 @@ namespace RepoAP
 					ShopManager.instance.itemRotateHelper.transform.localRotation = item.spawnRotationOffset;
 					Quaternion rotation = ShopManager.instance.itemRotateHelper.transform.rotation;
 					ShopManager.instance.itemRotateHelper.transform.parent = ShopManager.instance.transform;
-					string text = "Items/" + item.prefab.name;
+					string text = "Items/" + item.prefab.PrefabName;
 					if (SemiFunc.IsMultiplayer())
 					{
 						var inst = PhotonNetwork.InstantiateRoomObject(text, itemVolume.transform.position, rotation, 0, null);
@@ -322,7 +322,7 @@ namespace RepoAP
 					}
 					else
 					{
-                        var inst = UnityEngine.Object.Instantiate<GameObject>(item.prefab, itemVolume.transform.position, rotation);
+                        var inst = UnityEngine.Object.Instantiate<GameObject>(item.prefab.Prefab, itemVolume.transform.position, rotation);
 						Plugin.LastShopItemChecked++;
 						/*while (Plugin.ShopItemsBought.Contains(Plugin.LastShopItemChecked))
 						{

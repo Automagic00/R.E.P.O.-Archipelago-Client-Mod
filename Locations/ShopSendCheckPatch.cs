@@ -47,7 +47,7 @@ namespace RepoAP
 						SemiFunc.StatSetRunCurrency(SemiFunc.StatGetRunCurrency() - value);
 
 
-						if (itemAttributes.item.itemAssetName == ItemNames.apItem)
+						if (itemAttributes.item.prefab.PrefabName == ItemNames.apItem)
 						{
 							Debug.Log("AP ITEM PURCHASED " + itemAttributes.name);
 							//Send Check Here
@@ -62,13 +62,13 @@ namespace RepoAP
 						//Otherwise purchase as normal
 						else
 						{
-							Debug.Log("Not AP Item\n" + itemAttributes.item.itemAssetName + " != " + ItemNames.apItem);
-							StatsManager.instance.ItemPurchase(itemAttributes.item.itemAssetName);
+							Debug.Log("Not AP Item\n" + itemAttributes.item.prefab.PrefabName + " != " + ItemNames.apItem);
+							StatsManager.instance.ItemPurchase(itemAttributes.item.prefab.PrefabName);
 						}
 
-						if (itemAttributes.item.itemType == SemiFunc.itemType.item_upgrade && itemAttributes.item.itemAssetName != ItemNames.apItem)
+						if (itemAttributes.item.itemType == SemiFunc.itemType.item_upgrade && itemAttributes.item.prefab.PrefabName != ItemNames.apItem)
 						{
-							StatsManager.instance.AddItemsUpgradesPurchased(itemAttributes.item.itemAssetName);
+							StatsManager.instance.AddItemsUpgradesPurchased(itemAttributes.item.prefab.PrefabName);
 						}
 						if (itemAttributes.item.itemType == SemiFunc.itemType.power_crystal)
 						{

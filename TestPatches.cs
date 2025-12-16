@@ -157,7 +157,7 @@ namespace RepoAP
 
                     foreach (var val in allValuables)
                     {
-                        output += $"\n{val.name} - {LevelGenerator.Instance.Level.name}: {val.GetComponent<ValuableObject>().physAttributePreset}".Replace("PhysAttribute","").Replace("()","");
+                        output += $"\n{val.PrefabName} - {LevelGenerator.Instance.Level.name}: {val.Prefab.GetComponent<ValuableObject>().physAttributePreset}".Replace("PhysAttribute","").Replace("()","");
                     }
                 }
                 Debug.Log(output);

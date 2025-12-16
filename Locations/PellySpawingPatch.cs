@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using UnityEngine;
 using System.Reflection;
-using System.Linq;
 
 namespace RepoAP
 {
@@ -27,12 +26,12 @@ namespace RepoAP
 
                 foreach (LevelValuables levelValuables in LevelGenerator.Instance.Level.ValuablePresets)
                 {
-                    foreach (var pelly in levelValuables.medium.Where(x => x.name.Contains("Pelly")).ToList())
+                    foreach (var pelly in levelValuables.medium.Where(x => x.PrefabName.Contains("Pelly")).ToList())
                     {
-                        Debug.Log($"Pelly Found: {pelly.name}");
-                        if (APSave.saveData.pellysRequired.All(x => !pelly.name.Contains(x.ToString())))
+                        Debug.Log($"Pelly Found: {pelly.PrefabName}");
+                        if (APSave.saveData.pellysRequired.All(x => !pelly.PrefabName.Contains(x.ToString())))
                         {
-                            Debug.Log($"Removing: {pelly.name}");
+                            Debug.Log($"Removing: {pelly.PrefabName}");
                             levelValuables.medium.Remove(pelly);
                         }
                         
