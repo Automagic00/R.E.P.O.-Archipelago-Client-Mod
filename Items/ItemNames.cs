@@ -91,7 +91,7 @@ namespace RepoAP
         static public string human_grenade = "Human Grenade Unlock";
         static public string duct_taped_grenade = "Duct Taped Grenade Unlock";
         static public string shockwave_mine = "Shockwave Mine Unlock";
-        static public string stun_mine = "Stun Mine Unlock";
+        static public string stun_mine = "Trapzap Unlock";
         static public string explosive_mine = "Explosive Mine Unlock";
         static public string rubber_duck = "Rubber Duck Unlock";
 
