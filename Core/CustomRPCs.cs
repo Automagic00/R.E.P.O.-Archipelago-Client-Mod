@@ -23,7 +23,7 @@ namespace RepoAP
 
         public void CallUpdateItemNameRPC(string name, GameObject inst)
         {
-            Debug.Log("Calling RPC");
+            Plugin.Logger.LogInfo("Calling UpdateItemNameRPC");
             PhotonView photonView = inst.GetComponent<PhotonView>();
             object[] p = new object[] { name};
             photonView.RPC(nameof(CustomRPCs.UpdateItemNameRPC), RpcTarget.All, p);
@@ -48,7 +48,7 @@ namespace RepoAP
         [PunRPC]
         public void UpdateItemNameRPC(string name, PhotonMessageInfo info)
         {
-            Debug.Log("RPC Called");
+            Plugin.Logger.LogInfo("UpdateItemNameRPC Called");
             var inst = info.photonView.gameObject.GetComponent<ItemAttributes>();
             //ItemAttributes att = inst.GetComponent<ItemAttributes>();
 

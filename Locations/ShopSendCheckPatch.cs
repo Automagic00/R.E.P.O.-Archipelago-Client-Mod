@@ -23,13 +23,13 @@ namespace RepoAP
         static bool ShopCheckPatch(ExtractionPoint __instance)
         {
 			shoppingList = (List<ItemAttributes>)field.GetValue(ShopManager.instance);
-			Debug.Log("Connected in shop check");
+			Plugin.Logger.LogInfo("Connected in shop check");
 			if (SemiFunc.IsMasterClientOrSingleplayer())
 			{
 				//Exit if not connected to server
 				if (Plugin.connection == null)
 				{
-					Debug.Log("Connection Null");
+					Plugin.Logger.LogInfo("Connection Null");
 					return true;
 				}
 				foreach (PlayerAvatar playerAvatar in GameDirector.instance.PlayerList)
@@ -49,7 +49,7 @@ namespace RepoAP
 
 						if (itemAttributes.item.prefab.PrefabName == ItemNames.apItem)
 						{
-							Debug.Log("AP ITEM PURCHASED " + itemAttributes.name);
+							Plugin.Logger.LogInfo("AP ITEM PURCHASED " + itemAttributes.name);
 							//Send Check Here
 
 							long id = LocationData.ShopItemToID(itemAttributes.name);
@@ -62,7 +62,7 @@ namespace RepoAP
 						//Otherwise purchase as normal
 						else
 						{
-							Debug.Log("Not AP Item\n" + itemAttributes.item.prefab.PrefabName + " != " + ItemNames.apItem);
+							Plugin.Logger.LogInfo("Not AP Item\n" + itemAttributes.item.prefab.PrefabName + " != " + ItemNames.apItem);
 							StatsManager.instance.ItemPurchase(itemAttributes.item.prefab.PrefabName);
 						}
 

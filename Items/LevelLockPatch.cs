@@ -16,7 +16,7 @@ namespace RepoAP
         {
             if (APSave.GetLevelsReceived().Count == 0 || Plugin.connection.session == null)
             {
-                Debug.LogError("No Levels found in Save!");
+                Plugin.Logger.LogError("No Levels found in Save!");
                 return;
             }
 
@@ -27,7 +27,7 @@ namespace RepoAP
             List<string> levelList = new();
             foreach (var level in levels)
             {
-                Debug.Log("Player has " + level.Key);
+                Plugin.Logger.LogInfo("Player has " + level.Key);
                 levelList.Add(level.Key);
             }
 
@@ -38,7 +38,7 @@ namespace RepoAP
 
             var levelChoiceName = levelList[levelIndex];
             Level levelChoice = null;
-            Debug.Log("Setting level to " + levelChoiceName);
+            Plugin.Logger.LogInfo("Setting level to " + levelChoiceName);
             //Set level to choice
             foreach (var level in __instance.levels)
             {
@@ -48,7 +48,7 @@ namespace RepoAP
                 }
                 else
                 {
-                    Debug.Log(level.NarrativeName + " != " + levelChoiceName);
+                    Plugin.Logger.LogInfo(level.NarrativeName + " != " + levelChoiceName);
                 }
 
                 //Headman Manor : Level - Manor
@@ -58,7 +58,7 @@ namespace RepoAP
                 //Debug.Log($"{level.NarrativeName} : {level.name}");
             }
             __instance.levelCurrent = levelChoice;
-            Debug.Log("Returning " + __instance.levelCurrent.name);
+            Plugin.Logger.LogInfo("Returning " + __instance.levelCurrent.name);
             
         }
     }

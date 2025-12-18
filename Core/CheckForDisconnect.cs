@@ -19,7 +19,7 @@ namespace RepoAP
             {
                 if (Plugin.reconnectTask == null)
                 {
-                    Debug.Log("Disconnected from AP Server");
+                    Plugin.Logger.LogInfo("Disconnected from AP Server");
                     Plugin.reconnectTask = Plugin.connection.ClientDisconnected();
                 }
                 else if (Plugin.reconnectTask.Status == TaskStatus.RanToCompletion)

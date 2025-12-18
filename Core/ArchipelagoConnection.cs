@@ -72,10 +72,10 @@ namespace RepoAP
 
         public async Task TryConnect(string adress, int port, string pass, string player)
         {
-            Debug.Log("TryConnect");
+            Plugin.Logger.LogDebug("TryConnect");
             if (connected)
             {
-                Debug.Log("Returning");
+                Plugin.Logger.LogDebug("Already connected. Returning");
                 return;
             }
             
@@ -88,13 +88,13 @@ namespace RepoAP
                 try
                 {
                     session = ArchipelagoSessionFactory.CreateSession(adress, port);
-                    Debug.Log("Session at " + session.ToString());
+                    Plugin.Logger.LogInfo("Session at " + session.ToString());
 
                     session.MessageLog.OnMessageReceived += MessageLog_OnMessageReceived;
                 }
                 catch
                 {
-                    Debug.Log("Failed to create archipelago session!");
+                    Plugin.Logger.LogError("Failed to create archipelago session!");
                 }
             }
             
@@ -120,7 +120,7 @@ namespace RepoAP
 
                 slotData = LoginSuccess.SlotData;
 
-                Debug.Log("Successfully connected to Archipelago Multiworld server!");
+                Plugin.Logger.LogInfo("Successfully connected to Archipelago Multiworld server!");
                 APSave.Init();
                 APSave.ScoutLocations();
 
@@ -156,16 +156,20 @@ namespace RepoAP
             else
             {
                 LoginFailure loginFailure = (LoginFailure)result;
-                Debug.Log("Error connecting to Archipelago:");
                 //Notifications.Show($"\"Failed to connect to Archipelago!\"", $"\"Check your settings and/or log output.\"");
+                string connectFailureMessage = "Unable to connect to Archipelago Multiworld server:\n";
                 foreach (string Error in loginFailure.Errors)
                 {
-                    Debug.Log(Error);
+                    connectFailureMessage += $"{Error}\n";
+                    //Debug.Log(Error);
                 }
+                connectFailureMessage += "\n";
                 foreach (ConnectionRefusedError Error in loginFailure.ErrorCodes)
                 {
-                    Debug.Log(Error.ToString());
+                    connectFailureMessage += $"{Error.ToString()}\n";
+                    //Debug.Log(Error.ToString());
                 }
+                Plugin.Logger.LogWarning(connectFailureMessage);
                 TryDisconnect();
             }
             
@@ -207,7 +211,7 @@ namespace RepoAP
         {
             ItemInfo nextItem = helper.DequeueItem();
 
-            Debug.Log($"OnItemReceived: {nextItem.ToString()}");
+            Plugin.Logger.LogInfo($"OnItemReceived: {nextItem.ToString()}");
         }
 
         public void TryDisconnect()
@@ -231,11 +235,11 @@ namespace RepoAP
                 //Locations.CheckedLocations.Clear();
                 //ItemLookup.ItemList.Clear();
 
-                Debug.Log("Disconnected from Archipelago");
+                Plugin.Logger.LogInfo("Disconnected from Archipelago");
             }
             catch
             {
-                Debug.Log("Encountered an error disconnecting from Archipelago!");
+                Plugin.Logger.LogError("Encountered an error disconnecting from Archipelago!");
             }
         }
 
@@ -250,7 +254,7 @@ namespace RepoAP
             }
             catch(Exception e)
             {
-                Debug.Log("Failure in reconnecting: " + e.Message);
+                Plugin.Logger.LogError("Failure in reconnecting: " + e.Message);
             }
         }
 
@@ -258,7 +262,7 @@ namespace RepoAP
         {
             if (!APSave.saveData.locationsChecked.Contains(locationID))
             {
-                Debug.Log("Checked Location " + locationID);
+                Plugin.Logger.LogInfo("Checked Location " + locationID);
                 session.Locations.CompleteLocationChecksAsync(locationID);
 
                 //Debug.Log("TrySave");
@@ -290,9 +294,9 @@ namespace RepoAP
 
             if (serverLocCount != clientLocCount.Count)
             {
-                Debug.Log("Locations Unsynced, resyncing...");
+                Plugin.Logger.LogWarning("Locations Unsynced, resyncing...");
                 Dictionary<string,int> clientLocs = StatsManager.instance.dictionaryOfDictionaries["Locations Obtained"];
-                Debug.Log("Server: " + serverLocCount + "\nClient Count: " + clientLocCount + "\nClient Raw: " + clientLocs.Count);
+                Plugin.Logger.LogInfo("Server: " + serverLocCount + "\nClient Count: " + clientLocCount + "\nClient Raw: " + clientLocs.Count);
 
                 /*foreach (string location in clientLocs)
                 {
@@ -309,7 +313,7 @@ namespace RepoAP
 
         public long GetLocationID(string name)
         {
-            long id = session.Locations.GetLocationIdFromName("Another Crabs Treasure", name);
+            long id = session.Locations.GetLocationIdFromName("R.E.P.O", name);
             return id;
         }
 
@@ -328,7 +332,7 @@ namespace RepoAP
                     //NetworkItem Item = session.Items.AllItemsReceived[ItemIndex];
                     ItemInfo Item = session.Items.AllItemsReceived[ItemIndex];
                     string ItemReceivedName = Item.ItemName;
-                    Debug.Log("Placing item " + ItemReceivedName + " with index " + ItemIndex + " in queue.");
+                    Plugin.Logger.LogInfo("Placing item " + ItemReceivedName + " with index " + ItemIndex + " in queue.");
                     incomingItems.Enqueue((Item, ItemIndex));
                     ItemIndex++;
                     yield return true;
@@ -378,7 +382,7 @@ namespace RepoAP
                 var locID = networkItem.LocationId;
                 var receiver = session.Players.GetPlayerName(networkItem.Player);
 
-                Debug.Log("Sent " + itemName + " at " + location + " for " + receiver);
+                Plugin.Logger.LogInfo("Sent " + itemName + " at " + location + " for " + receiver);
 
                 if (networkItem.Player != session.ConnectionInfo.Slot)
                 {
@@ -414,13 +418,13 @@ namespace RepoAP
                 {
                     incomingItems.TryDequeue(out _);
                     //TunicRandomizer.Tracker.SetCollectedItem(itemName, false);
-                    Debug.Log("Skipping item " + itemName + " at index " + pendingItem.index + " as it has already been processed.");
+                    Plugin.Logger.LogInfo("Skipping item " + itemName + " at index " + pendingItem.index + " as it has already been processed.");
                     yield return true;
                     continue;
                 }
 
                 //CrabFile.current.SetInt($"randomizer processed item index {pendingItem.index}", 1);
-                Debug.Log("ItemHandler " + networkItem.ItemId);
+                Plugin.Logger.LogInfo("ItemHandler " + networkItem.ItemId);
                 APSave.AddItemReceived(networkItem.ItemId);
 
                 List<Level> nonGameLevels = new List<Level> { RunManager.instance.levelMainMenu, RunManager.instance.levelLobby, RunManager.instance.levelLobbyMenu };
@@ -458,7 +462,7 @@ namespace RepoAP
             {
                 session.Socket.SendPacket(new SayPacket() { Text = "!release" });
                 sentRelease = true;
-                Debug.Log("Released remaining checks.");
+                Plugin.Logger.LogInfo("Released remaining checks.");
             }
         }
 
@@ -468,7 +472,7 @@ namespace RepoAP
             {
                 session.Socket.SendPacket(new SayPacket() { Text = "!collect" });
                 sentCollect = true;
-                Debug.Log("Collected remaining items.");
+                Plugin.Logger.LogInfo("Collected remaining items.");
             }
         }
 

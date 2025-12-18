@@ -77,7 +77,7 @@ namespace RepoAP
                         }
                         catch (Exception e)
                         {
-                            Debug.Log($"OrbInfoTextEnabler: {e.Message}");
+                            Plugin.Logger.LogWarning($"OrbInfoTextEnabler: {e.Message}");
                         }
                     }
                 }

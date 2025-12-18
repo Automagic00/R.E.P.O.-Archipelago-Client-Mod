@@ -46,7 +46,7 @@ namespace RepoAP
 
             if (id == -1)
             {
-                Debug.Log($"{name}'s id not found");
+                Plugin.Logger.LogWarning($"{name}'s id not found");
                 id = 0;
             }
             else
@@ -73,7 +73,7 @@ namespace RepoAP
 
             if (id == -1)
             {
-                Debug.Log($"{name}'s id not found");
+                Plugin.Logger.LogWarning($"{name}'s id not found");
                 id = 0;
             }
             else

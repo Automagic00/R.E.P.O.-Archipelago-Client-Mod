@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Photon.Pun;
 using System.Threading.Tasks;
+using BepInEx.Logging;
 
 namespace RepoAP
 {
@@ -12,6 +13,8 @@ namespace RepoAP
 
     public class Plugin : BaseUnityPlugin
     {
+
+        internal new static ManualLogSource Logger = null!;
 
         public static ArchipelagoConnection connection;
         public static Task reconnectTask = null;
@@ -42,6 +45,8 @@ namespace RepoAP
 
         private void Awake()
         {
+            Logger = base.Logger;
+
             /*apAdressConfig = Config.Bind("Archipelago", "Server Adress", "archipelago.gg");
             apPortConfig = Config.Bind("Archipelago", "Server Port", "");
             apPassConfig = Config.Bind("Archipelago", "Server Password", "");
@@ -60,7 +65,7 @@ namespace RepoAP
         }
         private void Start()
         {
-            Debug.Log("In Start");
+            Logger.LogDebug("In Start");
             connection = new ArchipelagoConnection();
             customRPCManagerObject = new GameObject();
             customRPCManager = customRPCManagerObject.AddComponent<CustomRPCs>();

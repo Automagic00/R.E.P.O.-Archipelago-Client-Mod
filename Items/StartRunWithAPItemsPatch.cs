@@ -19,7 +19,7 @@ namespace RepoAP.Items
                 return;
             }
 
-            Debug.Log("Start Run With AP Items");
+            Plugin.Logger.LogInfo("Start Run With AP Items");
             var itemsReceived = APSave.GetItemsReceived();
 
             foreach (var item in itemsReceived)

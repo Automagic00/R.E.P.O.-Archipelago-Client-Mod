@@ -19,7 +19,7 @@ namespace RepoAP
 		//static int totalHaul;
 	    private static void CheckValuable(GameObject valuableObject)
 	    {
-            Debug.Log($"Extracting {valuableObject.name}");
+            Plugin.Logger.LogInfo($"Extracting {valuableObject.name}");
             if (valuableObject && valuableObject.GetComponent<PhysGrabObject>())
             {
                //totalHaulField.SetValue(RoundDirector.instance, totalHaul + (int)valuableObject.GetComponent<ValuableObject>().dollarValueCurrent);

@@ -60,7 +60,7 @@ namespace RepoAP
     {
 		public static void BuildPopup()
 		{
-			Debug.LogWarning("Building Popup");
+			Plugin.Logger.LogInfo("Building Popup");
 			REPOPopupPage repoPage = MenuAPI.CreateREPOPopupPage("Archipelago", REPOPopupPage.PresetSide.Right, shouldCachePage: false, pageDimmerVisibility: true, spacing: 1.5f);
 			
 			repoPage.AddElement(parent => MenuAPI.CreateREPOLabel("<size=12>Only host player must be connected to AP Server.", parent, new Vector2(380f, 275f)));

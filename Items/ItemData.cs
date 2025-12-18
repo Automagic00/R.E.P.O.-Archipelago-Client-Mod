@@ -203,7 +203,7 @@ namespace RepoAP
         {
             
             string itemName = IdToItemName(RemoveBaseId(itemId));
-            Debug.Log("Adding Item To Inventory: " + RemoveBaseId(itemId) + " : " + itemName);
+            Plugin.Logger.LogInfo("Adding Item To Inventory: " + RemoveBaseId(itemId) + " : " + itemName);
 
             if (LocationNames.all_levels.Contains(itemName))
             {

@@ -284,7 +284,7 @@ namespace RepoAP
             }
             else
             {
-                Debug.LogWarning(levelName + " has already been received!");
+                Plugin.Logger.LogWarning(levelName + " has already been received!");
             }
 
             ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
@@ -306,17 +306,17 @@ namespace RepoAP
                 return;
             }
 
-            Debug.Log("Scouting Locations...");
+            Plugin.Logger.LogInfo("Scouting Locations...");
 
             int shop_item_count = 100;
             int pelly_count = LocationNames.all_pellys.Count * LocationNames.all_levels.Count;
             int valuable_count = LocationNames.all_valuables.Count;
             int monster_count = LocationNames.all_monster_souls.Count;
 
-            Debug.Log($"Checking {shop_item_count} shop items...");
-            Debug.Log($"Checking {pelly_count} pelly statues...");
-            Debug.Log($"Checking {valuable_count} valuables...");
-            Debug.Log($"Checking {monster_count} monster souls...");
+            Plugin.Logger.LogInfo($"Checking {shop_item_count} shop items...");
+            Plugin.Logger.LogInfo($"Checking {pelly_count} pelly statues...");
+            Plugin.Logger.LogInfo($"Checking {valuable_count} valuables...");
+            Plugin.Logger.LogInfo($"Checking {monster_count} monster souls...");
 
             long[] idsToScout = new long[shop_item_count + pelly_count+valuable_count+monster_count];
 
@@ -456,13 +456,13 @@ namespace RepoAP
 
             status = "";
             
-            Debug.Log("CheckComplete");
+            Plugin.Logger.LogInfo("CheckComplete");
 
             //Check if Level Quota is Met
-            Debug.Log($"Current Level: {completedLevels}\nQuota: {saveData.levelQuota}");
+            Plugin.Logger.LogInfo($"Current Level: {completedLevels}\nQuota: {saveData.levelQuota}");
             if (completedLevels < saveData.levelQuota)
             {
-                Debug.Log($"Level Quota not met");
+                Plugin.Logger.LogInfo($"Level Quota not met");
                 goalMet = false;
             }
 
@@ -473,12 +473,12 @@ namespace RepoAP
             var collectedCount = 0;
             
             //Check if Pelly Hunt is Complete
-            Debug.Log("Pellys Required:");
+            Plugin.Logger.LogInfo("Pellys Required:");
             foreach(var pelly in saveData.pellysRequired)
             {
-                Debug.Log($"-{pelly.ToString()} {saveData.pellysRequired.Count}");
+                Plugin.Logger.LogInfo($"-{pelly.ToString()} {saveData.pellysRequired.Count}");
             }
-            Debug.Log("Pellys Gathered:");
+            Plugin.Logger.LogInfo("Pellys Gathered:");
             /*foreach (string pelly in saveData.pellysGathered)
             {
                 Debug.Log($"-{pelly}");
@@ -488,14 +488,14 @@ namespace RepoAP
                 string locName = Plugin.connection.session.Locations.GetLocationNameFromId(locID);
                 if (locName.Contains("Pelly"))
                 {
-                    Debug.Log($"-{locName}");
+                    Plugin.Logger.LogInfo($"-{locName}");
 
                     foreach (string level in LocationNames.all_levels)
                     {
-                        Debug.Log(level);
+                        Plugin.Logger.LogInfo(level);
                         locName = locName.Replace(level, "");
                     }
-                    Debug.Log(locName);
+                    Plugin.Logger.LogInfo(locName);
                     if (saveData.pellysRequired.Any(x => locName.Contains(x.ToString())))
                     {
                         collectedCount++;
@@ -504,7 +504,7 @@ namespace RepoAP
             }
             if (collectedCount < totalCount)
             {
-                Debug.Log($"Pelly hunt not complete.");
+                Plugin.Logger.LogInfo($"Pelly hunt not complete.");
                 goalMet = false;
             }
 
@@ -513,7 +513,7 @@ namespace RepoAP
                 string locName = Plugin.connection.session.Locations.GetLocationNameFromId(locID);
                 if (locName.Contains("Pelly"))
                 {
-                    Debug.Log("Missing " + locName);
+                    Plugin.Logger.LogInfo("Missing " + locName);
                 }
             }
 
@@ -542,17 +542,17 @@ namespace RepoAP
             {
                 totalCount = LocationNames.all_monster_souls.Count;
                 collectedCount = 0;
-                Debug.Log("Monster Hunt");
+                Plugin.Logger.LogInfo("Monster Hunt");
                 foreach(var soul in LocationNames.all_monster_souls)
                 {
                     if (!saveData.monsterSoulsGathered.Contains(soul))
                     {
-                        Debug.Log($"{soul} has not been extracted");
+                        Plugin.Logger.LogInfo($"{soul} has not been extracted");
                         goalMet = false;
                     }
                     else
                     {
-                        Debug.Log($"{soul} hunted");
+                        Plugin.Logger.LogInfo($"{soul} hunted");
                         collectedCount++;
                     }
                 }
@@ -565,12 +565,12 @@ namespace RepoAP
             {
                 totalCount = LocationNames.all_valuables.Count;
                 collectedCount = 0;
-                Debug.Log("Valuable Hunt");
+                Plugin.Logger.LogInfo("Valuable Hunt");
                 foreach (var valuable in LocationNames.all_valuables)
                 {
                     if (!saveData.valuablesGathered.Contains(valuable))
                     {
-                        Debug.Log($"{valuable} has not been extracted");
+                        Plugin.Logger.LogInfo($"{valuable} has not been extracted");
                         goalMet = false;
                     }
                     else
@@ -583,7 +583,7 @@ namespace RepoAP
                 status += $"<br>{{$$$}} Valuables - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
             }
 
-            if(goalMet) Debug.Log("All Goals Complete.");
+            if(goalMet) Plugin.Logger.LogInfo("All Goals Complete.");
 
             return goalMet;
         }
