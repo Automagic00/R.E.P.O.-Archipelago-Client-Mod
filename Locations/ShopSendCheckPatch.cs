@@ -47,7 +47,7 @@ namespace RepoAP
 						SemiFunc.StatSetRunCurrency(SemiFunc.StatGetRunCurrency() - value);
 
 
-						if (itemAttributes.item.prefab.PrefabName == ItemNames.apItem)
+						if (itemAttributes.item.prefab.PrefabName == ItemNames.ap_item)
 						{
 							Plugin.Logger.LogInfo("AP ITEM PURCHASED " + itemAttributes.name);
 							//Send Check Here
@@ -62,11 +62,11 @@ namespace RepoAP
 						//Otherwise purchase as normal
 						else
 						{
-							Plugin.Logger.LogInfo("Not AP Item\n" + itemAttributes.item.prefab.PrefabName + " != " + ItemNames.apItem);
+							Plugin.Logger.LogInfo("Not AP Item\n" + itemAttributes.item.prefab.PrefabName + " != " + ItemNames.ap_item);
 							StatsManager.instance.ItemPurchase(itemAttributes.item.prefab.PrefabName);
 						}
 
-						if (itemAttributes.item.itemType == SemiFunc.itemType.item_upgrade && itemAttributes.item.prefab.PrefabName != ItemNames.apItem)
+						if (itemAttributes.item.itemType == SemiFunc.itemType.item_upgrade && itemAttributes.item.prefab.PrefabName != ItemNames.ap_item)
 						{
 							StatsManager.instance.AddItemsUpgradesPurchased(itemAttributes.item.prefab.PrefabName);
 						}

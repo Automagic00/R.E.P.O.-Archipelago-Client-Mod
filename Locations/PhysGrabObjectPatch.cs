@@ -26,7 +26,6 @@ namespace RepoAP
             bool hasValuable = name.Contains("Valuable");
             bool hasPelly = name.Contains("Pelly");
             bool isSurplus = name.Contains("Surplus");
-            bool isPeeper = name.Contains("Peeper");
 
             if (!isSurplus && (hasSoul || hasValuable || hasPelly))
             {
@@ -39,7 +38,7 @@ namespace RepoAP
                     bool wasCollected = false;
                     bool huntObjective = false;
 
-                    if(!isPeeper && hasSoul)
+                    if(hasSoul)
                     {
                         id = LocationData.MonsterSoulNameToID(name);
                         wasCollected = APSave.WasMonsterSoulGathered(name);
@@ -58,7 +57,7 @@ namespace RepoAP
                         huntObjective = APSave.saveData.valuableHunt;
                     }
 
-                    ItemInfo iInfo = isPeeper ? null : APSave.GetScoutedLocation(id);
+                    ItemInfo iInfo = APSave.GetScoutedLocation(id);
 
                     // Only display "EXTRACTED" when we are hunting the item class
                     if (huntObjective && wasCollected)

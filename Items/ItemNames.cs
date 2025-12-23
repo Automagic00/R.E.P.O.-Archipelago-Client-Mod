@@ -46,19 +46,24 @@ namespace RepoAP
         static public string phaseBridge = "Item Phase Bridge";
         static public string powerCrystal = "Item Power Crystal";
         static public string rubberDuck = "Item Rubber Duck";*/
-        static public string upgradePlayerCount = "Item Upgrade Map Player Count";
-        static public string upgradeCrouchRest = "Item Upgrade Player Crouch Rest";
-        static public string upgradeStamina = "Item Upgrade Player Energy";
-        static public string upgradeDoubleJump = "Item Upgrade Player Extra Jump";
-        static public string upgradeRange = "Item Upgrade Player Grab Range";
-        static public string upgradeStrength = "Item Upgrade Player Grab Strength";
-        static public string upgradeHealth = "Item Upgrade Player Health";
-        static public string upgradeSprintSpeed = "Item Upgrade Player Sprint Speed";
-        static public string upgradeTumbleLaunch = "Item Upgrade Player Tumble Launch";
-        static public string upgradeTumbleWings = "Item Upgrade Player Tumble Wings";
-        static public string valuableTracker = "Item Valuable Tracker";
-        static public string apItem = "Item Upgrade AP Item";
-        static public string shopStock = "Progressive Shop Stock";
+
+
+        static public string shop_stock = "Progressive Shop Stock";
+
+        static public string upgrade_player_count = "Item Upgrade Map Player Count";
+        static public string upgrade_crouch_rest = "Item Upgrade Player Crouch Rest";
+        static public string upgrade_stamina = "Item Upgrade Player Energy";
+        static public string upgrade_double_jump = "Item Upgrade Player Extra Jump";
+        static public string upgrade_range = "Item Upgrade Player Grab Range";
+        static public string upgrade_strength = "Item Upgrade Player Grab Strength";
+        static public string upgrade_health = "Item Upgrade Player Health";
+        static public string upgrade_sprint_speed = "Item Upgrade Player Sprint Speed";
+        static public string upgrade_tumble_launch = "Item Upgrade Player Tumble Launch";
+        static public string upgrade_tumble_wings = "Item Upgrade Player Tumble Wings";
+        static public string upgrade_tumble_climb = "Item Upgrade Player Tumble Climb";
+        static public string upgrade_death_head_battery = "Item Upgrade Player Death Head Battery";
+        static public string valuable_tracker = "Item Valuable Tracker";
+        static public string ap_item = "Item Upgrade AP Item";
 
         // Health
         static public string progressive_health = "Progressive Health Pack Unlock";

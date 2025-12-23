@@ -46,7 +46,7 @@ namespace RepoAP
 				if ((itemList[i].itemName.Contains("Upgrade") && !itemList[i].name.Contains("Counted")) && /*Plugin.LastShopItemChecked <= APSave.saveData.upgradeLocations &&*/ Plugin.ShopItemsAvailable.Count > 0)
 				{
 					Plugin.Logger.LogInfo("Replacing  " + itemList[i].itemName);
-					item = StatsManager.instance.itemDictionary[ItemNames.apItem];
+					item = StatsManager.instance.itemDictionary[ItemNames.ap_item];
 				}
 				else
                 {
@@ -311,7 +311,7 @@ namespace RepoAP
 						{
 							Plugin.LastShopItemChecked++;
 						}*/
-						if (item.itemType == SemiFunc.itemType.item_upgrade && item.name == ItemNames.apItem)
+						if (item.itemType == SemiFunc.itemType.item_upgrade && item.name == ItemNames.ap_item)
 						{
 							System.Random rand = new System.Random();
 							int randomIndex = rand.Next(Plugin.ShopItemsAvailable.Count);
@@ -328,7 +328,7 @@ namespace RepoAP
 						{
 							Plugin.LastShopItemChecked++;
 						}*/
-						if (item.itemType == SemiFunc.itemType.item_upgrade && item.name == ItemNames.apItem)
+						if (item.itemType == SemiFunc.itemType.item_upgrade && item.name == ItemNames.ap_item)
 						{
 							System.Random rand = new System.Random();
 							int randomIndex = rand.Next(Plugin.ShopItemsAvailable.Count);

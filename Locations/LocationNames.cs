@@ -11,9 +11,9 @@ namespace RepoAP
     class LocationNames
     {
         //Pelly Names
-        static public string standard_pelly = "Standard";
-        static public string glass_pelly = "Glass";
-        static public string gold_pelly = "Gold";
+        static public string standard_pelly = "Standard Pelly";
+        static public string glass_pelly = "Glass Pelly";
+        static public string gold_pelly = "Gold Pelly";
 
         //Shop Location Names
         static public string upgrade_pur = "Upgrade Purchase";
@@ -29,7 +29,7 @@ namespace RepoAP
         //-- Heaman Manor --
         public const string goblet = "Goblet";
         public const string uranium_mug = "Uranium Mug";
-        public const string ring = "Emerald Bracelet";
+        public const string emerald_bracelet = "Emerald Bracelet";
         public const string ocarina = "Ocarina";
         public const string pocket_watch = "Pocket Watch";
         public const string music_box = "Music Box";
@@ -37,39 +37,39 @@ namespace RepoAP
         public const string doll = "Doll";
         public const string uranium_plate = "Uranium Plate";
         public const string globe = "Globe";
-        public const string frog_toy = "Frog";
-        public const string monkey = "Toy Monkey";
+        public const string frog = "Frog";
+        public const string toy_monkey = "Toy Monkey";
         public const string money = "Money";
         public const string small_vase = "Vase Small";
         public const string radio = "Radio";
         public const string gramophone = "Gramophone";
         public const string ship_in_a_bottle = "Ship in a bottle";
         public const string kettle = "Kettle";
-        public const string camera_old = "Old Camera";
+        public const string old_camera = "Old Camera";
         public const string magnifying_glass = "Magnifying Glass";
         public const string map = "Map";
         public const string vase = "Vase";
-        public const string champagne = "Bottle";
+        public const string bottle = "Bottle";
         public const string clown_doll = "Clown";
         public const string trophy = "Trophy";
-        public const string tv = "Television";
-        public const string rhino = "Diamond Display";
+        public const string television = "Television";
+        public const string diamond_display = "Diamond Display";
         public const string scream_doll = "Scream Doll";
         public const string telescope = "Telescope";
         public const string chunky_vase = "Vase Chunky";
-        public const string large_vase = "Vase Big";
-        public const string grand_piano = "Piano";
+        public const string big_vase = "Vase Big";
+        public const string piano = "Piano";
         public const string animal_crate = "Animal Crate";
         public const string harp = "Harp";
         public const string painting = "Painting";
         public const string grandfather_clock = "Grandfather Clock";
-        public const string dinosaur_skeleton = "Dinosaur";
+        public const string dinosaur = "Dinosaur";
         public const string golden_statue = "Golden Statue";
         public const string coffin = "Coffin";
 
         //-- McJannek Station --
         public const string keycard = "Keycard";
-        public const string petri_dish = "Uranium Petri Dish";
+        public const string uranium_petri_dish = "Uranium Petri Dish";
         public const string eraser = "Eraser";
         public const string pills = "Pills";
         public const string stapler = "Stapler";
@@ -86,28 +86,28 @@ namespace RepoAP
         public const string sample = "Sample";
         public const string sample_pack = "Sample Six Pack";
         public const string fan = "Fan";
-        public const string desktop_computer = "Computer";
-        public const string printer = "3D Printer";
-        public const string propane = "Propane Tank";
+        public const string computer = "Computer";
+        public const string printer_3d = "3D Printer";
+        public const string propane_tank = "Propane Tank";
         public const string scale = "Scale";
         public const string flashlight = "Flashlight";
-        public const string extinguisher = "Fire Extinguisher";
+        public const string fire_extinguisher = "Fire Extinguisher";
         public const string icepick = "Icepick";
-        public const string explosive_barrel = "Barrel";
+        public const string barrel = "Barrel";
         public const string sample_cooler = "Sample Cooler";
         public const string big_sample = "Big Sample";
-        public const string leg_ice = "Creature Leg";
+        public const string creature_leg = "Creature Leg";
         public const string guitar = "Guitar";
         public const string ice_saw = "Ice Saw";
         public const string flamethrower = "Flamethrower";
-        public const string skeleton_ice = "Ice Block"; 
+        public const string ice_block = "Ice Block"; 
         public const string snow_bike = "Snow Bike";
         public const string centrifuge = "Centrifuge";
         public const string sample_cooler_wide = "Sample Cooler Wide";
         public const string science_station = "Science Station";
         public const string heavy_water = "Heavy Water";
         public const string jackhammer = "Jackhammer";
-        public const string server = "Server Rack";
+        public const string server_rack = "Server Rack";
         public const string cryo_pod = "Cryo Pod";
 
         //-- Swiftbroom Academy --
@@ -116,8 +116,8 @@ namespace RepoAP
         public const string bird_skull = "Bird Skull";
         public const string bug = "Bug";
         public const string glowing_jar = "Glowing Jar";
-        public const string small_potion = "Small Potion";
         public const string small_gem = "Small Gem";
+        public const string small_potion = "Small Potion";
         public const string chomp_book = "Chomp Book";
         public const string love_potion = "Love Potion";
         public const string red_mushroom = "Red Mushroom";
@@ -127,7 +127,7 @@ namespace RepoAP
         public const string gem_box = "Gem Box";
         public const string crown = "Crown";
         public const string power_crystal = "Power Crystal";
-        public const string hourglass = "Time Glass";
+        public const string time_glass = "Time Glass";
         public const string goblin_head = "Goblin Head";
         public const string tentacle = "Tentacle";
         public const string star_wand = "Star Wand";
@@ -141,12 +141,12 @@ namespace RepoAP
         public const string forever_candle = "Forever Candle";
         public const string cauldron_box = "Cauldron Box";
         public const string spider_potion = "Spider Potion";
-        public const string griffin = "Griffin Statue";
-        public const string dragon_statue = "Dragon Statue";
+        public const string griffin_statue = "Griffin Statue";
+        public const string dragon_skull = "Dragon Skull";
         public const string alchemy_staion = "Alchemy Station";
         public const string goblin_arm = "Goblin Arm";
-        public const string staff = "Dumgolfs Staff";
-        public const string large_sword = "Sword";
+        public const string dumgolfs_staff = "Dumgolfs Staff";
+        public const string sword = "Sword";
         public const string broom = "Broom";
         public const string troll_finger = "Troll Finger";
 
@@ -176,7 +176,7 @@ namespace RepoAP
         public const string handface = "Handface";
         public const string cubic_sculpture = "Cubic Sculpture";
         public const string teeth_bot = "Teeth Bot";
-        public const string mug_deluxe = "Uranium Mug Deluxe";
+        public const string uranium_mug_deluxe = "Uranium Mug Deluxe";
         public const string golden_swirl = "Golden Swirl";
         public const string boombox = "Boombox";
         public const string gem_burger = "Gem Burger";
@@ -218,7 +218,7 @@ namespace RepoAP
         {
             goblet,
             uranium_mug,
-            ring,
+            emerald_bracelet,
             ocarina,
             pocket_watch,
             music_box,
@@ -226,38 +226,38 @@ namespace RepoAP
             doll,
             uranium_plate,
             globe,
-            frog_toy,
-            monkey,
+            frog,
+            toy_monkey,
             money,
             small_vase,
             radio,
             gramophone,
             ship_in_a_bottle,
             kettle,
-            camera_old,
+            old_camera,
             magnifying_glass,
             map,
             vase,
-            champagne,
+            bottle,
             clown_doll,
             trophy,
-            tv,
-            rhino,
+            television,
+            diamond_display,
             scream_doll,
             telescope,
             chunky_vase,
-            large_vase,
-            grand_piano,
+            big_vase,
+            piano,
             animal_crate,
             harp,
             painting,
             grandfather_clock,
-            dinosaur_skeleton,
+            dinosaur,
             golden_statue,
             coffin,
 
             keycard,
-            petri_dish,
+            uranium_petri_dish,
             eraser,
             pills,
             stapler,
@@ -274,28 +274,28 @@ namespace RepoAP
             sample,
             sample_pack,
             fan,
-            desktop_computer,
-            printer,
-            propane,
+            computer,
+            printer_3d,
+            propane_tank,
             scale,
             flashlight,
-            extinguisher,
+            fire_extinguisher,
             icepick,
-            explosive_barrel,
+            barrel,
             sample_cooler,
             big_sample,
-            leg_ice,
+            creature_leg,
             guitar,
             ice_saw,
             flamethrower,
-            skeleton_ice,
+            ice_block,
             snow_bike,
             centrifuge,
             sample_cooler_wide,
             science_station,
             heavy_water,
             jackhammer,
-            server,
+            server_rack,
             cryo_pod,
 
             eye_ball,
@@ -314,7 +314,7 @@ namespace RepoAP
             gem_box,
             crown,
             power_crystal,
-            hourglass,
+            time_glass,
             goblin_head,
             tentacle,
             star_wand,
@@ -328,12 +328,12 @@ namespace RepoAP
             forever_candle,
             cauldron_box,
             spider_potion,
-            griffin,
-            dragon_statue,
+            griffin_statue,
+            dragon_skull,
             alchemy_staion,
             goblin_arm,
-            staff,
-            large_sword,
+            dumgolfs_staff,
+            sword,
             broom,
             troll_finger,
 
@@ -362,7 +362,7 @@ namespace RepoAP
             handface,
             cubic_sculpture,
             teeth_bot,
-            mug_deluxe,
+            uranium_mug_deluxe,
             golden_swirl,
             boombox,
             gem_burger,
@@ -380,7 +380,7 @@ namespace RepoAP
 
         // ---- Monster Souls ----
         public const string animal_soul = "Animal Soul";
-        public const string duck_soul = "Apex Predator Soul";
+        public const string apex_predator_soul = "Apex Predator Soul";
         public const string bella_soul = "Bella Soul";
         public const string birthday_boy_soul = "Birthday Boy Soul";
         public const string bowtie_soul = "Bowtie Soul";
@@ -397,19 +397,20 @@ namespace RepoAP
         public const string loom_soul = "Loom Soul";
         public const string mentalist_soul = "Mentalist Soul";
         public const string oogly_soul = "Oogly Soul";
+        public const string peeper_soul = "Peeper Soul";
         public const string reaper_soul = "Reaper Soul";
         public const string robe_soul = "Robe Soul";
         public const string rugrat_soul = "Rugrat Soul";
         public const string shadow_child_soul = "Shadow Child Soul";
         public const string spewer_soul = "Spewer Soul";
-        //public const string tick_soul = "Tick Soul";      // only drops if the tick absorbs enough health from the player to reach 100hp
+        public const string tick_soul = "Tick Soul";      // only drops if the tick absorbs enough health from the player to reach 100hp
         public const string trudge_soul = "Trudge Soul";
         public const string upscream_soul = "Upscream Soul";
 
         public static readonly ReadOnlyCollection<string> all_monster_souls = new ReadOnlyCollection<string>(new List<string>
         {
             animal_soul,
-            duck_soul,
+            apex_predator_soul,
             bella_soul,
             birthday_boy_soul,
             bowtie_soul,
@@ -426,12 +427,13 @@ namespace RepoAP
             loom_soul,
             mentalist_soul,
             oogly_soul,
+            peeper_soul,
             reaper_soul,
             robe_soul,
             rugrat_soul,
             shadow_child_soul,
             spewer_soul,
-            //tick_soul,
+            tick_soul,
             trudge_soul,
             upscream_soul
         });

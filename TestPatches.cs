@@ -47,129 +47,132 @@ namespace RepoAP
         static void Prefix()
         {
             //MenuToggle
-            if (Input.GetKeyDown(KeyCode.Insert))
+            if (Debug.isDebugBuild)
             {
-                Plugin.showMenu = !Plugin.showMenu;
-                Debug.Log("Toggle Menu");
-            }
-
-            if (Input.GetKeyDown(KeyCode.F1))
-            {
-                Debug.Log("F1 Pressed");
-                RunManager.instance.ChangeLevel(true, false, _changeLevelType: RunManager.ChangeLevelType.Shop);
-            }
-            if (Input.GetKeyDown(KeyCode.F2))
-            {
-                Debug.Log("F2 Pressed");
-
-                SemiFunc.StatSetRunCurrency(100000);
-            }
-            if (Input.GetKeyDown(KeyCode.F3))
-            {
-                Debug.Log("F3 Pressed");
-                foreach (var item in StatsManager.instance.itemDictionary.Keys)
+                if (Input.GetKeyDown(KeyCode.Insert))
                 {
-                    Debug.Log($"{item}");
+                    Plugin.showMenu = !Plugin.showMenu;
+                    Debug.Log("Toggle Menu");
                 }
 
-            }
-
-            if (Input.GetKeyDown(KeyCode.F4))
-            {
-                Debug.Log("F4 Pressed");
-                
-                StatsManager.instance.itemsPurchased[ItemNames.upgradeStrength] = 15;
-                //StatsManager.instance.
-            }
-
-            if (Input.GetKeyDown(KeyCode.F5))
-            {
-                Debug.Log("Try Connect");
-                Plugin.connection.TryConnect(Plugin.apAdress, Int32.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
-            }
-            if (Input.GetKeyDown(KeyCode.F6))
-            {
-                string completionOutput = "-- Completetion Data --";
-                completionOutput += $"\nLevel Quota: {APSave.saveData.levelQuota}";
-
-                completionOutput += $"\nPellys Required: ";
-
-                foreach (var pelly in APSave.saveData.pellysRequired)
+                if (Input.GetKeyDown(KeyCode.F1))
                 {
-                    completionOutput += ($"\n- {pelly.ToString()}");
+                    Debug.Log("F1 Pressed");
+                    RunManager.instance.ChangeLevel(true, false, _changeLevelType: RunManager.ChangeLevelType.Shop);
                 }
-                completionOutput += ("\n\nPellys Gathered: ");
-                foreach (string pelly in APSave.saveData.pellysGathered)
+                if (Input.GetKeyDown(KeyCode.F2))
                 {
-                    completionOutput += ($"\n- {pelly}");
+                    Debug.Log("F2 Pressed");
+
+                    SemiFunc.StatSetRunCurrency(100000);
                 }
-                completionOutput += "\n\nValuables Gathered: ";
-                foreach (string valuable in APSave.saveData.valuablesGathered)
+                if (Input.GetKeyDown(KeyCode.F3))
                 {
-                    completionOutput += $"\n- {valuable}";
-                }
-                completionOutput += "\n\nValuables Missing: ";
-                foreach (string valuable in LocationNames.all_valuables)
-                {
-                    if (!APSave.saveData.valuablesGathered.Contains(valuable))
+                    Debug.Log("F3 Pressed");
+                    foreach (var item in StatsManager.instance.itemDictionary.Keys)
                     {
-                        completionOutput += $"\n- Missing {valuable}";
+                        Debug.Log($"{item}");
                     }
+
                 }
-                completionOutput += "\n\nMonster Souls Missing: ";
-                foreach (string soul in LocationNames.all_monster_souls)
+
+                if (Input.GetKeyDown(KeyCode.F4))
                 {
-                    if (!APSave.saveData.monsterSoulsGathered.Contains(soul))
+                    Debug.Log("F4 Pressed");
+
+                    StatsManager.instance.itemsPurchased[ItemNames.upgrade_strength] = 15;
+                    //StatsManager.instance.
+                }
+
+                if (Input.GetKeyDown(KeyCode.F5))
+                {
+                    Debug.Log("Try Connect");
+                    Plugin.connection.TryConnect(Plugin.apAdress, Int32.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
+                }
+                if (Input.GetKeyDown(KeyCode.F6))
+                {
+                    string completionOutput = "-- Completetion Data --";
+                    completionOutput += $"\nLevel Quota: {APSave.saveData.levelQuota}";
+
+                    completionOutput += $"\nPellys Required: ";
+
+                    foreach (var pelly in APSave.saveData.pellysRequired)
                     {
-                        completionOutput += $"\n- Missing {soul}";
+                        completionOutput += ($"\n- {pelly.ToString()}");
                     }
-                }
-                completionOutput += "\n\nMonster Souls Gathered: ";
-                foreach (string soul in APSave.saveData.monsterSoulsGathered)
-                {
-                    completionOutput += $"\n- {soul}";
-                }
-
-                Debug.Log(completionOutput);
-            }
-            if (Input.GetKeyDown(KeyCode.F8))
-            {
-                Debug.Log(RunManager.instance.levelCurrent.name);
-            }
-            if (Input.GetKeyDown(KeyCode.F9))
-            {
-                Debug.Log(APSave.saveData.shopStockReceived);
-            }
-
-            if (Input.GetKeyDown(KeyCode.F10))
-            {
-                string output = "--- Valuable Weights ---";
-                foreach(var levelValuables in LevelGenerator.Instance.Level.ValuablePresets)
-                {
-                    var allValuables = levelValuables.tiny;
-                    allValuables.AddRange(levelValuables.small);
-                    allValuables.AddRange(levelValuables.medium);
-                    allValuables.AddRange(levelValuables.big);
-                    allValuables.AddRange(levelValuables.wide);
-                    allValuables.AddRange(levelValuables.tall);
-                    allValuables.AddRange(levelValuables.veryTall);
-
-
-                    foreach (var val in allValuables)
+                    completionOutput += ("\n\nPellys Gathered: ");
+                    foreach (string pelly in APSave.saveData.pellysGathered)
                     {
-                        output += $"\n{val.PrefabName} - {LevelGenerator.Instance.Level.name}: {val.Prefab.GetComponent<ValuableObject>().physAttributePreset}".Replace("PhysAttribute","").Replace("()","");
+                        completionOutput += ($"\n- {pelly}");
                     }
+                    completionOutput += "\n\nValuables Gathered: ";
+                    foreach (string valuable in APSave.saveData.valuablesGathered)
+                    {
+                        completionOutput += $"\n- {valuable}";
+                    }
+                    completionOutput += "\n\nValuables Missing: ";
+                    foreach (string valuable in LocationNames.all_valuables)
+                    {
+                        if (!APSave.saveData.valuablesGathered.Contains(valuable))
+                        {
+                            completionOutput += $"\n- Missing {valuable}";
+                        }
+                    }
+                    completionOutput += "\n\nMonster Souls Missing: ";
+                    foreach (string soul in LocationNames.all_monster_souls)
+                    {
+                        if (!APSave.saveData.monsterSoulsGathered.Contains(soul))
+                        {
+                            completionOutput += $"\n- Missing {soul}";
+                        }
+                    }
+                    completionOutput += "\n\nMonster Souls Gathered: ";
+                    foreach (string soul in APSave.saveData.monsterSoulsGathered)
+                    {
+                        completionOutput += $"\n- {soul}";
+                    }
+
+                    Debug.Log(completionOutput);
                 }
-                Debug.Log(output);
-            }
-
-            if (Input.GetKeyDown(KeyCode.F11))
-            {
-                var items = APSave.GetItemsReceived();
-
-                foreach (var item in items)
+                if (Input.GetKeyDown(KeyCode.F8))
                 {
-                    Debug.Log(ItemData.itemIDToName[ItemData.RemoveBaseId(item.Key)]);
+                    Debug.Log(RunManager.instance.levelCurrent.name);
+                }
+                if (Input.GetKeyDown(KeyCode.F9))
+                {
+                    Debug.Log(APSave.saveData.shopStockReceived);
+                }
+
+                if (Input.GetKeyDown(KeyCode.F10))
+                {
+                    string output = "--- Valuable Weights ---";
+                    foreach (var levelValuables in LevelGenerator.Instance.Level.ValuablePresets)
+                    {
+                        var allValuables = levelValuables.tiny;
+                        allValuables.AddRange(levelValuables.small);
+                        allValuables.AddRange(levelValuables.medium);
+                        allValuables.AddRange(levelValuables.big);
+                        allValuables.AddRange(levelValuables.wide);
+                        allValuables.AddRange(levelValuables.tall);
+                        allValuables.AddRange(levelValuables.veryTall);
+
+
+                        foreach (var val in allValuables)
+                        {
+                            output += $"\n{val.PrefabName} - {LevelGenerator.Instance.Level.name}: {val.Prefab.GetComponent<ValuableObject>().physAttributePreset}".Replace("PhysAttribute", "").Replace("()", "");
+                        }
+                    }
+                    Debug.Log(output);
+                }
+
+                if (Input.GetKeyDown(KeyCode.F11))
+                {
+                    var items = APSave.GetItemsReceived();
+
+                    foreach (var item in items)
+                    {
+                        Debug.Log(ItemData.itemIDToName[ItemData.RemoveBaseId(item.Key)]);
+                    }
                 }
             }
         }
