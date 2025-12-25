@@ -1,11 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <REPO>D:\SteamLibrary\steamapps\common\REPO</REPO>
-    <BepinCore>$(REPO)\BepInEx\core</BepinCore>
-    <Managed>$(REPO)\REPO_Data\Managed</Managed>
-    <OutputFolder>$(REPO)\BepInEx\plugins</OutputFolder>
-  </PropertyGroup>
   
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
@@ -23,13 +16,17 @@
     <DoILRepack>false</DoILRepack>
   </PropertyGroup>
 
+  <PropertyGroup>
+	<NoWarn>$(NoWarn); MSB3277</NoWarn >
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Archipelago.MultiClient.Net" Version="6.6.0" />
-    <PackageReference Include="BepInEx.Core" Version="5.4.21" />
+	<PackageReference Include="BepInEx.Core" Version="5.4.21" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
     <PackageReference Include="ILRepack.Lib.MSBuild" Version="2.1.18" />
     <PackageReference Include="System.ValueTuple" Version="4.6.1" />
-    <PackageReference Include="UnityEngine.Modules" Version="2022.3.21" IncludeAssets="compile" />
+    <PackageReference Include="UnityEngine.Modules" Version="2022.3.62" IncludeAssets="compile" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
@@ -37,38 +34,34 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Reference Include="$(BepinCore)\0Harmony.dll" />
+	<Reference Include="$(BepInCore)\0Harmony.dll" />
+	<Reference Include="$(BepInCore)\BepInEx.dll" />
+	<Reference Include="$(BepInCore)\MonoMod.Utils.dll" />
 
-    <!--Reference Include="Archipelago.MultiClient.Net">
-      <HintPath>..\..\Archipelago.MultiClient.Net.dll</HintPath>
-    </Reference-->
     <Reference Include="$(Managed)\Assembly-CSharp.dll" />
-    <Reference Include="$(BepinCore)\BepInEx.dll" />
-    <Reference Include="$(BepinCore)\MonoMod.Utils.dll" />
     <Reference Include="$(Managed)\Assembly-CSharp-firstpass.dll" />
     <Reference Include="$(Managed)\PhotonUnityNetworking.dll" />
-    <!--Reference Include="BepInEx.Harmony">
-      <HintPath>..\..\..\..\BepInEx_win_x64_5.4.23.0\BepInEx\core\BepInEx.Harmony.dll</HintPath>
-    </Reference-->
-    <Reference Include="BepInEx.Preloader">
-      <HintPath>..\..\..\..\BepInEx_win_x64_5.4.23.0\BepInEx\core\BepInEx.Preloader.dll</HintPath>
+	<Reference Include="BepInEx.Preloader">
+		<HintPath>$(BepInCore)\BepInEx.Preloader.dll</HintPath>
+	</Reference>
+	<Reference Include="HarmonyXInterop">
+		<HintPath>$(BepInCore)\HarmonyXInterop.dll</HintPath>
+	</Reference>
+	<Reference Include="Mono.Cecil">
+        <HintPath>$(BepInCore)\Mono.Cecil.dll</HintPath>
     </Reference>
-    <Reference Include="HarmonyXInterop">
-      <HintPath>..\..\..\..\BepInEx_win_x64_5.4.23.0\BepInEx\core\HarmonyXInterop.dll</HintPath>
-    </Reference>
-    <Reference Include="$(BepinCore)Mono.Cecil.dll" />
-    <Reference Include="$(REPO)\BepInEx\plugins\MenuLib.dll" />
+    <Reference Include="$(MenuLib)\MenuLib.dll" />
     <Reference Include="netstandard">
-      <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\REPO\REPO_Data\Managed\netstandard.dll</HintPath>
+      <HintPath>$(Managed)\netstandard.dll</HintPath>
     </Reference>
     <Reference Include="PhotonRealtime">
-      <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\REPO\REPO_Data\Managed\PhotonRealtime.dll</HintPath>
+      <HintPath>$(Managed)\PhotonRealtime.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\REPO\REPO_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>$(Managed)\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\REPO\REPO_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(Managed)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   

@@ -10,6 +10,7 @@ namespace RepoAP
 {
     [BepInPlugin("Automagic.ArchipelagoREPO", "Archipelago Randomizer", "0.3.0")]
     [BepInDependency("nickklmao.menulib")]
+    [BepInDependency("REPOLib")]
 
     public class Plugin : BaseUnityPlugin
     {
