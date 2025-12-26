@@ -14,10 +14,10 @@ namespace RepoAP
         public const int pellyOffset = 100;
         public const int valuableOffset = 200;
         public const int monsterOffset = 500;
-        static Dictionary<long, string> idToName;
-        static Dictionary<string, long> nameToId;
-        static long[] ids;
-        static long[] names;
+        //static Dictionary<long, string> idToName;
+        //static Dictionary<string, long> nameToId;
+        //static long[] ids;
+        //static long[] names;
 
         public static void CreateLocationTables()
         {

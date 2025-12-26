@@ -87,7 +87,8 @@ namespace RepoAP
                 if (Input.GetKeyDown(KeyCode.F5))
                 {
                     Debug.Log("Try Connect");
-                    Plugin.connection.TryConnect(Plugin.apAdress, Int32.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
+                    Plugin.connection.TryConnect(Plugin.apAdress, Int32.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);    // despite what the compiler is telling us, we don't want or need to
+                                                                                                                                    // await this call
                 }
                 if (Input.GetKeyDown(KeyCode.F6))
                 {

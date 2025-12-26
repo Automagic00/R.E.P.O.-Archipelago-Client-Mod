@@ -88,7 +88,7 @@ namespace RepoAP
     class ExtractionSendCheckPatch
     {
 		static FieldInfo field = AccessTools.Field(typeof(RoundDirector), "totalHaul");
-		static int totalHaul;
+		//static int totalHaul;
 
         [HarmonyPrefix, HarmonyPatch("DestroyAllPhysObjectsInHaulList")]
         static void ExtractAllPatch()

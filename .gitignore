@@ -6,3 +6,4 @@ obj/
 .vs/
 .bin/
 bin/Release/net48/
+*.csproj.user

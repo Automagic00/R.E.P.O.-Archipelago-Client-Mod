@@ -89,7 +89,7 @@ namespace RepoAP
 
 			repoPage.AddElement(parent => MenuAPI.CreateREPOButton("Connect", () =>
 			{
-				Plugin.connection.TryConnect(Plugin.apAdress, Int32.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
+                _ = Plugin.connection.TryConnect(Plugin.apAdress, Int32.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
 				repoPage.ClosePage(false);
 				BuildConnectingPopUp();
 				//BuildPopup();

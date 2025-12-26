@@ -13,7 +13,7 @@ namespace RepoAP
 {
     class APSaveData
     {
-        public APConnectionData connectionData = new APConnectionData();
+        //public APConnectionData connectionData = new APConnectionData();
         public List<long> locationsChecked = new List<long>(); //By Location ID
         public List<string> pellysGathered = new List<string>();
         public List<string> valuablesGathered = new List<string>();
@@ -592,11 +592,11 @@ namespace RepoAP
     
 
 
-    class APConnectionData
+    /*class APConnectionData
     {
         string address = "archipelago.gg";
         string port = "";
         string password = "";
         string slot = "";
-    }
+    }*/
 }
