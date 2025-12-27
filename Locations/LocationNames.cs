@@ -19,10 +19,10 @@ namespace RepoAP
         static public string upgrade_pur = "Upgrade Purchase";
 
         //Level Type Names
-        static public string swiftbroom = "Swiftbroom Academy ";
+        static public string swiftbroom_academy = "Swiftbroom Academy ";
         static public string headman_manor = "Headman Manor ";
-        static public string mcjannek = "McJannek Station ";
-        static public string museum = "Museum of Human Art ";
+        static public string mcjannek_station = "McJannek Station ";
+        static public string museum_of_human_art = "Museum of Human Art ";
 
         //---- Valuables ----
 
@@ -208,10 +208,10 @@ namespace RepoAP
 
         public static readonly ReadOnlyCollection<string> all_levels = new ReadOnlyCollection<string>(new List<string>
         {
-            swiftbroom,
+            swiftbroom_academy,
             headman_manor,
-            mcjannek,
-            museum
+            mcjannek_station,
+            museum_of_human_art
         });
 
         public static readonly ReadOnlyCollection<string> all_valuables = new ReadOnlyCollection<string>(new List<string>

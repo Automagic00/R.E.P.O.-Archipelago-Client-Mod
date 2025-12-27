@@ -28,16 +28,16 @@ namespace RepoAP
 
             //0-9 Reserved for Levels
             ids.Add(0);
-            names.Add(LocationNames.swiftbroom);
+            names.Add(LocationNames.swiftbroom_academy);
 
             ids.Add(1);
  			names.Add(LocationNames.headman_manor);
 
             ids.Add(2);
- 			names.Add(LocationNames.mcjannek);
+ 			names.Add(LocationNames.mcjannek_station);
 
             ids.Add(3);
- 			names.Add(LocationNames.museum);
+ 			names.Add(LocationNames.museum_of_human_art);
 
             // ---- AP Function Items ----
             ids.Add(base_shop_offset++);
