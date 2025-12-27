@@ -1,10 +1,11 @@
-﻿using Archipelago.MultiClient.Net.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using Archipelago.MultiClient.Net.Models;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -88,6 +89,7 @@ namespace RepoAP
         {
             if (Plugin.connection.session == null)
             {
+                Plugin.Logger.LogInfo("Not connected. Cannot save slot data.");
                 return;
             }
             /*var test1 = Plugin.connection.slotData["pellys_required"];
@@ -380,7 +382,7 @@ namespace RepoAP
                 int index = LocationNames.all_levels.IndexOf(replace);
                 name.Replace(replace, LocationNames.all_levels_short[index]);
             }
-            name = name.Replace(" ", "").Replace("Valuable", "").Replace("(Clone)", "").ToLower();
+            name = name.Replace("Valuable", "").Replace("(Clone)", "");
 
             if (!saveData.pellysGathered.Contains(name))
             {
@@ -433,11 +435,13 @@ namespace RepoAP
 
         public static bool WasPellyGathered(string pelly, string level)
         {
+            pelly = LocationData.GetBaseName(pelly);
             return saveData.pellysGathered.Exists(x => x.Contains(level) && x.Contains(pelly));
         }
 
         public static bool IsPellyRequired(string pelly)
         {
+            pelly = LocationData.GetBaseName(pelly);
             return saveData.pellysRequired.Any(x => pelly.Contains(x.ToString()));
         }
 

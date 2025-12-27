@@ -20,6 +20,7 @@ namespace RepoAP
         {
             const string poscol = "#67a9cf";
             const string negcol = "#ef8a62"; 
+            const string unknowncol = "#edf03c";
             string name = __instance.gameObject.name;
 
             bool hasSoul = name.Contains("Soul");
@@ -46,7 +47,7 @@ namespace RepoAP
                     }
                     else if(hasPelly)
                     {
-                        id = LocationData.PellyNameToID(name);
+                        id = LocationData.PellyNameToID(name + RunManager.instance.levelCurrent.name);
                         wasCollected = APSave.WasPellyGathered(name, RunManager.instance.levelCurrent.name);
                         huntObjective = APSave.IsPellyRequired(name);
                     }
@@ -68,6 +69,10 @@ namespace RepoAP
                     {
                         label = $"<br><color={negcol}>not extracted";
                     }
+                    else if (wasCollected && iInfo != null)
+                    {
+                        label = $"<br><color={poscol}>found";
+                    }
                     else if (!wasCollected && iInfo != null)
                     {
                         try
@@ -77,6 +82,7 @@ namespace RepoAP
                         catch (Exception e)
                         {
                             Plugin.Logger.LogWarning($"OrbInfoTextEnabler: {e.Message}");
+                            label = $"<br><color={unknowncol}>unknown";
                         }
                     }
                 }
