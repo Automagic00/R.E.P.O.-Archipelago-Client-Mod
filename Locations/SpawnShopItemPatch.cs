@@ -30,13 +30,13 @@ namespace RepoAP
 
     [HarmonyPatch(typeof(PunManager), "SpawnShopItem")]
     class SpawnShopItemPatch
-    {
-        [HarmonyPrefix]
-        static bool ReplaceItemPatch(ref bool __result, ref ItemVolume itemVolume, ref List<Item> itemList, ref int spawnCount, bool isSecret = false)
-        {
-			APSave.UpdateAvailableItems();
+	{
+		[HarmonyPrefix]
+		static bool ReplaceItemPatch(ref bool __result, ref ItemVolume itemVolume, ref List<Item> itemList, ref int spawnCount, bool isSecret = false)
+		{
+			//APSave.UpdateAvailableItems();
 			FieldInfo field = AccessTools.Field(typeof(ItemAttributes), "itemName");
-			//Debug.Log($"AP Upgrades Available {Plugin.ShopItemsAvailable.Count}");
+			//Plugin.Logger.LogInfo($"AP Upgrades Available {Plugin.ShopItemsAvailable.Count}");
 			for (int i = itemList.Count - 1; i >= 0; i--)
 			{
 				//Debug.Log($"{i}/{itemList.Count - 1}");
@@ -49,13 +49,13 @@ namespace RepoAP
 					item = StatsManager.instance.itemDictionary[ItemNames.ap_item];
 				}
 				else
-                {
+				{
 					//Debug.Log($"Item Spawning {itemList[i].name}");
 					item = itemList[i];
 					//Debug.Log("item set");
 					//itemList.RemoveAt(i);
 					//return true;
-                }		
+				}
 
 				if (item.itemVolume == itemVolume.itemVolume)
 				{
@@ -295,9 +295,9 @@ namespace RepoAP
 						continue;
 					}
 					else
-                    {
+					{
 						Plugin.Logger.LogInfo(itemList[i].name + " Unlocked, Spawning");
-                    }
+					}
 					ShopManager.instance.itemRotateHelper.transform.parent = itemVolume.transform;
 					ShopManager.instance.itemRotateHelper.transform.localRotation = item.spawnRotationOffset;
 					Quaternion rotation = ShopManager.instance.itemRotateHelper.transform.rotation;
@@ -322,7 +322,7 @@ namespace RepoAP
 					}
 					else
 					{
-                        var inst = UnityEngine.Object.Instantiate<GameObject>(item.prefab.Prefab, itemVolume.transform.position, rotation);
+						var inst = UnityEngine.Object.Instantiate<GameObject>(item.prefab.Prefab, itemVolume.transform.position, rotation);
 						Plugin.LastShopItemChecked++;
 						/*while (Plugin.ShopItemsBought.Contains(Plugin.LastShopItemChecked))
 						{
@@ -335,6 +335,7 @@ namespace RepoAP
 							int itemID = Plugin.ShopItemsAvailable[randomIndex];
 							inst.name += "_Counted_" + itemID;
 							Plugin.ShopItemsAvailable.RemoveAt(randomIndex);
+							Plugin.Logger.LogDebug($"Spawned AP Item with ID: {itemID}");
 							//inst.name += "_Counted_" + Plugin.LastShopItemChecked;
 						}
 					}
@@ -350,9 +351,20 @@ namespace RepoAP
 			__result = false;
 			return false;
 		}
+	}
+
+    [HarmonyPatch(typeof(PunManager), nameof(PunManager.ShopPopulateItemVolumes))]
+	class ApStoreItemsPatch
+	{
+        [HarmonyPrefix]
+        static void RefreshAvailableAPShopItems()	// refreshes available shop items once per visit
+        {
+            Plugin.Logger.LogInfo("Refreshing Available AP Shop Items");
+            APSave.UpdateAvailableItems();
+        }
     }
 
-	[HarmonyPatch(typeof(ItemAttributes),"Start")]
+    [HarmonyPatch(typeof(ItemAttributes),"Start")]
 	class APItemNamePatch
     {
 		[HarmonyPostfix]
@@ -374,7 +386,7 @@ namespace RepoAP
 						//Debug.Log(LocationData.AddBaseId(Int64.Parse(name)));
 						ItemInfo itemInfo = APSave.GetScoutedShopItem(LocationData.AddBaseId(Int64.Parse(name)));
 
-						___itemName = $"{itemInfo.Player}'s {itemInfo.ItemName}";
+                        ___itemName = $"{itemInfo.Player}'s {itemInfo.ItemName}";
 
 						if (GameManager.instance.gameMode == 1)
 						{
