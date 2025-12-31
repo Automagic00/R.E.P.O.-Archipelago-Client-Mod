@@ -320,7 +320,7 @@ namespace RepoAP
             Plugin.Logger.LogInfo($"Checking {valuable_count} valuables...");
             Plugin.Logger.LogInfo($"Checking {monster_count} monster souls...");
 
-            long[] idsToScout = new long[shop_item_count + pelly_count+valuable_count+monster_count];
+            long[] idsToScout = new long[shop_item_count + pelly_count + valuable_count + monster_count];
 
             int p = 0;
 
@@ -331,10 +331,10 @@ namespace RepoAP
             for (int i = 1; i <= pelly_count; i++) idsToScout[p++] = LocationData.AddBaseId(LocationData.pellyOffset + i);
 
             // Valuables
-            for (int i = 1; i <= valuable_count; i++) idsToScout[p++] = LocationData.AddBaseId(LocationData.valuableOffset + i);
+            for (int i = 0; i < valuable_count; i++) idsToScout[p++] = LocationData.AddBaseId(LocationData.valuableOffset + i);
 
             // Souls
-            for (int i = 1; i <= monster_count; i++) idsToScout[p++] = LocationData.AddBaseId(LocationData.monsterOffset + i);
+            for (int i = 0; i < monster_count; i++) idsToScout[p++] = LocationData.AddBaseId(LocationData.monsterOffset + i);
 
             try
             {

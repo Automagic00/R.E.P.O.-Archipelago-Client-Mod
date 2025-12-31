@@ -61,7 +61,7 @@ namespace RepoAP
         static public string upgrade_tumble_launch = "Item Upgrade Player Tumble Launch";
         static public string upgrade_tumble_wings = "Item Upgrade Player Tumble Wings";
         static public string upgrade_tumble_climb = "Item Upgrade Player Tumble Climb";
-        static public string upgrade_death_head_battery = "Item Upgrade Player Death Head Battery";
+        static public string upgrade_death_head_battery = "Item Upgrade Death Head Battery";
         static public string valuable_tracker = "Item Valuable Tracker";
         static public string ap_item = "Item Upgrade AP Item";
 
