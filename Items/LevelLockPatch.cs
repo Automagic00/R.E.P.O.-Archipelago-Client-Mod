@@ -14,7 +14,7 @@ namespace RepoAP
         [HarmonyPostfix]
         static void SetRunLevelPre(RunManager __instance)
         {
-            if (APSave.GetLevelsReceived().Count == 0 || Plugin.connection.session == null)
+            if (APSave.GetLevelsReceived()?.Count == 0 || Plugin.connection.session == null)
             {
                 Plugin.Logger.LogError("No Levels found in Save!");
                 return;

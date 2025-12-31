@@ -237,6 +237,10 @@ namespace RepoAP
 
         public static void UpdateAvailableItems()
         {
+            if (Plugin.connection.session == null)
+            {
+                return;
+            }
             Plugin.ShopItemsAvailable = new List<int>();
             Plugin.ShopItemsBought = GetShopLocationsChecked();
 

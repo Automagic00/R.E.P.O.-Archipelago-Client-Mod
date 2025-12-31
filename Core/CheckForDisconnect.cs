@@ -11,6 +11,7 @@ namespace RepoAP
     [HarmonyPatch(typeof(PlayerController),"Update")]
     class CheckForDisconnect
     {
+        static double timeSinceLastCheck = 5.0f;
         [HarmonyPostfix]
         static void CheckDC()
         {
@@ -22,9 +23,14 @@ namespace RepoAP
                     Plugin.Logger.LogInfo("Disconnected from AP Server");
                     Plugin.reconnectTask = Plugin.connection.ClientDisconnected();
                 }
-                else if (Plugin.reconnectTask.Status == TaskStatus.RanToCompletion)
+                else if (Plugin.reconnectTask.Status == TaskStatus.RanToCompletion && timeSinceLastCheck >= 5.0f)
                 {
                     Plugin.reconnectTask = null;
+                    timeSinceLastCheck = 0.0f;
+                }
+                else
+                {
+                    timeSinceLastCheck += Time.deltaTime;
                 }
             }
         }

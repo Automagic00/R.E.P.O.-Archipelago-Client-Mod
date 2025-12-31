@@ -254,7 +254,7 @@ namespace RepoAP
             }
             catch(Exception e)
             {
-                Plugin.Logger.LogError("Failure in reconnecting: " + e.Message);
+                Plugin.Logger.LogWarning("Failure in reconnecting: " + e.Message);
             }
         }
 
