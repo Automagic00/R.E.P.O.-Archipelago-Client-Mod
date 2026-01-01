@@ -212,7 +212,7 @@ namespace RepoAP
         {
             
             string itemName = IdToItemName(RemoveBaseId(itemId));
-            Plugin.Logger.LogInfo("Adding Item To Inventory: " + RemoveBaseId(itemId) + " : " + itemName);
+            Plugin.Logger.LogInfo("Attempting to add item to inventory: " + RemoveBaseId(itemId) + " : " + itemName);
 
             if (LocationNames.all_levels.Contains(itemName))
             {
@@ -229,10 +229,16 @@ namespace RepoAP
             }
             else if (itemName.Contains("Upgrade"))
             {
-                StatsManager.instance.itemsPurchased[itemName]++;
+                // To ensure we don't grant upgrades multiple times, we check how many AP upgrades the save file already knows about and compare it to how many we have now.
+                // itemsUpgradesPurchased only tracks non-AP upgrades, which lets the player keep them in addition to the AP ones.
+                int upgradesReceived = StatsManager.instance.itemsPurchasedTotal[itemName] - StatsManager.instance.itemsUpgradesPurchased[itemName];
+                if (APSave.GetItemsReceived()[itemId] > upgradesReceived)
+                    StatsManager.instance.ItemPurchase(itemName);
+                else
+                    Plugin.Logger.LogInfo("Item " + itemName + " has already been received. Skipping...");
             }
-            
-            
+
+
         }
 
         public static string IdToItemName(long itemId)
