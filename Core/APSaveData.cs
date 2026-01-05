@@ -89,7 +89,7 @@ namespace RepoAP
         {
             if (Plugin.connection.session == null)
             {
-                Plugin.Logger.LogInfo("Not connected. Cannot save slot data.");
+                Plugin.Logger.LogWarning("Not connected. Cannot save slot data.");
                 return;
             }
             /*var test1 = Plugin.connection.slotData["pellys_required"];
@@ -107,7 +107,7 @@ namespace RepoAP
             
         }
 
-        public static void SyncServerLocationsToSave()
+        public static void SyncServerLocationsToSave()  // unused?
         {
             if (!Plugin.connection.connected)
             {

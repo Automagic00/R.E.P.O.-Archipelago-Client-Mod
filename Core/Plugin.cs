@@ -44,6 +44,8 @@ namespace RepoAP
         public static List<int> ShopItemsBought = new List<int>();
         public static List<int> ShopItemsAvailable = new List<int>();
 
+        internal static PluginConfig BoundConfig { get; private set; } = null!;
+
         private void Awake()
         {
             Logger = base.Logger;
@@ -59,6 +61,7 @@ namespace RepoAP
             apSlot = apSlotConfig.Value;*/
 
             _player = PlayerController.instance;
+            BoundConfig = new PluginConfig(base.Config);
             // Plugin startup logic
             Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
             var harmony = new Harmony("com.example.patch");

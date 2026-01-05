@@ -45,7 +45,7 @@ namespace RepoAP
 				//Replaces upgrades with AP items
 				if ((itemList[i].itemName.Contains("Upgrade") && !itemList[i].name.Contains("Counted")) && /*Plugin.LastShopItemChecked <= APSave.saveData.upgradeLocations &&*/ Plugin.ShopItemsAvailable.Count > 0)
 				{
-					Plugin.Logger.LogInfo("Replacing  " + itemList[i].itemName);
+					Plugin.Logger.LogInfo("Replacing " + itemList[i].itemName);
 					item = StatsManager.instance.itemDictionary[ItemNames.ap_item];
 				}
 				else
