@@ -500,7 +500,7 @@ namespace RepoAP
             {
                 Debug.Log($"-{pelly}");
             }*/
-            foreach (long locID in locationsChecked)
+            /*foreach (long locID in locationsChecked)
             {
                 string locName = Plugin.connection.session.Locations.GetLocationNameFromId(locID);
                 if (locName.Contains("Pelly"))
@@ -518,7 +518,16 @@ namespace RepoAP
                         collectedCount++;
                     }
                 }
+            }*/
+            foreach (string pellyName in saveData.pellysGathered)
+            {
+                Plugin.Logger.LogInfo($"-{pellyName}");
+                if (saveData.pellysRequired.Any(x => pellyName.Contains(x.ToString())))
+                {
+                    collectedCount++;
+                }
             }
+            Plugin.Logger.LogInfo($"Pellys Collected: {collectedCount}/{totalCount}");
             if (collectedCount < totalCount)
             {
                 Plugin.Logger.LogInfo($"Pelly hunt not complete.");
