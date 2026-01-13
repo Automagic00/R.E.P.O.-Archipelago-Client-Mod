@@ -89,8 +89,8 @@ namespace RepoAP
                 {
                     session = ArchipelagoSessionFactory.CreateSession(address, port);
                     Plugin.Logger.LogInfo("Session at " + session.ToString());
-
-                    session.MessageLog.OnMessageReceived += MessageLog_OnMessageReceived;
+                    if (Plugin.BoundConfig.DisplayAPMessagesOnTruckScreen.Value)
+                        session.MessageLog.OnMessageReceived += MessageLog_OnMessageReceived;
                 }
                 catch
                 {
