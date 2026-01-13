@@ -7,6 +7,7 @@
 	  <BepInCore>$(REPO)\BepInEx\core</BepInCore>
     <MenuLib>$(REPO)\BepInEx\plugins\nickklmao-MenuLib</MenuLib>
     <REPOLib>$(REPO)\BepInEx\plugins\Zehs-REPOLib</REPOLib>
+    <OutputFolder>$(REPO)\BepInEx\plugins</OutputFolder>
   </PropertyGroup>
 
   <PropertyGroup>
