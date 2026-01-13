@@ -67,9 +67,9 @@ namespace RepoAP
 
         // Health
         static public string progressive_health = "Progressive Health Pack Unlock";
-        static public string small_health = "Small Health Pack";
-        static public string medium_health = "Medium Health Pack";
-        static public string large_health = "Large Health Pack";
+        //static public string small_health = "Small Health Pack";
+        //static public string medium_health = "Medium Health Pack";
+        //static public string large_health = "Large Health Pack";
 
         // Melee Weapons
         static public string baseball_bat = "Baseball Bat Unlock";

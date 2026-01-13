@@ -81,14 +81,14 @@ namespace RepoAP
             names.Add(ItemNames.upgrade_death_head_battery);
 
             // ---- SHOP UNLOCKS ----
-            ids.Add(base_shop_offset++);
+            /*ids.Add(base_shop_offset++);      // these aren't implemented yet but will eventually be filler
  			names.Add(ItemNames.small_health);
 
             ids.Add(base_shop_offset++);
  			names.Add(ItemNames.medium_health);
 
             ids.Add(base_shop_offset++);
- 			names.Add(ItemNames.large_health);
+ 			names.Add(ItemNames.large_health);*/
 
             ids.Add(base_shop_offset++);
  			names.Add(ItemNames.progressive_health);
