@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Archipelago.MultiClient.Net.Models;
 using Newtonsoft.Json.Linq;
+using Photon.Pun;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 namespace RepoAP
@@ -19,16 +21,18 @@ namespace RepoAP
         public List<string> pellysGathered = new List<string>();
         public List<string> valuablesGathered = new List<string>();
         public List<string> monsterSoulsGathered = new List<string>();
-        public List<int> shopItemsPurchased = new List<int>();
+        //public List<int> shopItemsPurchased = new List<int>();    // unused
         public long shopStockSlotData;
         public int shopStockReceived;
         public Dictionary<long, int> itemsReceived = new Dictionary<long, int>();
         public Dictionary<string, bool> levelsUnlocked = new Dictionary<string, bool>();
         public int itemReceivedIndex = 0;
-        public Dictionary<long, ItemInfo> locationsScouted = new Dictionary<long, ItemInfo>();
+        //public Dictionary<long, ItemInfo> locationsScouted = new Dictionary<long, ItemInfo>();
+        public Dictionary<long, SerializableItemInfo> locationsScouted = new Dictionary<long, SerializableItemInfo>();
         public JArray pellysRequired = new JArray();
         public bool pellySpawning;
         public long levelQuota;
+        public long levelsCompleted;
         public long upgradeLocations;
         public bool valuableHunt;
         public bool monsterHunt;
@@ -43,6 +47,8 @@ namespace RepoAP
 
         public static void Init()
         {
+            if (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient)
+                return;
             string path = string.Concat(Application.persistentDataPath, "/archipelago");
             fileName = BuildFileName();
 
@@ -68,6 +74,7 @@ namespace RepoAP
             else
             {
                 es3Settings = new ES3Settings(path, ES3.EncryptionType.None);
+                Plugin.Logger.LogInfo("Loading save data from " + path);
                 saveData = ES3.Load<APSaveData>(saveKey, saveData, es3Settings);
                 SaveSlotDataToFile();
                 ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
@@ -98,6 +105,7 @@ namespace RepoAP
             Debug.Log(test2.GetType());*/
 
             saveData.levelQuota = (long)Plugin.connection.slotData["level_quota"];
+            //saveData.levelsCompleted = (long)Plugin.connection.slotData["levels_completed"];
             saveData.pellysRequired = (JArray)Plugin.connection.slotData["pellys_required"];
             saveData.pellySpawning = (bool)Plugin.connection.slotData["pelly_spawning"];
             saveData.upgradeLocations = (long)Plugin.connection.slotData["upgrade_locations"];
@@ -146,7 +154,7 @@ namespace RepoAP
 
         public static void AddLocationChecked(long locToAdd)
         {
-            if (Plugin.connection.session == null)
+            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
             {
                 return;
             }
@@ -155,7 +163,7 @@ namespace RepoAP
         }
         public static List<long> GetLocationsChecked()
         {
-            if (Plugin.connection.session == null)
+            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
             {
                 return null;
             }
@@ -184,7 +192,7 @@ namespace RepoAP
 
         public static void AddItemReceived(long itemId)
         {
-            if (Plugin.connection.session == null)
+            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
             {
                 return;
             }
@@ -209,7 +217,7 @@ namespace RepoAP
         }
         public static int GetItemReceivedIndex()
         {
-            if (Plugin.connection.session == null)
+            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
             {
                 return 0;
             }
@@ -218,7 +226,7 @@ namespace RepoAP
 
         public static void AddStockReceived()
         {
-            if (Plugin.connection.session == null)
+            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
             {
                 return;
             }
@@ -256,7 +264,7 @@ namespace RepoAP
 
         public static Dictionary<long, int> GetItemsReceived()
         {
-            if (Plugin.connection.session == null)
+            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
             {
                 return null;
             }
@@ -265,7 +273,7 @@ namespace RepoAP
 
         public static bool IsItemReceived(long id, int count=1)
         {
-            if (!Plugin.connection.connected)
+            if (!Plugin.connection.connected || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
             {
                 return false;
             }
@@ -280,7 +288,7 @@ namespace RepoAP
 
         public static void AddLevelReceived(string levelName)
         {
-            if (Plugin.connection.session == null)
+            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
             {
                 return;
             }
@@ -290,7 +298,7 @@ namespace RepoAP
             }
             else
             {
-                Plugin.Logger.LogWarning(levelName + " has already been received!");
+                Plugin.Logger.LogDebug(levelName + " has already been received!");
             }
 
             ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
@@ -298,7 +306,7 @@ namespace RepoAP
 
         public static Dictionary<string,bool> GetLevelsReceived()
         {
-            if (Plugin.connection.session == null)
+            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
             {
                 return null;
             }
@@ -307,7 +315,7 @@ namespace RepoAP
 
         public static async void ScoutLocations()
         {
-            if (Plugin.connection.session == null)
+            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
             {
                 return;
             }
@@ -343,10 +351,10 @@ namespace RepoAP
             try
             {
                 var scout = await Plugin.connection.session.Locations.ScoutLocationsAsync(idsToScout);
-                saveData.locationsScouted = new Dictionary<long, ItemInfo>();
+                saveData.locationsScouted = new Dictionary<long, SerializableItemInfo>();
                 foreach (ItemInfo item in scout.Values)
                 {
-                    saveData.locationsScouted.Add(item.LocationId, item);
+                    saveData.locationsScouted.Add(item.LocationId, item.ToSerializable());
                 }
             }
             catch (Exception e)
@@ -357,16 +365,16 @@ namespace RepoAP
             ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
         }
 
-        public static ItemInfo GetScoutedLocation(long id)
+        public static SerializableItemInfo GetScoutedLocation(long id)
         {
-            if (Plugin.connection.session != null && APSave.saveData.locationsScouted.ContainsKey(id))
+            if ((Plugin.connection.session != null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient)) && APSave.saveData.locationsScouted.ContainsKey(id))
             {
                 return saveData.locationsScouted[id];
             }
             return null;
         }
 
-        public static ItemInfo GetScoutedShopItem(long id)
+        public static SerializableItemInfo GetScoutedShopItem(long id)
         {
             return GetScoutedLocation(id);
         }
@@ -374,7 +382,7 @@ namespace RepoAP
         //For when the player extracts a Pelly
         public static void AddPellyGathered(string name)
         {
-            if (Plugin.connection.session == null)
+            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
             {
                 return;
             }
@@ -399,7 +407,7 @@ namespace RepoAP
         public static void AddValuableGathered(string name)
         {
             name = LocationData.GetBaseName(name);
-            if (Plugin.connection.session == null)
+            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
             {
                 return;
             }
@@ -414,7 +422,7 @@ namespace RepoAP
         public static void AddMonsterSoulGathered(string name)
         {
             name = LocationData.GetBaseName(name);
-            if (Plugin.connection.session == null)
+            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
             {
                 return;
             }
@@ -460,7 +468,8 @@ namespace RepoAP
             var locationsMissing = Plugin.connection.session.Locations.AllMissingLocations;
 
             bool goalMet = true;
-            var completedLevels = StatsManager.instance.GetRunStatLevel();
+            var completedLevels = Math.Max(StatsManager.instance.GetRunStatLevel(), saveData.levelsCompleted);
+            saveData.levelsCompleted = completedLevels;
 
             status = "";
             
@@ -525,7 +534,7 @@ namespace RepoAP
                 }
             }
 
-            
+
 
             /*foreach (string pelly in pellys)
             {
@@ -592,6 +601,8 @@ namespace RepoAP
             }
 
             if(goalMet) Plugin.Logger.LogInfo("All Goals Complete.");
+
+            _ = Plugin.connection.SyncCompletionProgress(completedLevels, APSave.saveData.pellysGathered, APSave.saveData.valuablesGathered, APSave.saveData.monsterSoulsGathered, APSave.saveData.shopStockReceived);
 
             return goalMet;
         }

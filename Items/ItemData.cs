@@ -212,7 +212,7 @@ namespace RepoAP
         {
             
             string itemName = IdToItemName(RemoveBaseId(itemId));
-            Plugin.Logger.LogInfo("Attempting to add item to inventory: " + RemoveBaseId(itemId) + " : " + itemName);
+            Plugin.Logger.LogDebug("Attempting to add item to inventory: " + RemoveBaseId(itemId) + " : " + itemName);
 
             if (LocationNames.all_levels.Contains(itemName))
             {
@@ -235,7 +235,7 @@ namespace RepoAP
                 if (APSave.GetItemsReceived()[itemId] > upgradesReceived)
                     StatsManager.instance.ItemPurchase(itemName);
                 else
-                    Plugin.Logger.LogInfo("Item " + itemName + " has already been received. Skipping...");
+                    Plugin.Logger.LogDebug("Item " + itemName + " has already been received. Skipping...");
             }
 
 

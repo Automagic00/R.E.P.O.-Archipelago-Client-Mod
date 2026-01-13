@@ -45,7 +45,7 @@ namespace RepoAP
         public DeathLinkService deathLinkService;
         public int ItemIndex = 0;
         private ConcurrentQueue<(ItemInfo NetworkItem, int index)> incomingItems;
-        private ConcurrentQueue<ItemInfo> outgoingItems;
+        private ConcurrentQueue<SerializableItemInfo> outgoingItems;
         private ConcurrentQueue<messageData> messageItems;
 
         private struct messageData
@@ -70,7 +70,7 @@ namespace RepoAP
             get { return session != null ? session.Socket.Connected : false; }
         }
 
-        public async Task TryConnect(string adress, int port, string pass, string player)
+        public async Task TryConnect(string address, int port, string pass, string player)
         {
             Plugin.Logger.LogDebug("TryConnect");
             if (connected)
@@ -87,7 +87,7 @@ namespace RepoAP
             {
                 try
                 {
-                    session = ArchipelagoSessionFactory.CreateSession(adress, port);
+                    session = ArchipelagoSessionFactory.CreateSession(address, port);
                     Plugin.Logger.LogInfo("Session at " + session.ToString());
 
                     session.MessageLog.OnMessageReceived += MessageLog_OnMessageReceived;
@@ -100,7 +100,7 @@ namespace RepoAP
             
             messageHandler = MessageHandler();
             incomingItems = new ConcurrentQueue<(ItemInfo NetworkItem, int index)>();
-            outgoingItems = new ConcurrentQueue<ItemInfo>();
+            outgoingItems = new ConcurrentQueue<SerializableItemInfo>();
             messageItems = new ConcurrentQueue<messageData>();
 
             // setup
@@ -133,16 +133,16 @@ namespace RepoAP
 
                 deathLinkService = session.CreateDeathLinkService();
 
-               /* deathLinkService.OnDeathLinkReceived += (deathLinkObject) =>
-                {
-                    if (SceneManager.GetActiveScene().name != "TitleScreen" && _player != null && !_player.dead && !DeathLinkPatch.isDeathLink )
-                    {
-                        //Debug.Log("Death link received");
-                        DeathLinkPatch.deathMsg = deathLinkObject.Cause == null ? $"{deathLinkObject.Source} died. Point and laugh." : $"{deathLinkObject.Cause}";
-                        DeathLinkPatch.isDeathLink = true;
+                /* deathLinkService.OnDeathLinkReceived += (deathLinkObject) =>
+                 {
+                     if (SceneManager.GetActiveScene().name != "TitleScreen" && _player != null && !_player.dead && !DeathLinkPatch.isDeathLink )
+                     {
+                         //Debug.Log("Death link received");
+                         DeathLinkPatch.deathMsg = deathLinkObject.Cause == null ? $"{deathLinkObject.Source} died. Point and laugh." : $"{deathLinkObject.Cause}";
+                         DeathLinkPatch.isDeathLink = true;
 
-                    }
-                };*/
+                     }
+                 };*/
 
 
                 /*if ((bool)Plugin.connection.slotData["death_link"])
@@ -228,7 +228,7 @@ namespace RepoAP
                 //outgoingItemHandler = null;
                 //checkItemsReceived = null;
                 incomingItems = new ConcurrentQueue<(ItemInfo NetworkItem, int ItemIndex)>();
-                outgoingItems = new ConcurrentQueue<ItemInfo>();
+                outgoingItems = new ConcurrentQueue<SerializableItemInfo>();
                 deathLinkService = null;
                 slotData = null;
                 ItemIndex = 0;
@@ -280,7 +280,7 @@ namespace RepoAP
                         {
                             foreach (ItemInfo itemInfo in locationInfoPacket.Result.Values)
                             {
-                                outgoingItems.Enqueue(itemInfo);
+                                outgoingItems.Enqueue(itemInfo.ToSerializable());
                             }
                         });
                 }
@@ -332,7 +332,7 @@ namespace RepoAP
                     //NetworkItem Item = session.Items.AllItemsReceived[ItemIndex];
                     ItemInfo Item = session.Items.AllItemsReceived[ItemIndex];
                     string ItemReceivedName = Item.ItemName;
-                    Plugin.Logger.LogInfo("Placing item " + ItemReceivedName + " with index " + ItemIndex + " in queue.");
+                    Plugin.Logger.LogDebug("Placing item " + ItemReceivedName + " with index " + ItemIndex + " in queue.");
                     incomingItems.Enqueue((Item, ItemIndex));
                     ItemIndex++;
                     yield return true;
@@ -418,7 +418,7 @@ namespace RepoAP
                 {
                     incomingItems.TryDequeue(out _);
                     //TunicRandomizer.Tracker.SetCollectedItem(itemName, false);
-                    Plugin.Logger.LogInfo("Skipping item " + itemName + " at index " + pendingItem.index + " as it has already been processed.");
+                    Plugin.Logger.LogDebug("Skipping item " + itemName + " at index " + pendingItem.index + " as it has already been processed.");
                     yield return true;
                     continue;
                 }
@@ -476,6 +476,58 @@ namespace RepoAP
             }
         }
 
+        /** Syncs the player's completion progress to the Archipelago data storage.
+         *
+         * @param levels_completed The number of levels the player has completed. 
+         * @param pellys_gathered A list of pellys the player has gathered.
+         * @param valuables_gathered A list of valuables the player has gathered.
+         * @param monster_souls_gathered A list of monster souls the player has gathered.
+         */
+        public async Task SyncCompletionProgress(long levels_completed, List<string> pellys_gathered, List<string> valuables_gathered, List<string> monster_souls_gathered, int shop_stock_received) 
+        {
+            if (connected)
+            {
+                // level goal
+                long tempLevels = await session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-levelsCompleted"].GetAsync<long>();
+                APSave.saveData.levelsCompleted = Math.Max(levels_completed,
+                    tempLevels);
+                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-levelsCompleted"] = APSave.saveData.levelsCompleted;
+
+                // pelly goal
+                List<string> pellyData = await session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-pellysGathered"].GetAsync<List<string>>();
+                foreach (var item in pellys_gathered.Where(pelly => !pellyData.Contains(pelly)))
+                {
+                    pellyData.Add(item);
+                }
+                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-pellysGathered"] = pellyData;
+                APSave.saveData.pellysGathered = pellyData;
+
+                // valuable goal
+                List<string> valuableData = await session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-valuablesGathered"].GetAsync<List<string>>();
+                foreach (var item in valuables_gathered.Where(valuable => !valuableData.Contains(valuable)))
+                {
+                    valuableData.Add(item);
+                }
+                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-valuablesGathered"] = valuableData;
+                APSave.saveData.valuablesGathered = valuableData;
+
+                // monster soul goal
+                List<string> monsterData = await session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-monsterSoulsGathered"].GetAsync<List<string>>();
+                foreach (var item in monster_souls_gathered.Where(soul => !monsterData.Contains(soul)))
+                {
+                    monsterData.Add(item);
+                }
+                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-monsterSoulsGathered"] = monsterData;
+                APSave.saveData.monsterSoulsGathered = monsterData;
+
+                // shopStockReceived gets updated when connecting, so we don't need to store it on the server
+                // itemsReceived is filled when connecting if some received items are missing, so we don't need to store it on the server
+                // levelsUnlocked gets constructed from itemsReceived, so we don't need to store it on the server
+                // we already know locationsScouted gets filled if it isn't already
+                // the rest get filled when connecting as well
+            }
+        }
+
         public void SendDeathLink()
         {
             if (connected)
@@ -484,5 +536,15 @@ namespace RepoAP
             }
         }
 
+        /*public void HandleDeathLink()
+        {
+            if (!SemiFunc.MenuLevel() && !RunManager.AllPlayersDead && !DeathLinkPatch.isDeathLink)
+            {
+                //Debug.Log("Death link received");
+                DeathLinkPatch.deathMsg = deathLinkObject.Cause == null ? $"{deathLinkObject.Source} died. Point and laugh." : $"{deathLinkObject.Cause}";
+                DeathLinkPatch.isDeadFromDeathLink = true;
+
+            }
+        }*/
     }
 }

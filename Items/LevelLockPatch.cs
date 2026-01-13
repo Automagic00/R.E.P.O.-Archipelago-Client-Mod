@@ -48,7 +48,7 @@ namespace RepoAP
                 }
                 else
                 {
-                    Plugin.Logger.LogInfo(level.NarrativeName + " != " + levelChoiceName);
+                    Plugin.Logger.LogDebug(level.NarrativeName + " != " + levelChoiceName);
                 }
 
                 //Headman Manor : Level - Manor
@@ -59,7 +59,8 @@ namespace RepoAP
             }
             __instance.levelCurrent = levelChoice;
             Plugin.Logger.LogInfo("Returning " + __instance.levelCurrent.name);
-            
+            Plugin.customRPCManager.CallSyncSlotDataWithClientsRpc(Plugin.customRPCManagerObject);
+
         }
     }
 }

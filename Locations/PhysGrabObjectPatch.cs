@@ -4,10 +4,9 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Photon.Pun;
 using UnityEngine;
-using UnityEngine.Experimental.AI;
 using static ModulePropSwitch;
-using static System.Collections.Specialized.BitVector32;
 
 
 namespace RepoAP
@@ -19,8 +18,9 @@ namespace RepoAP
         static void OrbInfoTextEnabler(PhysGrabObject __instance)
         {
             const string poscol = "#67a9cf";
-            const string negcol = "#ef8a62"; 
-            const string unknowncol = "#edf03c";
+            const string negcol = "#ef8a62";
+            //const string hintedcol = "#edf03c";   // for eventual use if we want to show that a location is hinted
+            const string unknowncol = "#9c9c9c";
             string name = __instance.gameObject.name;
 
             bool hasSoul = name.Contains("Soul");
@@ -32,7 +32,7 @@ namespace RepoAP
             {
                 string label = "";
 
-                if (Plugin.connection.session != null)
+                if (Plugin.connection.session != null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
                 {
                     
                     long id = -1;
@@ -58,7 +58,7 @@ namespace RepoAP
                         huntObjective = APSave.saveData.valuableHunt;
                     }
 
-                    ItemInfo iInfo = APSave.GetScoutedLocation(id);
+                    SerializableItemInfo iInfo = APSave.GetScoutedLocation(id);
 
                     // Only display "EXTRACTED" when we are hunting the item class
                     if (huntObjective && wasCollected)
@@ -77,7 +77,7 @@ namespace RepoAP
                     {
                         try
                         {
-                            label = $"<br><color={negcol}>{iInfo.Player}'s {iInfo.ItemName}";
+                            label = $"<br><color={/*(LocationData.IsLocationHinted(id) ? hintedcol : */negcol}>{iInfo.Player}'s {iInfo.ItemName}";
                         }
                         catch (Exception e)
                         {

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
-using System.Reflection;
+using RepoAP;
 using UnityEngine;
 
 namespace RepoAP
@@ -112,5 +113,27 @@ namespace RepoAP
 
 			ExtractSendCheck.SendFirst(field);
 		}
-	}
+        [HarmonyPostfix, HarmonyPatch("DestroyAllPhysObjectsInHaulList")]
+        static void ExtractAllSyncWithClientsPatch()
+        {
+            //Exit if not connected to an AP Server
+            if (Plugin.connection == null)
+            {
+                return;
+            }
+
+            Plugin.customRPCManager.CallSyncSlotDataWithClientsRpc(Plugin.customRPCManagerObject);
+        }
+        /*[HarmonyPostfix, HarmonyPatch("DestroyTheFirstPhysObjectsInHaulList")]
+        static void ExtractFirstSyncWithClientsPatch()
+        {
+            //Exit if not connected to an AP Server
+            if (Plugin.connection == null)
+            {
+                return;
+            }
+
+            Plugin.customRPCManager.CallSyncSlotDataWithClientsRpc(Plugin.customRPCManagerObject);
+        }*/
+    }
 }

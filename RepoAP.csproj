@@ -51,6 +51,7 @@
         <HintPath>$(BepInCore)\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="$(MenuLib)\MenuLib.dll" />
+	  <Reference Include="$(REPOLib)\REPOLib.dll" />
     <Reference Include="netstandard">
       <HintPath>$(Managed)\netstandard.dll</HintPath>
     </Reference>

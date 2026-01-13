@@ -71,10 +71,26 @@ namespace RepoAP
         {
             Logger.LogDebug("In Start");
             connection = new ArchipelagoConnection();
-            customRPCManagerObject = new GameObject();
+            customRPCManagerObject = new GameObject("RepoAPCustomRPCManager")
+            {
+                hideFlags = HideFlags.HideAndDontSave,
+            };
+            customRPCManagerObject.SetActive(false);
             customRPCManager = customRPCManagerObject.AddComponent<CustomRPCs>();
             customRPCManagerObject.AddComponent<PhotonView>();
             DontDestroyOnLoad(customRPCManager);
+            // I'm not sure if these next few lines are necessary, but they don't seem to hurt
+            string myPrefabId = $"{MyPluginInfo.PLUGIN_GUID}/{customRPCManagerObject.name}";
+            PrefabRef registeredNetworkPrefab = REPOLib.Modules.NetworkPrefabs.RegisterNetworkPrefab(myPrefabId, customRPCManagerObject);
+            if (registeredNetworkPrefab != null)
+            {
+                REPOLib.Modules.NetworkPrefabs.SpawnNetworkPrefab(registeredNetworkPrefab, Vector3.zero, Quaternion.identity);
+                Logger.LogInfo("Registered customRPCManagerObject for multiplayer RPCs.");
+            }
+            else
+                Logger.LogError("Failed to register customRPCManagerObject. Multiplayer may be borked.");
+            // this line is necessary to set the PhotonView ID to something unique (unless we find a way to do it dunamically and encure all clients get the same ID)
+            customRPCManagerObject.GetComponent<PhotonView>().ViewID = myPrefabId.GetHashCode();
             ItemData.CreateItemDataTable();
 
         }

@@ -6,7 +6,7 @@
     <REPO>D:\SteamLibrary\steamapps\common\REPO</REPO>
 	  <BepInCore>$(REPO)\BepInEx\core</BepInCore>
     <MenuLib>$(REPO)\BepInEx\plugins\nickklmao-MenuLib</MenuLib>
-    <OutputFolder>$(REPO)\BepInEx\plugins</OutputFolder>
+    <REPOLib>$(REPO)\BepInEx\plugins\Zehs-REPOLib</REPOLib>
   </PropertyGroup>
 
   <PropertyGroup>

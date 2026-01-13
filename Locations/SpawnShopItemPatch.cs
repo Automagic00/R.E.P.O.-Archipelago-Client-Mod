@@ -383,7 +383,7 @@ namespace RepoAP
 						}
 						___itemName += " " + name;
 						//Debug.Log(LocationData.AddBaseId(Int64.Parse(name)));
-						ItemInfo itemInfo = APSave.GetScoutedShopItem(LocationData.AddBaseId(Int64.Parse(name)));
+						SerializableItemInfo itemInfo = APSave.GetScoutedShopItem(LocationData.AddBaseId(Int64.Parse(name)));
 
                         ___itemName = $"{itemInfo.Player}'s {itemInfo.ItemName}";
 
@@ -391,7 +391,7 @@ namespace RepoAP
 						{
 
 							FieldInfo field = AccessTools.Field(typeof(ItemUpgrade), "photonView");
-							PhotonView photonView = (PhotonView)field.GetValue(__instance.GetComponent<ItemUpgrade>());
+							//PhotonView photonView = (PhotonView)field.GetValue(__instance.GetComponent<ItemUpgrade>());	// this is unused
 							Plugin.customRPCManager.CallUpdateItemNameRPC(___itemName, __instance.gameObject);
 							return;
 						}
