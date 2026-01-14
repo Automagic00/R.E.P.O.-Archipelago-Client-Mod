@@ -32,7 +32,7 @@ namespace RepoAP
             {
                 string label = "";
 
-                if (Plugin.connection.session != null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+                if (Plugin.connection.session != null || !SemiFunc.IsMasterClientOrSingleplayer())
                 {
                     
                     long id = -1;

@@ -94,8 +94,7 @@ namespace RepoAP
             //APSave.saveData.itemsReceived =                               // not needed by clients
             //APSave.saveData.levelsUnlocked =                              // not needed by clients
             //APSave.saveData.itemReceivedIndex =                           // not needed by clients
-            //Dictionary<long, SerializableItemInfo> tempDict = locations_scouted.ToDictionary(kvp => kvp.Key, kvp => SerializableItemInfo.FromJson(kvp.Value));
-            APSave.saveData.locationsScouted = locations_scouted.ToDictionary(kvp => kvp.Key, kvp => SerializableItemInfo.FromJson(kvp.Value));// needed for PhysGrabObjectPatch*/
+            APSave.saveData.locationsScouted = locations_scouted.ToDictionary(kvp => kvp.Key, kvp => SerializableItemInfo.FromJson(kvp.Value));// needed for PhysGrabObjectPatch
             APSave.saveData.pellysRequired = JArray.Parse(pellys_required); // needed
             //APSave.saveData.pellySpawning = pelly_spawning;               // not needed by clients
             //APSave.saveData.levelQuota = level_quota;                     // not needed by clients

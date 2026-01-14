@@ -33,11 +33,6 @@ namespace RepoAP
         public static string apPassword = "";
         public static string apSlot = "";
 
-        /*//Config Entries
-        private ConfigEntry<string> apAdressConfig;
-        private ConfigEntry<string> apPortConfig;
-        private ConfigEntry<string> apPassConfig;
-        private ConfigEntry<string> apSlotConfig;*/
 
         //Item tracking
         public static int LastShopItemChecked = 0;
@@ -49,16 +44,6 @@ namespace RepoAP
         private void Awake()
         {
             Logger = base.Logger;
-
-            /*apAdressConfig = Config.Bind("Archipelago", "Server Adress", "archipelago.gg");
-            apPortConfig = Config.Bind("Archipelago", "Server Port", "");
-            apPassConfig = Config.Bind("Archipelago", "Server Password", "");
-            apSlotConfig = Config.Bind("Archipelago", "Player Slot", "");
-
-            apAdress = apAdressConfig.Value;
-            apPort = apPortConfig.Value;
-            apPassword = apPassConfig.Value;
-            apSlot = apSlotConfig.Value;*/
 
             _player = PlayerController.instance;
             BoundConfig = new PluginConfig(base.Config);

@@ -13,11 +13,7 @@ namespace RepoAP.Locations
     [HarmonyPatch(typeof(EnemyDirector), "PickEnemies")]
     class AdjustMonsterOddsPatch
     {
-        static readonly RarityPreset apBoosted = ScriptableObject.CreateInstance<RarityPreset>(); /*new()  // needs to use ScriptableObject.CreateInstance<RarityPreset>() and set the fields in an Init method
-        {
-            name = "AP Boosted",
-            chance = 100.0f + Math.Max(0, Plugin.BoundConfig.EnemyWeightIncrease.Value)
-        };*/
+        static readonly RarityPreset apBoosted = ScriptableObject.CreateInstance<RarityPreset>();
         static bool initialized = false;
         static void InitApBoostedPreset()
         {

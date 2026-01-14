@@ -124,16 +124,5 @@ namespace RepoAP
 
             Plugin.customRPCManager.CallSyncSlotDataWithClientsRpc(Plugin.customRPCManagerObject);
         }
-        /*[HarmonyPostfix, HarmonyPatch("DestroyTheFirstPhysObjectsInHaulList")]
-        static void ExtractFirstSyncWithClientsPatch()
-        {
-            //Exit if not connected to an AP Server
-            if (Plugin.connection == null)
-            {
-                return;
-            }
-
-            Plugin.customRPCManager.CallSyncSlotDataWithClientsRpc(Plugin.customRPCManagerObject);
-        }*/
     }
 }

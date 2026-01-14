@@ -8,45 +8,6 @@ namespace RepoAP
 {
     public static class ItemNames
     {
-        /*static public string cartCannon = "Item Cart Cannon";
-        static public string cartLaser = "Item Cart Laser";
-        static public string cartMed = "Item Cart Medium";
-        static public string cartSmall = "Item Cart Small";
-        static public string droneBattery = "Item Drone Battery";
-        static public string droneFeather = "Item Drone Feather";
-        static public string droneIndestructible = "Item Drone Indestructible";
-        static public string droneRoll = "Item Drone Torque";
-        static public string droneZeroGrav = "Item Drone Zero Gravity";
-        static public string duckBucket = "Item Duck Bucket";
-        static public string extractTracker = "Item Extraction Tracker";
-        static public string grenadeDuctTape = "Item Grenade Duct Taped";
-        static public string grenade = "Item Grenade Explosive";
-        static public string grenadeHuman = "Item Grenade Human";
-        static public string grenadeShockwave = "Item Grenade Shockwave";
-        static public string grenadeStun = "Item Grenade Stun";
-        static public string gunPistol = "Item Gun Handgun";
-        static public string gunLaser = "Item Gun Laser";
-        static public string gunShockwave = "Item Gun Shockwave";
-        static public string gunShotgun = "Item Gun Shotgun";
-        static public string gunStun = "Item Gun Stun";
-        static public string gunTranq = "Item Gun Tranq";
-        static public string healthPackLarge = "Item Health Pack Large";
-        static public string healthPackMed = "Item Health Pack Medium";
-        static public string healthPackSmall = "Item Health Pack Small";
-        static public string baseballBat = "Item Melee Baseball Bat";
-        static public string fryingPan = "Item Melee Frying Pan";
-        static public string inflatableHammer = "Item Melee Inflatable Hammer";
-        static public string sledgeHammer = "Item Melee Sledge Hammer";
-        static public string stunBaton = "Item Melee Stun Baton";
-        static public string sword = "Item Melee Sword";
-        static public string mineExplosive = "Item Mine Explosive";
-        static public string mineShockwave = "Item Mine Shockwave";
-        static public string mineStun = "Item Mine Stun";
-        static public string zeroGravOrb = "Item Orb Zero Gravity";
-        static public string phaseBridge = "Item Phase Bridge";
-        static public string powerCrystal = "Item Power Crystal";
-        static public string rubberDuck = "Item Rubber Duck";*/
-
 
         static public string shop_stock = "Progressive Shop Stock";
 
@@ -67,7 +28,7 @@ namespace RepoAP
 
         // Health
         static public string progressive_health = "Progressive Health Pack Unlock";
-        //static public string small_health = "Small Health Pack";
+        //static public string small_health = "Small Health Pack";      // these aren't implemented yet but will eventually be filler
         //static public string medium_health = "Medium Health Pack";
         //static public string large_health = "Large Health Pack";
 

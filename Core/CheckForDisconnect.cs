@@ -16,7 +16,7 @@ namespace RepoAP
         [HarmonyPostfix]
         static void CheckDC()
         {
-            if (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient)
+            if (!SemiFunc.IsMasterClientOrSingleplayer())
                 return;
             //If player is in a gameplay level and not connected
             if (!RunManager.instance.levelCurrent.name.Contains("Menu") && !RunManager.instance.levelCurrent.name.Contains("Splash") && !Plugin.connection.connected)

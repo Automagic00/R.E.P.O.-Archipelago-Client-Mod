@@ -47,7 +47,7 @@ namespace RepoAP
 
         public static void Init()
         {
-            if (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient)
+            if (!SemiFunc.IsMasterClientOrSingleplayer())
                 return;
             string path = string.Concat(Application.persistentDataPath, "/archipelago");
             fileName = BuildFileName();
@@ -105,7 +105,6 @@ namespace RepoAP
             Debug.Log(test2.GetType());*/
 
             saveData.levelQuota = (long)Plugin.connection.slotData["level_quota"];
-            //saveData.levelsCompleted = (long)Plugin.connection.slotData["levels_completed"];
             saveData.pellysRequired = (JArray)Plugin.connection.slotData["pellys_required"];
             saveData.pellySpawning = (bool)Plugin.connection.slotData["pelly_spawning"];
             saveData.upgradeLocations = (long)Plugin.connection.slotData["upgrade_locations"];
@@ -154,16 +153,17 @@ namespace RepoAP
 
         public static void AddLocationChecked(long locToAdd)
         {
-            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+            if (Plugin.connection.session == null || !SemiFunc.IsMasterClientOrSingleplayer())
             {
                 return;
             }
             saveData.locationsChecked.Add(locToAdd);
             ES3.Save<APSaveData>(saveKey, saveData, es3Settings);
         }
+
         public static List<long> GetLocationsChecked()
         {
-            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+            if (Plugin.connection.session == null || !SemiFunc.IsMasterClientOrSingleplayer())
             {
                 return null;
             }
@@ -192,7 +192,7 @@ namespace RepoAP
 
         public static void AddItemReceived(long itemId)
         {
-            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+            if (Plugin.connection.session == null || !SemiFunc.IsMasterClientOrSingleplayer())
             {
                 return;
             }
@@ -217,7 +217,7 @@ namespace RepoAP
         }
         public static int GetItemReceivedIndex()
         {
-            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+            if (Plugin.connection.session == null || !SemiFunc.IsMasterClientOrSingleplayer())
             {
                 return 0;
             }
@@ -226,7 +226,7 @@ namespace RepoAP
 
         public static void AddStockReceived()
         {
-            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+            if (Plugin.connection.session == null || !SemiFunc.IsMasterClientOrSingleplayer())
             {
                 return;
             }
@@ -264,7 +264,7 @@ namespace RepoAP
 
         public static Dictionary<long, int> GetItemsReceived()
         {
-            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+            if (Plugin.connection.session == null || !SemiFunc.IsMasterClientOrSingleplayer())
             {
                 return null;
             }
@@ -273,7 +273,7 @@ namespace RepoAP
 
         public static bool IsItemReceived(long id, int count=1)
         {
-            if (!Plugin.connection.connected || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+            if (!Plugin.connection.connected || !SemiFunc.IsMasterClientOrSingleplayer())
             {
                 return false;
             }
@@ -288,7 +288,7 @@ namespace RepoAP
 
         public static void AddLevelReceived(string levelName)
         {
-            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+            if (Plugin.connection.session == null || !SemiFunc.IsMasterClientOrSingleplayer())
             {
                 return;
             }
@@ -306,7 +306,7 @@ namespace RepoAP
 
         public static Dictionary<string,bool> GetLevelsReceived()
         {
-            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+            if (Plugin.connection.session == null || !SemiFunc.IsMasterClientOrSingleplayer())
             {
                 return null;
             }
@@ -315,7 +315,7 @@ namespace RepoAP
 
         public static async void ScoutLocations()
         {
-            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+            if (Plugin.connection.session == null || !SemiFunc.IsMasterClientOrSingleplayer())
             {
                 return;
             }
@@ -367,7 +367,7 @@ namespace RepoAP
 
         public static SerializableItemInfo GetScoutedLocation(long id)
         {
-            if ((Plugin.connection.session != null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient)) && APSave.saveData.locationsScouted.ContainsKey(id))
+            if ((Plugin.connection.session != null || !SemiFunc.IsMasterClientOrSingleplayer()) && APSave.saveData.locationsScouted.ContainsKey(id))
             {
                 return saveData.locationsScouted[id];
             }
@@ -382,7 +382,7 @@ namespace RepoAP
         //For when the player extracts a Pelly
         public static void AddPellyGathered(string name)
         {
-            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+            if (Plugin.connection.session == null || !SemiFunc.IsMasterClientOrSingleplayer())
             {
                 return;
             }
@@ -407,7 +407,7 @@ namespace RepoAP
         public static void AddValuableGathered(string name)
         {
             name = LocationData.GetBaseName(name);
-            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+            if (Plugin.connection.session == null || !SemiFunc.IsMasterClientOrSingleplayer())
             {
                 return;
             }
@@ -422,7 +422,7 @@ namespace RepoAP
         public static void AddMonsterSoulGathered(string name)
         {
             name = LocationData.GetBaseName(name);
-            if (Plugin.connection.session == null || (GameManager.instance.gameMode == 1 && !PhotonNetwork.IsMasterClient))
+            if (Plugin.connection.session == null || !SemiFunc.IsMasterClientOrSingleplayer())
             {
                 return;
             }
@@ -493,32 +493,10 @@ namespace RepoAP
             Plugin.Logger.LogInfo("Pellys Required:");
             foreach(var pelly in saveData.pellysRequired)
             {
-                Plugin.Logger.LogInfo($"-{pelly.ToString()} {saveData.pellysRequired.Count}");
+                Plugin.Logger.LogInfo($"-{pelly} {saveData.pellysRequired.Count}");
             }
             Plugin.Logger.LogInfo("Pellys Gathered:");
-            /*foreach (string pelly in saveData.pellysGathered)
-            {
-                Debug.Log($"-{pelly}");
-            }*/
-            /*foreach (long locID in locationsChecked)
-            {
-                string locName = Plugin.connection.session.Locations.GetLocationNameFromId(locID);
-                if (locName.Contains("Pelly"))
-                {
-                    Plugin.Logger.LogInfo($"-{locName}");
 
-                    foreach (string level in LocationNames.all_levels)
-                    {
-                        Plugin.Logger.LogInfo(level);
-                        locName = locName.Replace(level, "");
-                    }
-                    Plugin.Logger.LogInfo(locName);
-                    if (saveData.pellysRequired.Any(x => locName.Contains(x.ToString())))
-                    {
-                        collectedCount++;
-                    }
-                }
-            }*/
             foreach (string pellyName in saveData.pellysGathered)
             {
                 Plugin.Logger.LogInfo($"-{pellyName}");
@@ -545,21 +523,6 @@ namespace RepoAP
 
 
 
-            /*foreach (string pelly in pellys)
-            {
-                foreach(string level in LocationNames.all_levels_short)
-                {
-                    if (!saveData.pellysGathered.Exists(x => x.Contains(level.ToLower()) && x.Contains(pelly.ToLower())))
-                    {
-                        Debug.Log($"Pelly hunt not complete.");
-                        goalMet = false;
-                    }
-                    else
-                    {
-                        collectedCount++;
-                    }
-                }
-            }*/
 
             status += $"<br>{{?}} Pelly - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
 
