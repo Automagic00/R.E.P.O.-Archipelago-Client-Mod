@@ -1,5 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <!-- Replace these with your own locations -->
+    <REPO>D:\SteamLibrary\steamapps\common\REPO</REPO>
+	  <BepInCore>$(REPO)\BepInEx\core</BepInCore>
+    <MenuLib>$(REPO)\BepInEx\plugins\nickklmao-MenuLib</MenuLib>
+    <REPOLib>$(REPO)\BepInEx\plugins\Zehs-REPOLib</REPOLib>
+    <OutputFolder>$(REPO)\BepInEx\plugins</OutputFolder>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Do Not Modify -->
+    <Managed>$(REPO)\REPO_Data\Managed</Managed>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>

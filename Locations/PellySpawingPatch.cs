@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using UnityEngine;
 using System.Reflection;
-using System.Linq;
 
 namespace RepoAP
 {
@@ -19,7 +18,7 @@ namespace RepoAP
             //Make sure pelly spawn is set to false
             if (Plugin.connection.session != null && APSave.saveData.pellySpawning == false)
             {
-                Debug.Log("InValuableDirector");
+                Plugin.Logger.LogDebug("InValuableDirector");
 
                 FieldInfo field = AccessTools.Field(typeof(ValuableDirector), "mediumValuables");
                 List<GameObject> value = (List<GameObject>)field.GetValue(__instance);
@@ -27,12 +26,12 @@ namespace RepoAP
 
                 foreach (LevelValuables levelValuables in LevelGenerator.Instance.Level.ValuablePresets)
                 {
-                    foreach (var pelly in levelValuables.medium.Where(x => x.name.Contains("Pelly")).ToList())
+                    foreach (var pelly in levelValuables.medium.Where(x => x.PrefabName.Contains("Pelly")).ToList())
                     {
-                        Debug.Log($"Pelly Found: {pelly.name}");
-                        if (APSave.saveData.pellysRequired.All(x => !pelly.name.Contains(x.ToString())))
+                        Plugin.Logger.LogInfo($"Pelly Found: {pelly.PrefabName}");
+                        if (APSave.saveData.pellysRequired.All(x => !pelly.PrefabName.Contains(x.ToString())))
                         {
-                            Debug.Log($"Removing: {pelly.name}");
+                            Plugin.Logger.LogInfo($"Removing: {pelly.PrefabName}");
                             levelValuables.medium.Remove(pelly);
                         }
                         

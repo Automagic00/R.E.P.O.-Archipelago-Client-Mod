@@ -23,13 +23,13 @@ namespace RepoAP
         static bool ShopCheckPatch(ExtractionPoint __instance)
         {
 			shoppingList = (List<ItemAttributes>)field.GetValue(ShopManager.instance);
-			Debug.Log("Connected in shop check");
+			Plugin.Logger.LogInfo("Connected in shop check");
 			if (SemiFunc.IsMasterClientOrSingleplayer())
 			{
 				//Exit if not connected to server
 				if (Plugin.connection == null)
 				{
-					Debug.Log("Connection Null");
+					Plugin.Logger.LogInfo("Connection Null");
 					return true;
 				}
 				foreach (PlayerAvatar playerAvatar in GameDirector.instance.PlayerList)
@@ -47,9 +47,9 @@ namespace RepoAP
 						SemiFunc.StatSetRunCurrency(SemiFunc.StatGetRunCurrency() - value);
 
 
-						if (itemAttributes.item.itemAssetName == ItemNames.apItem)
+						if (itemAttributes.item.name == ItemNames.ap_item)
 						{
-							Debug.Log("AP ITEM PURCHASED " + itemAttributes.name);
+							Plugin.Logger.LogInfo("AP ITEM PURCHASED " + itemAttributes.name);
 							//Send Check Here
 
 							long id = LocationData.ShopItemToID(itemAttributes.name);
@@ -62,13 +62,13 @@ namespace RepoAP
 						//Otherwise purchase as normal
 						else
 						{
-							Debug.Log("Not AP Item\n" + itemAttributes.item.itemAssetName + " != " + ItemNames.apItem);
-							StatsManager.instance.ItemPurchase(itemAttributes.item.itemAssetName);
+							Plugin.Logger.LogInfo("Not AP Item\n" + itemAttributes.item.name + " != " + ItemNames.ap_item);
+							StatsManager.instance.ItemPurchase(itemAttributes.item.name);
 						}
 
-						if (itemAttributes.item.itemType == SemiFunc.itemType.item_upgrade && itemAttributes.item.itemAssetName != ItemNames.apItem)
+						if (itemAttributes.item.itemType == SemiFunc.itemType.item_upgrade && itemAttributes.item.name != ItemNames.ap_item)
 						{
-							StatsManager.instance.AddItemsUpgradesPurchased(itemAttributes.item.itemAssetName);
+							StatsManager.instance.AddItemsUpgradesPurchased(itemAttributes.item.name);
 						}
 						if (itemAttributes.item.itemType == SemiFunc.itemType.power_crystal)
 						{

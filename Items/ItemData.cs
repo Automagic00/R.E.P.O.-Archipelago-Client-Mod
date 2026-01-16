@@ -10,7 +10,7 @@ namespace RepoAP
     class ItemData
     {
         const int baseID = 75912022;
-        public const int shopStockID = 20;
+        public const int shopStockID = 10;
 
         public static Dictionary<long, string> itemIDToName;
         public static Dictionary<string, long> itemNameToID;
@@ -23,174 +23,183 @@ namespace RepoAP
             List<string> names = new List<string>();
             List<long> ids = new List<long>();
 
+            int base_shop_offset = shopStockID;
 
 
             //0-9 Reserved for Levels
             ids.Add(0);
-            names.Add(LocationNames.swiftbroom);
+            names.Add(LocationNames.swiftbroom_academy);
 
             ids.Add(1);
  			names.Add(LocationNames.headman_manor);
 
             ids.Add(2);
- 			names.Add(LocationNames.mcjannek);
+ 			names.Add(LocationNames.mcjannek_station);
 
             ids.Add(3);
- 			names.Add(LocationNames.museum);
+ 			names.Add(LocationNames.museum_of_human_art);
 
-            //Upgrades
-            ids.Add(10);
- 			names.Add(ItemNames.upgradeHealth);
+            // ---- AP Function Items ----
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.shop_stock);
 
-            ids.Add(11);
- 			names.Add(ItemNames.upgradeStrength);
+            // ---- UPGRADES ----
+            ids.Add(base_shop_offset++);
+ 			names.Add(ItemNames.upgrade_health);
 
-            ids.Add(12);
- 			names.Add(ItemNames.upgradeRange);
+            ids.Add(base_shop_offset++);
+ 			names.Add(ItemNames.upgrade_strength);
 
-            ids.Add(13);
- 			names.Add(ItemNames.upgradeSprintSpeed);
+            ids.Add(base_shop_offset++);
+ 			names.Add(ItemNames.upgrade_range);
 
-            ids.Add(14);
- 			names.Add(ItemNames.upgradeStamina);
+            ids.Add(base_shop_offset++);
+ 			names.Add(ItemNames.upgrade_sprint_speed);
 
-            ids.Add(15);
- 			names.Add(ItemNames.upgradePlayerCount);
+            ids.Add(base_shop_offset++);
+ 			names.Add(ItemNames.upgrade_stamina);
 
-            ids.Add(16);
- 			names.Add(ItemNames.upgradeDoubleJump);
+            ids.Add(base_shop_offset++);
+ 			names.Add(ItemNames.upgrade_player_count);
 
-            ids.Add(17);
- 			names.Add(ItemNames.upgradeTumbleLaunch);
+            ids.Add(base_shop_offset++);
+ 			names.Add(ItemNames.upgrade_double_jump);
 
-            ids.Add(18);
- 			names.Add(ItemNames.upgradeCrouchRest);
+            ids.Add(base_shop_offset++);
+ 			names.Add(ItemNames.upgrade_tumble_launch);
 
-            ids.Add(19);
- 			names.Add(ItemNames.upgradeTumbleWings);
+            ids.Add(base_shop_offset++);
+ 			names.Add(ItemNames.upgrade_crouch_rest);
 
-            ids.Add(shopStockID);
- 			names.Add(ItemNames.shopStock);
+            ids.Add(base_shop_offset++);
+ 			names.Add(ItemNames.upgrade_tumble_wings);
 
-            ids.Add(21);
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.upgrade_tumble_climb);
+
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.upgrade_death_head_battery);
+
+            // ---- SHOP UNLOCKS ----
+            /*ids.Add(base_shop_offset++);      // these aren't implemented yet but will eventually be filler
  			names.Add(ItemNames.small_health);
 
-            ids.Add(22);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.medium_health);
 
-            ids.Add(23);
- 			names.Add(ItemNames.large_health);
+            ids.Add(base_shop_offset++);
+ 			names.Add(ItemNames.large_health);*/
 
-            ids.Add(24);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.progressive_health);
 
-            ids.Add(25);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.baseball_bat);
 
-            ids.Add(26);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.frying_pan);
 
-            ids.Add(27);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.sledge_hammer);
 
-            ids.Add(28);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.sword);
 
-            ids.Add(29);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.inflatable_hammer);
 
-            ids.Add(30);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.prodzap);
 
-            ids.Add(31);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.gun);
 
-            ids.Add(32);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.shotgun);
 
-            ids.Add(33);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.tranq_gun);
 
-            ids.Add(34);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.pulse_pistol);
 
-            ids.Add(35);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.photon_blaster);
 
-            ids.Add(36);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.boltzap);
 
-            ids.Add(37);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.cart_cannon);
 
-            ids.Add(38);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.cart_laser);
 
-            ids.Add(39);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.grenade);
 
-            ids.Add(40);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.shock_grenade);
 
-            ids.Add(41);
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.human_grenade);
+
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.stun_grenade);
 
-            ids.Add(42);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.duct_taped_grenade);
 
-            ids.Add(43);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.shockwave_mine);
 
-            ids.Add(44);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.stun_mine);
 
-            ids.Add(45);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.explosive_mine);
 
-            ids.Add(46);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.rubber_duck);
 
-            ids.Add(47);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.recharge_drone);
 
-            ids.Add(48);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.indestructible_drone);
 
-            ids.Add(49);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.roll_drone);
 
-            ids.Add(50);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.feather_drone);
 
-            ids.Add(51);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.zero_grav_drone);
 
-            ids.Add(52);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.pocket_cart);
 
-            ids.Add(53);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.cart);
 
-            ids.Add(54);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.valuable_detector);
 
-            ids.Add(55);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.extraction_detector);
 
-            ids.Add(56);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.energy_crystal);
 
-            ids.Add(57);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.zero_grav_orb);
 
-            ids.Add(58);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.duck_bucket);
 
-            ids.Add(59);
+            ids.Add(base_shop_offset++);
  			names.Add(ItemNames.phase_bridge);
-
-            ids.Add(60);
-            names.Add(ItemNames.human_grenade);
 
             for (int i = 0; i < ids.Count;i++)
             {
@@ -203,13 +212,13 @@ namespace RepoAP
         {
             
             string itemName = IdToItemName(RemoveBaseId(itemId));
-            Debug.Log("Adding Item To Inventory: " + RemoveBaseId(itemId) + " : " + itemName);
+            Plugin.Logger.LogDebug("Attempting to add item to inventory: " + RemoveBaseId(itemId) + " : " + itemName);
 
             if (LocationNames.all_levels.Contains(itemName))
             {
                 APSave.AddLevelReceived(itemName);
             }
-            else if (itemName == ItemNames.shopStock)
+            else if (itemName == ItemNames.shop_stock)
             {
                 /*if (repeatedAdditions)
                 {
@@ -220,10 +229,16 @@ namespace RepoAP
             }
             else if (itemName.Contains("Upgrade"))
             {
-                StatsManager.instance.itemsPurchased[itemName]++;
+                // To ensure we don't grant upgrades multiple times, we check how many AP upgrades the save file already knows about and compare it to how many we have now.
+                // itemsUpgradesPurchased only tracks non-AP upgrades, which lets the player keep them in addition to the AP ones.
+                int upgradesReceived = StatsManager.instance.itemsPurchasedTotal[itemName] - StatsManager.instance.itemsUpgradesPurchased[itemName];
+                if (APSave.GetItemsReceived()[itemId] > upgradesReceived)
+                    StatsManager.instance.ItemPurchase(itemName);
+                else
+                    Plugin.Logger.LogDebug("Item " + itemName + " has already been received. Skipping...");
             }
-            
-            
+
+
         }
 
         public static string IdToItemName(long itemId)

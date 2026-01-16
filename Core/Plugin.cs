@@ -4,14 +4,18 @@ using UnityEngine;
 using System.Collections.Generic;
 using Photon.Pun;
 using System.Threading.Tasks;
+using BepInEx.Logging;
 
 namespace RepoAP
 {
-    [BepInPlugin("Automagic.ArchipelagoREPO", "Archipelago Randomizer", "0.2.4")]
+    [BepInPlugin("Automagic.ArchipelagoREPO", "Archipelago Randomizer", "0.3.0")]
     [BepInDependency("nickklmao.menulib")]
+    [BepInDependency("REPOLib")]
 
     public class Plugin : BaseUnityPlugin
     {
+
+        internal new static ManualLogSource Logger = null!;
 
         public static ArchipelagoConnection connection;
         public static Task reconnectTask = null;
@@ -29,30 +33,20 @@ namespace RepoAP
         public static string apPassword = "";
         public static string apSlot = "";
 
-        /*//Config Entries
-        private ConfigEntry<string> apAdressConfig;
-        private ConfigEntry<string> apPortConfig;
-        private ConfigEntry<string> apPassConfig;
-        private ConfigEntry<string> apSlotConfig;*/
 
         //Item tracking
         public static int LastShopItemChecked = 0;
         public static List<int> ShopItemsBought = new List<int>();
         public static List<int> ShopItemsAvailable = new List<int>();
 
+        internal static PluginConfig BoundConfig { get; private set; } = null!;
+
         private void Awake()
         {
-            /*apAdressConfig = Config.Bind("Archipelago", "Server Adress", "archipelago.gg");
-            apPortConfig = Config.Bind("Archipelago", "Server Port", "");
-            apPassConfig = Config.Bind("Archipelago", "Server Password", "");
-            apSlotConfig = Config.Bind("Archipelago", "Player Slot", "");
-
-            apAdress = apAdressConfig.Value;
-            apPort = apPortConfig.Value;
-            apPassword = apPassConfig.Value;
-            apSlot = apSlotConfig.Value;*/
+            Logger = base.Logger;
 
             _player = PlayerController.instance;
+            BoundConfig = new PluginConfig(base.Config);
             // Plugin startup logic
             Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
             var harmony = new Harmony("com.example.patch");
@@ -60,12 +54,28 @@ namespace RepoAP
         }
         private void Start()
         {
-            Debug.Log("In Start");
+            Logger.LogDebug("In Start");
             connection = new ArchipelagoConnection();
-            customRPCManagerObject = new GameObject();
+            customRPCManagerObject = new GameObject("RepoAPCustomRPCManager")
+            {
+                hideFlags = HideFlags.HideAndDontSave,
+            };
+            customRPCManagerObject.SetActive(false);
             customRPCManager = customRPCManagerObject.AddComponent<CustomRPCs>();
             customRPCManagerObject.AddComponent<PhotonView>();
             DontDestroyOnLoad(customRPCManager);
+            // I'm not sure if these next few lines are necessary, but they don't seem to hurt
+            string myPrefabId = $"{MyPluginInfo.PLUGIN_GUID}/{customRPCManagerObject.name}";
+            PrefabRef registeredNetworkPrefab = REPOLib.Modules.NetworkPrefabs.RegisterNetworkPrefab(myPrefabId, customRPCManagerObject);
+            if (registeredNetworkPrefab != null)
+            {
+                REPOLib.Modules.NetworkPrefabs.SpawnNetworkPrefab(registeredNetworkPrefab, Vector3.zero, Quaternion.identity);
+                Logger.LogInfo("Registered customRPCManagerObject for multiplayer RPCs.");
+            }
+            else
+                Logger.LogError("Failed to register customRPCManagerObject. Multiplayer may be borked.");
+            // this line is necessary to set the PhotonView ID to something unique (unless we find a way to do it dunamically and encure all clients get the same ID)
+            customRPCManagerObject.GetComponent<PhotonView>().ViewID = myPrefabId.GetHashCode();
             ItemData.CreateItemDataTable();
 
         }

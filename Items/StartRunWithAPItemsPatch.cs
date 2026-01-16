@@ -8,27 +8,46 @@ using UnityEngine;
 
 namespace RepoAP.Items
 {
-    [HarmonyPatch(typeof(StatsManager),"RunStartStats")]
-    class StartRunWithAPItemsPatch
+
+    class StartRunWithAPItems
     {
-        [HarmonyPostfix]
-        static void RunStartStatsPatch()
+        internal static void GrantAPItems()
         {
             if (Plugin.connection.session == null)
             {
                 return;
             }
 
-            Debug.Log("Start Run With AP Items");
+            Plugin.Logger.LogInfo("Start Run With AP Items");
             var itemsReceived = APSave.GetItemsReceived();
 
             foreach (var item in itemsReceived)
             {
                 for (int i = 0; i < item.Value; i++)
                 {
-                    ItemData.AddItemToInventory(item.Key,true);
+                    ItemData.AddItemToInventory(item.Key, true);
                 }
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(StatsManager), "SaveFileCreate")]
+    class CreateRunWithAPItemsPatch
+    {
+        [HarmonyPostfix]
+        static void RunStartStatsPatch()
+        {
+            StartRunWithAPItems.GrantAPItems();
+        }
+    }
+
+    [HarmonyPatch(typeof(StatsManager), "LoadGame")]    // it turns out that RunStartStats runs before the save data loads, which is why we couldn't track which items we already had
+    class LoadRunWithAPItemsPatch
+    {
+        [HarmonyPostfix]
+        static void RunStartStatsPatch()
+        {
+            StartRunWithAPItems.GrantAPItems();
         }
     }
 }

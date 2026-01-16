@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
-using System.Reflection;
+using RepoAP;
 using UnityEngine;
 
 namespace RepoAP
@@ -19,7 +20,7 @@ namespace RepoAP
 		//static int totalHaul;
 	    private static void CheckValuable(GameObject valuableObject)
 	    {
-            Debug.Log($"Extracting {valuableObject.name}");
+            Plugin.Logger.LogInfo($"Extracting {valuableObject.name}");
             if (valuableObject && valuableObject.GetComponent<PhysGrabObject>())
             {
                //totalHaulField.SetValue(RoundDirector.instance, totalHaul + (int)valuableObject.GetComponent<ValuableObject>().dollarValueCurrent);
@@ -88,7 +89,7 @@ namespace RepoAP
     class ExtractionSendCheckPatch
     {
 		static FieldInfo field = AccessTools.Field(typeof(RoundDirector), "totalHaul");
-		static int totalHaul;
+		//static int totalHaul;
 
         [HarmonyPrefix, HarmonyPatch("DestroyAllPhysObjectsInHaulList")]
         static void ExtractAllPatch()
@@ -112,5 +113,16 @@ namespace RepoAP
 
 			ExtractSendCheck.SendFirst(field);
 		}
-	}
+        [HarmonyPostfix, HarmonyPatch("DestroyAllPhysObjectsInHaulList")]
+        static void ExtractAllSyncWithClientsPatch()
+        {
+            //Exit if not connected to an AP Server
+            if (Plugin.connection == null)
+            {
+                return;
+            }
+
+            Plugin.customRPCManager.CallSyncSlotDataWithClientsRpc(Plugin.customRPCManagerObject);
+        }
+    }
 }

@@ -45,7 +45,7 @@ namespace RepoAP
         public DeathLinkService deathLinkService;
         public int ItemIndex = 0;
         private ConcurrentQueue<(ItemInfo NetworkItem, int index)> incomingItems;
-        private ConcurrentQueue<ItemInfo> outgoingItems;
+        private ConcurrentQueue<SerializableItemInfo> outgoingItems;
         private ConcurrentQueue<messageData> messageItems;
 
         private struct messageData
@@ -70,12 +70,12 @@ namespace RepoAP
             get { return session != null ? session.Socket.Connected : false; }
         }
 
-        public async Task TryConnect(string adress, int port, string pass, string player)
+        public async Task TryConnect(string address, int port, string pass, string player)
         {
-            Debug.Log("TryConnect");
+            Plugin.Logger.LogDebug("TryConnect");
             if (connected)
             {
-                Debug.Log("Returning");
+                Plugin.Logger.LogDebug("Already connected. Returning");
                 return;
             }
             
@@ -87,20 +87,20 @@ namespace RepoAP
             {
                 try
                 {
-                    session = ArchipelagoSessionFactory.CreateSession(adress, port);
-                    Debug.Log("Session at " + session.ToString());
-
-                    session.MessageLog.OnMessageReceived += MessageLog_OnMessageReceived;
+                    session = ArchipelagoSessionFactory.CreateSession(address, port);
+                    Plugin.Logger.LogInfo("Session at " + session.ToString());
+                    if (Plugin.BoundConfig.DisplayAPMessagesOnTruckScreen.Value)
+                        session.MessageLog.OnMessageReceived += MessageLog_OnMessageReceived;
                 }
                 catch
                 {
-                    Debug.Log("Failed to create archipelago session!");
+                    Plugin.Logger.LogError("Failed to create archipelago session!");
                 }
             }
             
             messageHandler = MessageHandler();
             incomingItems = new ConcurrentQueue<(ItemInfo NetworkItem, int index)>();
-            outgoingItems = new ConcurrentQueue<ItemInfo>();
+            outgoingItems = new ConcurrentQueue<SerializableItemInfo>();
             messageItems = new ConcurrentQueue<messageData>();
 
             // setup
@@ -120,7 +120,7 @@ namespace RepoAP
 
                 slotData = LoginSuccess.SlotData;
 
-                Debug.Log("Successfully connected to Archipelago Multiworld server!");
+                Plugin.Logger.LogInfo("Successfully connected to Archipelago Multiworld server!");
                 APSave.Init();
                 APSave.ScoutLocations();
 
@@ -133,16 +133,16 @@ namespace RepoAP
 
                 deathLinkService = session.CreateDeathLinkService();
 
-               /* deathLinkService.OnDeathLinkReceived += (deathLinkObject) =>
-                {
-                    if (SceneManager.GetActiveScene().name != "TitleScreen" && _player != null && !_player.dead && !DeathLinkPatch.isDeathLink )
-                    {
-                        //Debug.Log("Death link received");
-                        DeathLinkPatch.deathMsg = deathLinkObject.Cause == null ? $"{deathLinkObject.Source} died. Point and laugh." : $"{deathLinkObject.Cause}";
-                        DeathLinkPatch.isDeathLink = true;
+                /* deathLinkService.OnDeathLinkReceived += (deathLinkObject) =>
+                 {
+                     if (SceneManager.GetActiveScene().name != "TitleScreen" && _player != null && !_player.dead && !DeathLinkPatch.isDeathLink )
+                     {
+                         //Debug.Log("Death link received");
+                         DeathLinkPatch.deathMsg = deathLinkObject.Cause == null ? $"{deathLinkObject.Source} died. Point and laugh." : $"{deathLinkObject.Cause}";
+                         DeathLinkPatch.isDeathLink = true;
 
-                    }
-                };*/
+                     }
+                 };*/
 
 
                 /*if ((bool)Plugin.connection.slotData["death_link"])
@@ -156,16 +156,20 @@ namespace RepoAP
             else
             {
                 LoginFailure loginFailure = (LoginFailure)result;
-                Debug.Log("Error connecting to Archipelago:");
                 //Notifications.Show($"\"Failed to connect to Archipelago!\"", $"\"Check your settings and/or log output.\"");
+                string connectFailureMessage = "Unable to connect to Archipelago Multiworld server:\n";
                 foreach (string Error in loginFailure.Errors)
                 {
-                    Debug.Log(Error);
+                    connectFailureMessage += $"{Error}\n";
+                    //Debug.Log(Error);
                 }
+                connectFailureMessage += "\n";
                 foreach (ConnectionRefusedError Error in loginFailure.ErrorCodes)
                 {
-                    Debug.Log(Error.ToString());
+                    connectFailureMessage += $"{Error.ToString()}\n";
+                    //Debug.Log(Error.ToString());
                 }
+                Plugin.Logger.LogWarning(connectFailureMessage);
                 TryDisconnect();
             }
             
@@ -207,7 +211,7 @@ namespace RepoAP
         {
             ItemInfo nextItem = helper.DequeueItem();
 
-            Debug.Log($"OnItemReceived: {nextItem.ToString()}");
+            Plugin.Logger.LogInfo($"OnItemReceived: {nextItem.ToString()}");
         }
 
         public void TryDisconnect()
@@ -224,18 +228,18 @@ namespace RepoAP
                 //outgoingItemHandler = null;
                 //checkItemsReceived = null;
                 incomingItems = new ConcurrentQueue<(ItemInfo NetworkItem, int ItemIndex)>();
-                outgoingItems = new ConcurrentQueue<ItemInfo>();
+                outgoingItems = new ConcurrentQueue<SerializableItemInfo>();
                 deathLinkService = null;
                 slotData = null;
                 ItemIndex = 0;
                 //Locations.CheckedLocations.Clear();
                 //ItemLookup.ItemList.Clear();
 
-                Debug.Log("Disconnected from Archipelago");
+                Plugin.Logger.LogInfo("Disconnected from Archipelago");
             }
             catch
             {
-                Debug.Log("Encountered an error disconnecting from Archipelago!");
+                Plugin.Logger.LogError("Encountered an error disconnecting from Archipelago!");
             }
         }
 
@@ -250,7 +254,7 @@ namespace RepoAP
             }
             catch(Exception e)
             {
-                Debug.Log("Failure in reconnecting: " + e.Message);
+                Plugin.Logger.LogWarning("Failure in reconnecting: " + e.Message);
             }
         }
 
@@ -258,7 +262,7 @@ namespace RepoAP
         {
             if (!APSave.saveData.locationsChecked.Contains(locationID))
             {
-                Debug.Log("Checked Location " + locationID);
+                Plugin.Logger.LogInfo("Checked Location " + locationID);
                 session.Locations.CompleteLocationChecksAsync(locationID);
 
                 //Debug.Log("TrySave");
@@ -276,7 +280,7 @@ namespace RepoAP
                         {
                             foreach (ItemInfo itemInfo in locationInfoPacket.Result.Values)
                             {
-                                outgoingItems.Enqueue(itemInfo);
+                                outgoingItems.Enqueue(itemInfo.ToSerializable());
                             }
                         });
                 }
@@ -290,9 +294,9 @@ namespace RepoAP
 
             if (serverLocCount != clientLocCount.Count)
             {
-                Debug.Log("Locations Unsynced, resyncing...");
+                Plugin.Logger.LogWarning("Locations Unsynced, resyncing...");
                 Dictionary<string,int> clientLocs = StatsManager.instance.dictionaryOfDictionaries["Locations Obtained"];
-                Debug.Log("Server: " + serverLocCount + "\nClient Count: " + clientLocCount + "\nClient Raw: " + clientLocs.Count);
+                Plugin.Logger.LogInfo("Server: " + serverLocCount + "\nClient Count: " + clientLocCount + "\nClient Raw: " + clientLocs.Count);
 
                 /*foreach (string location in clientLocs)
                 {
@@ -309,7 +313,7 @@ namespace RepoAP
 
         public long GetLocationID(string name)
         {
-            long id = session.Locations.GetLocationIdFromName("Another Crabs Treasure", name);
+            long id = session.Locations.GetLocationIdFromName("R.E.P.O", name);
             return id;
         }
 
@@ -328,7 +332,7 @@ namespace RepoAP
                     //NetworkItem Item = session.Items.AllItemsReceived[ItemIndex];
                     ItemInfo Item = session.Items.AllItemsReceived[ItemIndex];
                     string ItemReceivedName = Item.ItemName;
-                    Debug.Log("Placing item " + ItemReceivedName + " with index " + ItemIndex + " in queue.");
+                    Plugin.Logger.LogDebug("Placing item " + ItemReceivedName + " with index " + ItemIndex + " in queue.");
                     incomingItems.Enqueue((Item, ItemIndex));
                     ItemIndex++;
                     yield return true;
@@ -378,7 +382,7 @@ namespace RepoAP
                 var locID = networkItem.LocationId;
                 var receiver = session.Players.GetPlayerName(networkItem.Player);
 
-                Debug.Log("Sent " + itemName + " at " + location + " for " + receiver);
+                Plugin.Logger.LogInfo("Sent " + itemName + " at " + location + " for " + receiver);
 
                 if (networkItem.Player != session.ConnectionInfo.Slot)
                 {
@@ -414,13 +418,13 @@ namespace RepoAP
                 {
                     incomingItems.TryDequeue(out _);
                     //TunicRandomizer.Tracker.SetCollectedItem(itemName, false);
-                    Debug.Log("Skipping item " + itemName + " at index " + pendingItem.index + " as it has already been processed.");
+                    Plugin.Logger.LogDebug("Skipping item " + itemName + " at index " + pendingItem.index + " as it has already been processed.");
                     yield return true;
                     continue;
                 }
 
                 //CrabFile.current.SetInt($"randomizer processed item index {pendingItem.index}", 1);
-                Debug.Log("ItemHandler " + networkItem.ItemId);
+                Plugin.Logger.LogInfo("ItemHandler " + networkItem.ItemId);
                 APSave.AddItemReceived(networkItem.ItemId);
 
                 List<Level> nonGameLevels = new List<Level> { RunManager.instance.levelMainMenu, RunManager.instance.levelLobby, RunManager.instance.levelLobbyMenu };
@@ -458,7 +462,7 @@ namespace RepoAP
             {
                 session.Socket.SendPacket(new SayPacket() { Text = "!release" });
                 sentRelease = true;
-                Debug.Log("Released remaining checks.");
+                Plugin.Logger.LogInfo("Released remaining checks.");
             }
         }
 
@@ -468,7 +472,59 @@ namespace RepoAP
             {
                 session.Socket.SendPacket(new SayPacket() { Text = "!collect" });
                 sentCollect = true;
-                Debug.Log("Collected remaining items.");
+                Plugin.Logger.LogInfo("Collected remaining items.");
+            }
+        }
+
+        /** Syncs the player's completion progress to the Archipelago data storage.
+         *
+         * @param levels_completed The number of levels the player has completed. 
+         * @param pellys_gathered A list of pellys the player has gathered.
+         * @param valuables_gathered A list of valuables the player has gathered.
+         * @param monster_souls_gathered A list of monster souls the player has gathered.
+         */
+        public async Task SyncCompletionProgress(long levels_completed, List<string> pellys_gathered, List<string> valuables_gathered, List<string> monster_souls_gathered, int shop_stock_received) 
+        {
+            if (connected)
+            {
+                // level goal
+                long tempLevels = await session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-levelsCompleted"].GetAsync<long>();
+                APSave.saveData.levelsCompleted = Math.Max(levels_completed,
+                    tempLevels);
+                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-levelsCompleted"] = APSave.saveData.levelsCompleted;
+
+                // pelly goal
+                List<string> pellyData = await session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-pellysGathered"].GetAsync<List<string>>();
+                foreach (var item in pellys_gathered.Where(pelly => !pellyData.Contains(pelly)))
+                {
+                    pellyData.Add(item);
+                }
+                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-pellysGathered"] = pellyData;
+                APSave.saveData.pellysGathered = pellyData;
+
+                // valuable goal
+                List<string> valuableData = await session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-valuablesGathered"].GetAsync<List<string>>();
+                foreach (var item in valuables_gathered.Where(valuable => !valuableData.Contains(valuable)))
+                {
+                    valuableData.Add(item);
+                }
+                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-valuablesGathered"] = valuableData;
+                APSave.saveData.valuablesGathered = valuableData;
+
+                // monster soul goal
+                List<string> monsterData = await session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-monsterSoulsGathered"].GetAsync<List<string>>();
+                foreach (var item in monster_souls_gathered.Where(soul => !monsterData.Contains(soul)))
+                {
+                    monsterData.Add(item);
+                }
+                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-monsterSoulsGathered"] = monsterData;
+                APSave.saveData.monsterSoulsGathered = monsterData;
+
+                // shopStockReceived gets updated when connecting, so we don't need to store it on the server
+                // itemsReceived is filled when connecting if some received items are missing, so we don't need to store it on the server
+                // levelsUnlocked gets constructed from itemsReceived, so we don't need to store it on the server
+                // we already know locationsScouted gets filled if it isn't already
+                // the rest get filled when connecting as well
             }
         }
 
@@ -480,5 +536,15 @@ namespace RepoAP
             }
         }
 
+        /*public void HandleDeathLink()
+        {
+            if (!SemiFunc.MenuLevel() && !RunManager.AllPlayersDead && !DeathLinkPatch.isDeathLink)
+            {
+                //Debug.Log("Death link received");
+                DeathLinkPatch.deathMsg = deathLinkObject.Cause == null ? $"{deathLinkObject.Source} died. Point and laugh." : $"{deathLinkObject.Cause}";
+                DeathLinkPatch.isDeadFromDeathLink = true;
+
+            }
+        }*/
     }
 }

@@ -17,7 +17,7 @@ namespace RepoAP
         [HarmonyPostfix]
         static void CheckComplete()
         {
-            Debug.Log("Truck Go To Next");
+            Plugin.Logger.LogInfo("Truck Go To Next");
             string status;
             bool complete = APSave.CheckCompletion(out status);
             if (complete)
