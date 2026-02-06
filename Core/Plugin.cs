@@ -49,8 +49,9 @@ namespace RepoAP
             BoundConfig = new PluginConfig(base.Config);
             // Plugin startup logic
             Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
-            var harmony = new Harmony("com.example.patch");
+            var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
+            harmony.PatchAll(typeof(EnemyDespawnPatch));
         }
         private void Start()
         {

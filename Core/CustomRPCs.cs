@@ -57,6 +57,14 @@ namespace RepoAP
                 APSave.saveData.pellysRequired.ToString(), APSave.saveData.valuableHunt, APSave.saveData.monsterHunt };  
             photonView.RPC(nameof(CustomRPCs.SyncSlotDataWithClientsRpc), RpcTarget.All, p);
         }
+        public void CallClientChangeMonsterOrbName(GameObject inst, string enemyName)
+        {
+            Plugin.Logger.LogInfo("Calling ClientChangeMonsterOrbName");
+            PhotonView photonView = inst.GetComponent<PhotonView>();
+            object[] p = new object[] { enemyName };
+            photonView.RPC(nameof(CustomRPCs.ClientChangeMonsterOrbName), RpcTarget.All, p);
+        }
+
 
 
         [PunRPC]
@@ -102,6 +110,11 @@ namespace RepoAP
             APSave.saveData.valuableHunt = valuable_hunt;                   // needed
             APSave.saveData.monsterHunt = monster_hunt;                     // needed
             Plugin.Logger.LogInfo("Ap data synced with host");
+        }
+        [PunRPC]
+        public void ClientChangeMonsterOrbName(string enemyName)
+        {
+            EnemyDespawnPatch.ChangeEnemyOrbNames(enemyName);
         }
     }
 }
