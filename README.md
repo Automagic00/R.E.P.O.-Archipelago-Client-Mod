@@ -10,13 +10,15 @@ More information at https://archipelago.gg/
 3) Using the Archipelago.gg website or a local machine, host a server using the output file generated.
 
 #### Thunderstore instructions
-1) Install the Thunderstore Mod Manager at https://www.overwolf.com/app/thunderstore-thunderstore_mod_manager
-2) Install the R.E.P.O. Archipelago mod and all dependencies by clicking on "Install with Mod Manager" at https://thunderstore.io/c/repo/p/Automagic/Archipelago_Randomizer_for_REPO/
-3) On the Profile page of the Thunderstore Mod manager, click "Edit config" then click edit on "BepInEx/config/BepInEx.cfg". You may need to run the game modded first for this to appear.
-4) Under the "Chainloader" section, set "HideManagerGameObject" to true and click save.
-5) Click the Run Modded button to launch R.E.P.O.
-6) On the main menu, click the Archipelago button and enter the server address, port, server password, and player slot name into the listed fields.
-7) After a successful connection, start a new save file and begin playing.
+1) Install a Mod Manager (I personally recommend [r2modman](<https://thunderstore.io/c/repo/p/ebkr/r2modman/>) or [Gale](<https://thunderstore.io/c/repo/p/Kesomannen/GaleModManager/>), but [Thunderstore Mod Manager](https://www.overwolf.com/app/thunderstore-thunderstore_mod_manager) is also an option)
+2) Open the mod manager and create a new profile. Select that profile, then open the tab that lets you browse mods and install Archipelago Randomizer for REPO and it's dependencies. Alternatively, go to https://thunderstore.io/c/repo/p/Automagic/Archipelago_Randomizer_for_REPO/ and click the "Install with Mod Manager" button.
+3) Next, you'll need to make sure 'Hide manager game object' is set to True in the BepInEx config. You may need to run the game with mods once for this to appear. The way you edit mod configs depends on your mod manager:
+     With Thunderstore Mod manager, click "Edit config" on the Profile page, then click edit on "BepInEx/config/BepInEx.cfg". Under the "Chainloader" section, set "HideManagerGameObject" to true and click save.
+     With r2modman, select your profile and click "Config editor" on the sidebar to your left. Select "BepInEx/config/BepInEx.cfg", then "Edit Config". Under the "Chainloader" section, set "HideManagerGameObject" to true and click Save.
+     With Gale, select your profile and click "Edit mod config" on the sidebar to your left. Select "BepInEx", then "ChainLoader", and make sure that the button to the right of "Hide manager game object" has a green checkmark.
+4) Click the Run Modded button to launch R.E.P.O. When the main menu loads, you should see a new button at the bottom of the screen that says "ARCHIPELAGO".
+5) On the main menu, click on the Archipelago button to open the connection menu. Enter your multiworld's address, port, password (if it has one, otherwise leave the box blank), and your slot name, then click CONNECT. If you entered everything correctly, the text above the address box should change from 'Not connected' to 'Connected'.
+6) After a successful connection, start a new save file and begin playing.
 
 #### Manual Client Install Instructions
 1) Download version 5.4.21 of BepInEx from https://thunderstore.io/c/repo/p/BepInEx/BepInExPack/
