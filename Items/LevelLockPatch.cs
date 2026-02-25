@@ -59,7 +59,7 @@ namespace RepoAP
             }
             __instance.levelCurrent = levelChoice;
             Plugin.Logger.LogInfo("Returning " + __instance.levelCurrent.name);
-            Plugin.customRPCManager.CallSyncSlotDataWithClientsRpc(Plugin.customRPCManagerObject);
+            Plugin.customRPCManager.CallSyncSlotDataWithClientsRpc(Plugin.customRPCManagerObject);  // Might be involved in a race condition with SyncCompletionProgress, but it should only affect the info clients see
 
         }
     }

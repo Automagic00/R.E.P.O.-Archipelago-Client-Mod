@@ -46,7 +46,7 @@ namespace RepoAP
 
         }
 
-        public void CallSyncSlotDataWithClientsRpc(GameObject inst) // I don't even know if this will work. I believe this needs to be called when entering a new level and extracting
+        public void CallSyncSlotDataWithClientsRpc(GameObject inst)
         {
             if (GameManager.instance.gameMode != 1 || !PhotonNetwork.IsMasterClient)
                 return;
@@ -55,7 +55,7 @@ namespace RepoAP
             object[] p = new object[] { APSave.saveData.pellysGathered.ToArray<string>(), APSave.saveData.valuablesGathered.ToArray<string>(), 
                 APSave.saveData.monsterSoulsGathered.ToArray<string>(), APSave.saveData.locationsScouted.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToJson(full:true) ), 
                 APSave.saveData.pellysRequired.ToString(), APSave.saveData.valuableHunt, APSave.saveData.monsterHunt };  
-            photonView.RPC(nameof(CustomRPCs.SyncSlotDataWithClientsRpc), RpcTarget.All, p);
+            photonView.RPC(nameof(CustomRPCs.SyncSlotDataWithClientsRpc), RpcTarget.Others, p);    // using RpcTarget.All here may have created a race condition with APSaveData.CheckCompletion when both are called after a level is complete
         }
         public void CallClientChangeMonsterOrbName(GameObject inst, string enemyName)
         {

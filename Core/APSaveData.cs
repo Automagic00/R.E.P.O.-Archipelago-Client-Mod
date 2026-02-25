@@ -574,7 +574,7 @@ namespace RepoAP
 
             if(goalMet) Plugin.Logger.LogInfo("All Goals Complete.");
 
-            _ = Plugin.connection.SyncCompletionProgress(completedLevels, APSave.saveData.pellysGathered, APSave.saveData.valuablesGathered, APSave.saveData.monsterSoulsGathered, APSave.saveData.shopStockReceived);
+            _ = Plugin.connection.SyncCompletionProgress(completedLevels, APSave.saveData.pellysGathered, APSave.saveData.valuablesGathered, APSave.saveData.monsterSoulsGathered);
 
             return goalMet;
         }

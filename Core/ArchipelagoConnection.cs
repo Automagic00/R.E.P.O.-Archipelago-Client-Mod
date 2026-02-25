@@ -152,6 +152,12 @@ namespace RepoAP
 
                 //SetupDataStorage();
 
+                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-levelsCompleted"].Initialize(0);
+                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-pellysGathered"].Initialize(new List<string>());
+                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-valuablesGathered"].Initialize(new List<string>());
+                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-monsterSoulsGathered"].Initialize(new List<string>());
+
+                _ = Plugin.connection.SyncCompletionProgress(APSave.saveData.levelsCompleted, APSave.saveData.pellysGathered, APSave.saveData.valuablesGathered, APSave.saveData.monsterSoulsGathered);
             }
             else
             {
@@ -483,49 +489,48 @@ namespace RepoAP
          * @param valuables_gathered A list of valuables the player has gathered.
          * @param monster_souls_gathered A list of monster souls the player has gathered.
          */
-        public async Task SyncCompletionProgress(long levels_completed, List<string> pellys_gathered, List<string> valuables_gathered, List<string> monster_souls_gathered, int shop_stock_received) 
+        public async Task SyncCompletionProgress(long levels_completed, List<string> pellys_gathered, List<string> valuables_gathered, List<string> monster_souls_gathered) 
         {
             if (connected)
             {
-                // level goal
-                long tempLevels = await session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-levelsCompleted"].GetAsync<long>();
-                APSave.saveData.levelsCompleted = Math.Max(levels_completed,
-                    tempLevels);
-                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-levelsCompleted"] = APSave.saveData.levelsCompleted;
+                Plugin.Logger.LogInfo("Syncing completion progress to Archipelago data storage...");
 
-                // pelly goal
-                List<string> pellyData = await session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-pellysGathered"].GetAsync<List<string>>();
-                foreach (var item in pellys_gathered.Where(pelly => !pellyData.Contains(pelly)))
-                {
-                    pellyData.Add(item);
-                }
-                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-pellysGathered"] = pellyData;
-                APSave.saveData.pellysGathered = pellyData;
+                Task<long> getLevelsCompleted = SyncAPClientServerData($"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-levelsCompleted", levels_completed);
+                Task<List<string>> getPellysGathered = SyncAPClientServerData($"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-pellysGathered", pellys_gathered);
+                Task<List<string>> getValuablesGathered = SyncAPClientServerData($"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-valuablesGathered", valuables_gathered);
+                Task<List<string>> getMonsterSoulsGathered = SyncAPClientServerData($"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-monsterSoulsGathered", monster_souls_gathered);
+                APSave.saveData.levelsCompleted = await getLevelsCompleted;
+                APSave.saveData.pellysGathered = await getPellysGathered;
+                APSave.saveData.valuablesGathered = await getValuablesGathered;
+                APSave.saveData.monsterSoulsGathered = await getMonsterSoulsGathered;
 
-                // valuable goal
-                List<string> valuableData = await session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-valuablesGathered"].GetAsync<List<string>>();
-                foreach (var item in valuables_gathered.Where(valuable => !valuableData.Contains(valuable)))
-                {
-                    valuableData.Add(item);
-                }
-                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-valuablesGathered"] = valuableData;
-                APSave.saveData.valuablesGathered = valuableData;
-
-                // monster soul goal
-                List<string> monsterData = await session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-monsterSoulsGathered"].GetAsync<List<string>>();
-                foreach (var item in monster_souls_gathered.Where(soul => !monsterData.Contains(soul)))
-                {
-                    monsterData.Add(item);
-                }
-                session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-monsterSoulsGathered"] = monsterData;
-                APSave.saveData.monsterSoulsGathered = monsterData;
-
+                Plugin.Logger.LogInfo("Data storage sync complete");
                 // shopStockReceived gets updated when connecting, so we don't need to store it on the server
                 // itemsReceived is filled when connecting if some received items are missing, so we don't need to store it on the server
                 // levelsUnlocked gets constructed from itemsReceived, so we don't need to store it on the server
                 // we already know locationsScouted gets filled if it isn't already
                 // the rest get filled when connecting as well
             }
+        }
+
+        async Task<long> SyncAPClientServerData(string serverDataKey, long localData)
+        {
+            long serverData = await session.DataStorage[serverDataKey].GetAsync<long>();
+            serverData = Math.Max(localData,
+                serverData);
+            session.DataStorage[serverDataKey] = serverData;
+            return serverData;
+        }
+
+        async Task<List<string>> SyncAPClientServerData(string serverDataKey, List<string> localData)
+        {
+            List<string> serverData = await session.DataStorage[serverDataKey].GetAsync<List<string>>();
+            foreach (var item in localData.Where(element => !serverData.Contains(element)))
+            {
+                serverData.Add(item);
+            }
+            session.DataStorage[serverDataKey] = serverData;
+            return serverData;
         }
 
         public void SendDeathLink()
