@@ -1,9 +1,5 @@
 .idea/
-obj/Debug/net48/
-obj/Release/
-obj/Release/net48/
-obj/
 .vs/
-.bin/
-bin/Release/net48/
+bin/*
+obj/*
 *.csproj.user
