@@ -103,17 +103,24 @@ namespace RepoAP
                             ShopManager.instance.potentialItemHealthPacks.Add(obj);
                         else if (flag1)
                             ShopManager.instance.potentialItemConsumables.Add(obj);
-                        else if (obj.itemSecretShopType == SemiFunc.itemSecretShopType.none)
-                        {
+                        else //if (obj.itemSecretShopType == SemiFunc.itemSecretShopType.none)    // for fun
+                             //{
                             ShopManager.instance.potentialItems.Add(obj);
-                        }
+                        /*}
                         else
                         {
                             if (!ShopManager.instance.potentialSecretItems.ContainsKey(obj.itemSecretShopType))
                                 ShopManager.instance.potentialSecretItems.Add(obj.itemSecretShopType, new List<Item>());
                             ShopManager.instance.potentialSecretItems[obj.itemSecretShopType].Add(obj);
-                        }
+                        }*/
                     }
+                }
+                // this is just a test for fun
+                if (obj.itemType != SemiFunc.itemType.item_upgrade && obj.itemType != SemiFunc.itemType.cart && obj.itemType != SemiFunc.itemType.pocket_cart)
+                {
+                    if (!ShopManager.instance.potentialSecretItems.ContainsKey(SemiFunc.itemSecretShopType.shop_attic))
+                        ShopManager.instance.potentialSecretItems.Add(SemiFunc.itemSecretShopType.shop_attic, new List<Item>());
+                    ShopManager.instance.potentialSecretItems[SemiFunc.itemSecretShopType.shop_attic].Add(obj);
                 }
             }
             ShopManager.instance.potentialItems.Shuffle<Item>();
