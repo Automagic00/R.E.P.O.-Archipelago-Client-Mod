@@ -36,7 +36,7 @@ namespace RepoAP
 
 
         //Item tracking
-        public static int LastShopItemChecked = 0;
+        public static int LastShopItemChecked = 0;  // this is never read and I don't know why it exists
         public static List<int> ShopItemsBought = new List<int>();
         public static List<int> ShopItemsAvailable = new List<int>();
 

@@ -27,277 +27,150 @@ namespace RepoAP
         }
     }
 
+    [HarmonyPatch(typeof(ShopManager), "GetAllItemsFromStatsManager")]
+    class CreateShopItemListPatch
+    {
+        static bool IsItemUnlockedInMultiworld(Item itemToCheck)
+        {
+            if (itemToCheck.itemType == SemiFunc.itemType.item_upgrade)
+            {
+                return true;
+            }
+            else if (itemToCheck.itemName.Contains("Health Pack"))
+            {
+                if (itemToCheck.itemName.Contains("Large") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.progressive_health]), 3)) return false;
+                if (itemToCheck.itemName.Contains("Medium") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.progressive_health]), 2)) return false;
+                if (itemToCheck.itemName.Contains("Small") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.progressive_health]), 1)) return false;
+                Plugin.Logger.LogInfo($"Item '{itemToCheck.itemName}' is unlocked and able to spawn");
+                return true;
+            }
+            if (!ItemData.itemNameToID.TryGetValue(itemToCheck.itemName + " Unlock", out long itemID))     // if an item is not in our item data table, we can assume it's not known by AP and should be left alone
+            {
+                if (itemToCheck.itemName.Equals("Duct Taped Grenades")) itemID = ItemData.itemNameToID[ItemNames.duct_taped_grenade];  // temporary fix for incorrect name
+                else if (itemToCheck.itemName.Equals("POCKET C.A.R.T.")) itemID = ItemData.itemNameToID[ItemNames.pocket_cart];  // temporary fix for incorrect name
+                else if (itemToCheck.itemName.Equals("Extraction Tracker")) itemID = ItemData.itemNameToID[ItemNames.extraction_detector];  // temporary fix for incorrect name
+                else if (itemToCheck.itemName.Equals("Shockwave Grenade")) itemID = ItemData.itemNameToID[ItemNames.shock_grenade];  // temporary fix for incorrect name
+                else if (itemToCheck.itemName.Equals("Valuable Tracker")) itemID = ItemData.itemNameToID[ItemNames.valuable_detector];  // temporary fix for incorrect name
+                else
+                {
+                    Plugin.Logger.LogInfo($"Item '{itemToCheck.itemName}' not found in AP data table");
+                    return true;
+                }
+            }
+            if (APSave.IsItemReceived(ItemData.AddBaseId(itemID)))
+            {
+                Plugin.Logger.LogInfo($"Item '{itemToCheck.itemName}' is unlocked and able to spawn");
+                return true;
+            }
+            Plugin.Logger.LogInfo($"Item '{itemToCheck.itemName}' is not unlocked and will not spawn");
+            return false;
+        }
 
+        // search for StatsManager.instance.itemDictionary.Values and replace it with our own edited list
+        [HarmonyPrefix]
+		static bool GetAllAPItemsFromStatsManager()
+		{
+            if (SemiFunc.IsNotMasterClient())
+                return true;
+            ShopManager.instance.potentialItems.Clear();
+            ShopManager.instance.potentialItemConsumables.Clear();
+            ShopManager.instance.potentialItemUpgrades.Clear();
+            ShopManager.instance.potentialItemHealthPacks.Clear();
+            ShopManager.instance.potentialSecretItems.Clear();
+            ShopManager.instance.itemConsumablesAmount = UnityEngine.Random.Range(4, 6);
+            foreach (Item obj in StatsManager.instance.itemDictionary.Values)
+            {
+                int itemsPurchased = SemiFunc.StatGetItemsPurchased(obj.name);
+                float max = obj.value.valueMax / 1000f * (float)AccessTools.Field(typeof(ShopManager), "itemValueMultiplier").GetValue(ShopManager.instance);//ShopManager.instance.itemValueMultiplier;
+                if (obj.itemType == SemiFunc.itemType.item_upgrade)
+                    max = ShopManager.instance.UpgradeValueGet(max, obj);
+                else if (obj.itemType == SemiFunc.itemType.healthPack)
+                    max = ShopManager.instance.HealthPackValueGet(max);
+                else if (obj.itemType == SemiFunc.itemType.power_crystal)
+                    max = ShopManager.instance.CrystalValueGet(max);
+                float num = Mathf.Clamp(max, 1f, max);
+                bool flag1 = obj.itemType == SemiFunc.itemType.power_crystal;
+                bool flag2 = obj.itemType == SemiFunc.itemType.item_upgrade;
+                bool flag3 = obj.itemType == SemiFunc.itemType.healthPack;
+                int maxAmountInShop = obj.maxAmountInShop;
+                if (itemsPurchased < maxAmountInShop && (!obj.maxPurchase || StatsManager.instance.GetItemsUpgradesPurchasedTotal(obj.name) < obj.maxPurchaseAmount) && ((double)num <= (double)ShopManager.instance.totalCurrency || UnityEngine.Random.Range(0, 100) < 25) && IsItemUnlockedInMultiworld(obj))
+                {
+                    for (int index = 0; index < maxAmountInShop - itemsPurchased; ++index)
+                    {
+                        if (flag2)
+                            ShopManager.instance.potentialItemUpgrades.Add(obj);
+                        else if (flag3)
+                            ShopManager.instance.potentialItemHealthPacks.Add(obj);
+                        else if (flag1)
+                            ShopManager.instance.potentialItemConsumables.Add(obj);
+                        else if (obj.itemSecretShopType == SemiFunc.itemSecretShopType.none)
+                        {
+                            ShopManager.instance.potentialItems.Add(obj);
+                        }
+                        else
+                        {
+                            if (!ShopManager.instance.potentialSecretItems.ContainsKey(obj.itemSecretShopType))
+                                ShopManager.instance.potentialSecretItems.Add(obj.itemSecretShopType, new List<Item>());
+                            ShopManager.instance.potentialSecretItems[obj.itemSecretShopType].Add(obj);
+                        }
+                    }
+                }
+            }
+            ShopManager.instance.potentialItems.Shuffle<Item>();
+            ShopManager.instance.potentialItemConsumables.Shuffle<Item>();
+            ShopManager.instance.potentialItemUpgrades.Shuffle<Item>();
+            ShopManager.instance.potentialItemHealthPacks.Shuffle<Item>();
+            foreach (IList<Item> list in ShopManager.instance.potentialSecretItems.Values)
+                list.Shuffle<Item>();
+            return false;
+        }
+    }
+
+    // it would be much easier to do this with a transpiler patch and less costly in terms of performance
     [HarmonyPatch(typeof(PunManager), "SpawnShopItem")]
     class SpawnShopItemPatch
 	{
-		[HarmonyPrefix]
+        /*[HarmonyTranspiler]
+		static IEnumerable<CodeInstruction> ModifySpawnableShopItems(IEnumerable<CodeInstruction> instructions)
+		{
+			var codeMatcher = new CodeMatcher(instructions);
+			codeMatcher.MatchStartForward(
+				CodeMatch.Calls(() => default(PunManager).SpawnShopItem(default, ShopManager.instance.potentialItems, default))
+				)
+				.ThrowIfInvalid("Could not find the target method call to PunManager.SpawnShopItem")
+				.RemoveInstruction()
+				.InsertAndAdvance(
+				CodeInstruction.Call
+				)
+        }*/
+
+
+        [HarmonyPrefix]
 		static bool ReplaceItemPatch(ref bool __result, ref ItemVolume itemVolume, ref List<Item> itemList, ref int spawnCount, bool isSecret = false)
 		{
-			//APSave.UpdateAvailableItems();
-			FieldInfo field = AccessTools.Field(typeof(ItemAttributes), "itemName");
-			//Plugin.Logger.LogInfo($"AP Upgrades Available {Plugin.ShopItemsAvailable.Count}");
-			for (int i = itemList.Count - 1; i >= 0; i--)
+            //APSave.UpdateAvailableItems();
+            //Plugin.Logger.LogInfo($"AP Upgrades Available {Plugin.ShopItemsAvailable.Count}");
+            if (itemList.Count <= 0 || itemList[0].itemType != SemiFunc.itemType.item_upgrade)
 			{
-				//Debug.Log($"{i}/{itemList.Count - 1}");
-				//Debug.Log($"Checking {itemList[i].name}");
-				Item item;
+				return true;
+            }
+            for (int i = itemList.Count - 1; i >= 0; i--)
+			{
+                //Debug.Log($"{i}/{itemList.Count - 1}");
+                //Debug.Log($"Checking {itemList[i].name}");
+                Item item;
 				//Replaces upgrades with AP items
-				if ((itemList[i].itemName.Contains("Upgrade") && !itemList[i].name.Contains("Counted")) && /*Plugin.LastShopItemChecked <= APSave.saveData.upgradeLocations &&*/ Plugin.ShopItemsAvailable.Count > 0)
+				if ((itemList[i].itemName.Contains("Upgrade") && !itemList[i].name.Contains("Counted")) && Plugin.ShopItemsAvailable.Count > 0)
 				{
-					Plugin.Logger.LogInfo("Replacing " + itemList[i].itemName);
 					item = StatsManager.instance.itemDictionary[ItemNames.ap_item];
 				}
 				else
 				{
-					//Debug.Log($"Item Spawning {itemList[i].name}");
-					item = itemList[i];
-					//Debug.Log("item set");
-					//itemList.RemoveAt(i);
-					//return true;
-				}
-
-				if (item.itemVolume == itemVolume.itemVolume)
+                    item = itemList[i];
+                }
+                // handle upgrade spawning ourself (need to check if the itemVolume is for upgrades) SemiFunc.ItemVolume.upgrade
+                if (item.itemVolume == itemVolume.itemVolume)
 				{
-					//Remove shop items if not unlocked
-					if (itemList[i].name.Contains("Item Cart Cannon") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.cart_cannon])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.cart_cannon + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Cart Laser") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.cart_laser])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.cart_laser + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Cart Medium") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.cart])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.cart + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Cart Small") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.pocket_cart])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.pocket_cart + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Drone Battery") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.recharge_drone])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.recharge_drone + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Drone Feather") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.feather_drone])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.feather_drone + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Drone Indestructible") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.indestructible_drone])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.indestructible_drone + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Drone Torque") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.roll_drone])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.roll_drone + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Drone Zero Gravity") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.zero_grav_drone])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.zero_grav_drone + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Duck Bucket") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.duck_bucket])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.duck_bucket + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Extraction Tracker") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.extraction_detector])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.extraction_detector + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Grenade Duct Taped") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.duct_taped_grenade])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.duct_taped_grenade + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Grenade Explosive") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.grenade])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.grenade + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Grenade Human") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.human_grenade])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.human_grenade + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Grenade Shockwave") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.shock_grenade])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.shock_grenade + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Grenade Stun") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.stun_grenade])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.stun_grenade + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Gun Handgun") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.gun])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.gun + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Gun Laser") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.photon_blaster])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.photon_blaster + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Gun Shockwave") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.pulse_pistol])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.pulse_pistol + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Gun Shotgun") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.shotgun])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.shotgun + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Gun Stun") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.boltzap])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.boltzap + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Gun Tranq") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.tranq_gun])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.tranq_gun + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Health Pack Large") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.progressive_health]), 3))
-					{
-						Plugin.Logger.LogInfo("3 " + ItemNames.progressive_health + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Health Pack Medium") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.progressive_health]), 2))
-					{
-						Plugin.Logger.LogInfo("2 " + ItemNames.progressive_health + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Health Pack Small") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.progressive_health]), 1))
-					{
-						Plugin.Logger.LogInfo("1 " + ItemNames.progressive_health + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Melee Baseball Bat") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.baseball_bat])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.baseball_bat + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Melee Frying Pan") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.frying_pan])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.frying_pan + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Melee Inflatable Hammer") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.inflatable_hammer])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.inflatable_hammer + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Melee Sledge Hammer") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.sledge_hammer])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.sledge_hammer + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Melee Stun Baton") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.prodzap])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.prodzap + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Melee Sword") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.sword])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.sword + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Mine Explosive") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.explosive_mine])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.explosive_mine + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Mine Shockwave") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.shockwave_mine])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.shockwave_mine + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Mine Stun") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.stun_mine])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.stun_mine + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Orb Zero Gravity") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.zero_grav_orb])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.zero_grav_orb + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Phase Bridge") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.phase_bridge])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.phase_bridge + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Power Crystal") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.energy_crystal])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.energy_crystal + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Rubber Duck") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.rubber_duck])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.rubber_duck + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else if (itemList[i].name.Contains("Item Valuable Tracker") && !APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.valuable_detector])))
-					{
-						Plugin.Logger.LogInfo(ItemNames.valuable_detector + " Not Unlocked");
-						itemList.RemoveAt(i);
-						continue;
-					}
-					else
-					{
-						Plugin.Logger.LogInfo(itemList[i].name + " Unlocked, Spawning");
-					}
 					ShopManager.instance.itemRotateHelper.transform.parent = itemVolume.transform;
 					ShopManager.instance.itemRotateHelper.transform.localRotation = item.spawnRotationOffset;
 					Quaternion rotation = ShopManager.instance.itemRotateHelper.transform.rotation;
@@ -306,13 +179,10 @@ namespace RepoAP
 					{
 						var inst = PhotonNetwork.InstantiateRoomObject(item.prefab.ResourcePath, itemVolume.transform.position, rotation, 0, null);
 						Plugin.LastShopItemChecked++;
-						/*while (Plugin.ShopItemsBought.Contains(Plugin.LastShopItemChecked))
-						{
-							Plugin.LastShopItemChecked++;
-						}*/
 						if (item.itemType == SemiFunc.itemType.item_upgrade && item.name == ItemNames.ap_item)
 						{
-							System.Random rand = new System.Random();
+                            Plugin.Logger.LogInfo($"Replacing {itemList[i].itemName} with a random AP item");
+                            System.Random rand = new System.Random();
 							int randomIndex = rand.Next(Plugin.ShopItemsAvailable.Count);
 							int itemID = Plugin.ShopItemsAvailable[randomIndex];
 							inst.name += "_Counted_" + itemID;
@@ -323,13 +193,10 @@ namespace RepoAP
 					{
 						var inst = UnityEngine.Object.Instantiate<GameObject>(item.prefab.Prefab, itemVolume.transform.position, rotation);
 						Plugin.LastShopItemChecked++;
-						/*while (Plugin.ShopItemsBought.Contains(Plugin.LastShopItemChecked))
-						{
-							Plugin.LastShopItemChecked++;
-						}*/
 						if (item.itemType == SemiFunc.itemType.item_upgrade && item.name == ItemNames.ap_item)
 						{
-							System.Random rand = new System.Random();
+                            Plugin.Logger.LogInfo($"Replacing {itemList[i].itemName} with a random AP item");
+                            System.Random rand = new System.Random();
 							int randomIndex = rand.Next(Plugin.ShopItemsAvailable.Count);
 							int itemID = Plugin.ShopItemsAvailable[randomIndex];
 							inst.name += "_Counted_" + itemID;

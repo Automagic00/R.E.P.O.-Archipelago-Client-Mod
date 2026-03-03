@@ -52,10 +52,10 @@ namespace RepoAP
 
         // Explosive Weapons
         static public string grenade = "Grenade Unlock";
-        static public string shock_grenade = "Shock Grenade Unlock";
+        static public string shock_grenade = "Shock Grenade Unlock";            // needs to be Shockwave Grenade
         static public string stun_grenade = "Stun Grenade Unlock";
         static public string human_grenade = "Human Grenade Unlock";
-        static public string duct_taped_grenade = "Duct Taped Grenade Unlock";
+        static public string duct_taped_grenade = "Duct Taped Grenade Unlock";  // needs to be Grenades
         static public string shockwave_mine = "Shockwave Mine Unlock";
         static public string stun_mine = "Trapzap Unlock";
         static public string explosive_mine = "Explosive Mine Unlock";
@@ -69,12 +69,12 @@ namespace RepoAP
         static public string zero_grav_drone = "Zero Gravity Drone Unlock";
 
         // CARTS
-        static public string pocket_cart = "Pocket C.A.R.T. Unlock";
+        static public string pocket_cart = "Pocket C.A.R.T. Unlock";    // needs to be POCKET C.A.R.T.
         static public string cart = "C.A.R.T. Unlock";
 
         // Misc
-        static public string valuable_detector = "Valuable Detector Unlock";
-        static public string extraction_detector = "Extraction Detector Unlock";
+        static public string valuable_detector = "Valuable Detector Unlock";        // needs to be Valuable Tracker
+        static public string extraction_detector = "Extraction Detector Unlock";    // needs to be Extraction Tracker
         static public string energy_crystal = "Energy Crystal Unlock";
         static public string zero_grav_orb = "Zero Gravity Orb Unlock";
         static public string duck_bucket = "Duck Bucket Unlock";
