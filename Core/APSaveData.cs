@@ -36,6 +36,7 @@ namespace RepoAP
         public long upgradeLocations;
         public bool valuableHunt;
         public bool monsterHunt;
+        public Dictionary<string, int> trapsUsed = [];
     }
 
     static class APSave

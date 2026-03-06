@@ -54,6 +54,7 @@ namespace RepoAP
             harmony.PatchAll();
             harmony.PatchAll(typeof(DeathLinkPatch));
             harmony.PatchAll(typeof(EnemyDespawnPatch));
+            harmony.PatchAll(typeof(TrapHandler));
         }
         private void Start()
         {
