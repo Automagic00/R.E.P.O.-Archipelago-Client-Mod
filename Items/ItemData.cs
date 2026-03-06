@@ -202,6 +202,19 @@ namespace RepoAP
             ids.Add(base_shop_offset++);
  			names.Add(ItemNames.phase_bridge);
 
+            // Traps
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.monster_trap);
+
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.audit_trap);
+
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.ping_trap);
+
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.moon_phase_trap);
+
             for (int i = 0; i < ids.Count;i++)
             {
                 itemIDToName.Add(ids[i], names[i]);
