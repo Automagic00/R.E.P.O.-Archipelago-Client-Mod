@@ -64,6 +64,24 @@ namespace RepoAP
             object[] p = new object[] { enemyName };
             photonView.RPC(nameof(CustomRPCs.ClientChangeMonsterOrbName), RpcTarget.All, p);
         }
+        public void CallSendClientDeathLink(GameObject inst, string playerWhoDied, string playerSteamID)
+        {
+            if (GameManager.instance.gameMode != 1 || !PhotonNetwork.IsMasterClient)
+                return;
+            Plugin.Logger.LogInfo("Sending death link notification to clients");
+            PhotonView photonView = inst.GetComponent<PhotonView>();
+            object[] p = new object[] { playerWhoDied, playerSteamID };
+            photonView.RPC(nameof(CustomRPCs.SendClientDeathLink), RpcTarget.All, p);
+        }
+        public void CallClientDeathLinkFinished(GameObject inst, string playerSteamIdWhoWasPosessed)
+        {
+            Plugin.Logger.LogInfo("Notifying clients that death link processing is finished");
+            PhotonView photonView = inst.GetComponent<PhotonView>();
+            object[] p = new object[] { playerSteamIdWhoWasPosessed };
+            photonView.RPC(nameof(CustomRPCs.ClientDeathLinkFinished), RpcTarget.MasterClient, p);
+        }
+
+
 
 
 
@@ -115,6 +133,16 @@ namespace RepoAP
         public void ClientChangeMonsterOrbName(string enemyName)
         {
             EnemyDespawnPatch.ChangeEnemyOrbNames(enemyName);
+        }
+        [PunRPC]
+        public void SendClientDeathLink(string apPlayerWhoDied, string chosenPlayerSteamID)
+        {
+            RepoAP.Core.DeathLinkPatch.PosessDeathlink(apPlayerWhoDied, chosenPlayerSteamID);
+        }
+        [PunRPC]
+        public void ClientDeathLinkFinished(string playerSteamIdWhoWasPosessed)
+        {
+            RepoAP.Core.DeathLinkPatch.DeathLinkFinished(playerSteamIdWhoWasPosessed);
         }
     }
 }
