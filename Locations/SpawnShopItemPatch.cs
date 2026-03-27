@@ -80,6 +80,7 @@ namespace RepoAP
             ShopManager.instance.itemConsumablesAmount = UnityEngine.Random.Range(4, 6);
             foreach (Item obj in StatsManager.instance.itemDictionary.Values)
             {
+                bool itemIsUnlockedInAP = IsItemUnlockedInMultiworld(obj);
                 int itemsPurchased = SemiFunc.StatGetItemsPurchased(obj.name);
                 float max = obj.value.valueMax / 1000f * (float)AccessTools.Field(typeof(ShopManager), "itemValueMultiplier").GetValue(ShopManager.instance);//ShopManager.instance.itemValueMultiplier;
                 if (obj.itemType == SemiFunc.itemType.item_upgrade)
@@ -93,7 +94,7 @@ namespace RepoAP
                 bool flag2 = obj.itemType == SemiFunc.itemType.item_upgrade;
                 bool flag3 = obj.itemType == SemiFunc.itemType.healthPack;
                 int maxAmountInShop = obj.maxAmountInShop;
-                if (itemsPurchased < maxAmountInShop && (!obj.maxPurchase || StatsManager.instance.GetItemsUpgradesPurchasedTotal(obj.name) < obj.maxPurchaseAmount) && ((double)num <= (double)ShopManager.instance.totalCurrency || UnityEngine.Random.Range(0, 100) < 25) && IsItemUnlockedInMultiworld(obj))
+                if (itemsPurchased < maxAmountInShop && (!obj.maxPurchase || StatsManager.instance.GetItemsUpgradesPurchasedTotal(obj.name) < obj.maxPurchaseAmount) && ((double)num <= (double)ShopManager.instance.totalCurrency || UnityEngine.Random.Range(0, 100) < 25) && itemIsUnlockedInAP)
                 {
                     for (int index = 0; index < maxAmountInShop - itemsPurchased; ++index)
                     {
@@ -116,7 +117,7 @@ namespace RepoAP
                     }
                 }
                 // this is just a test for fun
-                if (obj.itemType != SemiFunc.itemType.item_upgrade && obj.itemType != SemiFunc.itemType.cart && obj.itemType != SemiFunc.itemType.pocket_cart)
+                if (obj.itemType != SemiFunc.itemType.item_upgrade && obj.itemType != SemiFunc.itemType.cart && obj.itemType != SemiFunc.itemType.pocket_cart && (itemIsUnlockedInAP || UnityEngine.Random.Range(0, 100) < 25))
                 {
                     if (!ShopManager.instance.potentialSecretItems.ContainsKey(SemiFunc.itemSecretShopType.shop_attic))
                         ShopManager.instance.potentialSecretItems.Add(SemiFunc.itemSecretShopType.shop_attic, new List<Item>());
