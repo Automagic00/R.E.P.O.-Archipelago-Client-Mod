@@ -29,10 +29,10 @@ namespace RepoAP
 
 
         //Conection Info
-        public static string apAdress = "archipelago.gg";
-        public static string apPort = "";
-        public static string apPassword = "";
-        public static string apSlot = "";
+        public static string apAddress;
+        public static string apPort;
+        public static string apPassword;
+        public static string apSlot;
 
 
         //Item tracking
@@ -47,7 +47,14 @@ namespace RepoAP
             Logger = base.Logger;
 
             _player = PlayerController.instance;
+
+            // Config
             BoundConfig = new PluginConfig(base.Config);
+            apAddress = BoundConfig.APServerAddress.Value;
+            apPort = BoundConfig.APServerPort.Value;
+            apPassword = BoundConfig.APPassword.Value;
+            apSlot = BoundConfig.APSlotName.Value;
+
             // Plugin startup logic
             Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
             var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
@@ -125,7 +132,7 @@ namespace RepoAP
 
         public static void UpdateAPAddress(string input)
         {
-            apAdress = input;
+            apAddress = input;
         }
 
         /*

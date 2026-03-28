@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using HarmonyLib;
 using MenuLib;
 using MenuLib.MonoBehaviors;
-using UnityEngine;
-using HarmonyLib;
 using MenuLib.Structs;
-using System.Reflection;
+using UnityEngine;
 
 namespace RepoAP
 {
@@ -69,8 +70,8 @@ namespace RepoAP
 			
 			repoPage.AddElement(parent => MenuAPI.CreateREPOInputField("Address", (string input) =>
 			{
-				Plugin.apAdress = input;
-			}, parent, new Vector2(400f, 200f), placeholder: Plugin.apAdress));
+				Plugin.apAddress = input;
+			}, parent, new Vector2(400f, 200f), placeholder: Plugin.apAddress));
 
 			repoPage.AddElement(parent => MenuAPI.CreateREPOInputField("Port", (string input) =>
 			{
@@ -89,7 +90,7 @@ namespace RepoAP
 
 			repoPage.AddElement(parent => MenuAPI.CreateREPOButton("Connect", () =>
 			{
-                _ = Plugin.connection.TryConnect(Plugin.apAdress, Int32.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
+                _ = Plugin.connection.TryConnect(Plugin.apAddress, Int32.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
 				repoPage.ClosePage(false);
 				BuildConnectingPopUp();
 				//BuildPopup();
