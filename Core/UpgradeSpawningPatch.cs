@@ -25,6 +25,7 @@ namespace RepoAP.Core
         {
             List<ItemVolume> upgradeItemVolumeList = [.. ___itemManager.itemVolumes.Where(volume => volume.itemVolume == SemiFunc.itemVolume.upgrade)];
             if (upgradeItemVolumeList.Count < 16) return;    // just a precaution
+            Plugin.Logger.LogDebug("Creating new upgrades spawn positions in the truck");
             Vector3 directionToSpawnUpgrades = Vector3.Cross(upgradeItemVolumeList[7].transform.position, upgradeItemVolumeList[8].transform.position).normalized;   // this is originally (0.00, 1.00, 0.09) at game start. after, it is (0.00, 1.00, -0.09) in levels and (0.09, 1.00, 0.00) on the road
             directionToSpawnUpgrades.y = 0;
             if (directionToSpawnUpgrades.z > 0) directionToSpawnUpgrades.z *= -1;
@@ -45,6 +46,17 @@ namespace RepoAP.Core
                 newRowStartPosition += distBetweenUpgrades;
             }
             ___itemManager.itemVolumes.AddRange(newUpgradeItemVolumes);
+            Plugin.Logger.LogDebug($"Created {newUpgradeItemVolumes.Count} new spots for upgrades in truck");
+        }
+
+        [HarmonyPatch(typeof(StatsManager), "LoadItemsFromFolder")]
+        [HarmonyPostfix]
+        internal static void AllowMoreOfUpgradeTypeToSpawnPatch(StatsManager __instance)
+        {
+            foreach (Item item in __instance.itemDictionary.Values)
+            {
+                if (item.itemType == SemiFunc.itemType.item_upgrade && item.maxAmount < 20) item.maxAmount = 20;
+            }
         }
 
     }
