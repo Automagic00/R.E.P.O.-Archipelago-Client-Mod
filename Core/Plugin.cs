@@ -53,6 +53,7 @@ namespace RepoAP
             var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
             harmony.PatchAll(typeof(DeathLinkPatch));
+            harmony.PatchAll(typeof(ShopPopulateItemVolumesPatch));
             harmony.PatchAll(typeof(EnemyDespawnPatch));
         }
         private void Start()
