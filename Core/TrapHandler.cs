@@ -54,8 +54,10 @@ namespace RepoAP.Core
                             trapUsed = true;
                             break;
                         case "Audit Trap":
+                            if (__instance.levelCurrent != __instance.levelShop) break;
                             SemiFunc.StatSetRunCurrency(StatsManager.instance.GetRunStatCurrency() / 2);
                             trapUsed = true;
+                            TutorialDirector.instance.ActivateTip("AuditTrap", 0.0f, false);
                             break;
                         case "Ping Trap":
                             if (__instance.levelCurrent == __instance.levelArena || ___levelPrevious == __instance.levelArena ||
@@ -65,6 +67,7 @@ namespace RepoAP.Core
                                 pingTrapActive = true;
                                 RunManager.instance.StartCoroutine(PingTrapCycle());    // I really shouldn't be doing this
                                 trapUsed = true;
+                                TutorialDirector.instance.ActivateTip("PingTrap", 0.0f, false);
                             }
                             break;
                         case "Progressive Moon Phase Trap":
@@ -87,7 +90,7 @@ namespace RepoAP.Core
 
         [HarmonyPatch(typeof(RunManager), nameof(RunManager.CalculateMoonLevel))]
         [HarmonyPrefix]
-        static bool CalculateMoonLevelPatch(int _levelsCompleted, ref int __result)
+        static bool CalculateMoonLevelPatch(int _levelsCompleted, ref int __result)     // the moon phase DOES stay when restarting, but you don't see the popup
         {
             __result = Math.Max((_levelsCompleted + 1) / 5, APSave.saveData.trapsUsed[ItemNames.moon_phase_trap]);
             return false;
