@@ -514,7 +514,7 @@ namespace RepoAP
 
             foreach (long locID in locationsMissing)
             {
-                string locName = Plugin.connection.session.Locations.GetLocationNameFromId(locID);
+                string locName = Plugin.connection.session.Locations.GetLocationNameFromId(locID);  // this is inaccurate because the pelly goal tracks collection differently
                 if (locName.Contains("Pelly"))
                 {
                     Plugin.Logger.LogInfo("Missing " + locName);
@@ -580,7 +580,27 @@ namespace RepoAP
                     }
                 }
 
-                status += $"<br>{{$$$}} Valuables - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
+                if (RunManager.instance.levels.Contains(RunManager.instance.levelCurrent))
+                {
+                    List<string> levelValuables = [];
+                    foreach (var preset in RunManager.instance.levelCurrent.ValuablePresets)
+                    {
+                        List<PrefabRef> prefabList = [.. preset.tiny, .. preset.small, .. preset.medium, .. preset.big, .. preset.wide, .. preset.tall, .. preset.veryTall];
+                        levelValuables = [.. levelValuables.Union(prefabList.Select(prefab => LocationData.GetBaseName(prefab.PrefabName)))];
+                    }
+                    collectedCount = 0;
+                    totalCount = levelValuables.Intersect(LocationNames.all_valuables).Count();
+                    foreach (string valuable in levelValuables)
+                    {
+                        if (saveData.valuablesGathered.Contains(valuable))
+                        {
+                            collectedCount++;
+                        }
+                    }
+                    status += $"<br>{{$$$}} {RunManager.instance.levelCurrent.NarrativeName} Valuables - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
+                }
+                else
+                    status += $"<br>{{$$$}} Valuables - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
             }
 
             if(goalMet) Plugin.Logger.LogInfo("All Goals Complete.");
