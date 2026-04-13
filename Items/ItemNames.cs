@@ -83,7 +83,7 @@ namespace RepoAP
         // Traps
         static public string monster_trap = "Extra Monster Trap";
         static public string audit_trap = "Audit Trap";
-        static public string ping_trap = "Ping Trap";
+        static public string lure_trap = "Monster Lure Trap";
         static public string moon_phase_trap = "Progressive Moon Phase Trap";
     }
 }

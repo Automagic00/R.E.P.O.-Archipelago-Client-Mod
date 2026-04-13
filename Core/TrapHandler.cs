@@ -17,7 +17,7 @@ namespace RepoAP.Core
     {
         private static float lastProcessTime = 0f;
         const float TRAP_TRIGGER_FREQUENCY = 5f;
-        static bool pingTrapActive = false;
+        static bool lureTrapActive = false;
         // we will process traps here
 
         // we need to keep track of how many instances of each trap have been used in datastorage. 
@@ -59,15 +59,15 @@ namespace RepoAP.Core
                             trapUsed = true;
                             TutorialDirector.instance.ActivateTip("AuditTrap", 0.0f, false);
                             break;
-                        case "Ping Trap":
+                        case "Monster Lure Trap":
                             if (__instance.levelCurrent == __instance.levelArena || ___levelPrevious == __instance.levelArena ||
                                 __instance.levelCurrent == __instance.levelShop || SemiFunc.IsMainMenu()) break;
-                            if (!pingTrapActive)
+                            if (!lureTrapActive)
                             {
-                                pingTrapActive = true;
-                                RunManager.instance.StartCoroutine(PingTrapCycle());    // I really shouldn't be doing this
+                                lureTrapActive = true;
+                                RunManager.instance.StartCoroutine(LureTrapCycle());    // I really shouldn't be doing this
                                 trapUsed = true;
-                                TutorialDirector.instance.ActivateTip("PingTrap", 0.0f, false);
+                                TutorialDirector.instance.ActivateTip("LureTrap", 0.0f, false);
                             }
                             break;
                         case "Progressive Moon Phase Trap":
@@ -96,7 +96,7 @@ namespace RepoAP.Core
             return false;
         }
 
-        private static IEnumerator PingTrapCycle()
+        private static IEnumerator LureTrapCycle()
         {
             for (int i = 0; i < 6; i++)
             {
@@ -109,7 +109,7 @@ namespace RepoAP.Core
                 PlayerAvatar.instance.truckReturn.Play(PlayerAvatar.instance.PlayerVisionTarget.VisionTransform.position);
                 yield return new WaitForSeconds(20f);
             }
-            pingTrapActive = false;
+            lureTrapActive = false;
         }
 
     }

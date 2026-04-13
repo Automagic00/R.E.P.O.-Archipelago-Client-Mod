@@ -210,7 +210,7 @@ namespace RepoAP
             names.Add(ItemNames.audit_trap);
 
             ids.Add(base_shop_offset++);
-            names.Add(ItemNames.ping_trap);
+            names.Add(ItemNames.lure_trap);
 
             ids.Add(base_shop_offset++);
             names.Add(ItemNames.moon_phase_trap);

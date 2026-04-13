@@ -141,7 +141,7 @@ namespace RepoAP
                 session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-pellysGathered"].Initialize(new List<string>());
                 session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-valuablesGathered"].Initialize(new List<string>());
                 session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-monsterSoulsGathered"].Initialize(new List<string>());
-                APSave.saveData.trapsUsed[ItemNames.monster_trap] = 0; APSave.saveData.trapsUsed[ItemNames.audit_trap] = 0; APSave.saveData.trapsUsed[ItemNames.ping_trap] = 0; APSave.saveData.trapsUsed[ItemNames.moon_phase_trap] = 0;
+                APSave.saveData.trapsUsed[ItemNames.monster_trap] = 0; APSave.saveData.trapsUsed[ItemNames.audit_trap] = 0; APSave.saveData.trapsUsed[ItemNames.lure_trap] = 0; APSave.saveData.trapsUsed[ItemNames.moon_phase_trap] = 0;
                 session.DataStorage[$"REPO-{Plugin.connection.session.Players.GetPlayerName(Plugin.connection.session.ConnectionInfo.Slot)}-trapsUsed"].Initialize(JObject.FromObject(APSave.saveData.trapsUsed));
 
                 _ = Plugin.connection.SyncCompletionProgress(APSave.saveData.levelsCompleted, APSave.saveData.pellysGathered, APSave.saveData.valuablesGathered, APSave.saveData.monsterSoulsGathered);

@@ -10,12 +10,12 @@ namespace RepoAP.Core
     [HarmonyPatch(typeof(TutorialDirector), "Awake")]
     internal class TutorialPatches
     {
-        static readonly TutorialDirector.TutorialPage pingTrapTutorial = new()
+        static readonly TutorialDirector.TutorialPage lureTrapTutorial = new()
         {
-            pageName = "PingTrap",
+            pageName = "LureTrap",
             video = null,
-            text = "A Ping Trap is active! Hide or Fight!",
-            focusText = "Ping Trap Active!",
+            text = "A Monster Lure trap is active! Hide or Fight!",
+            focusText = "Lure Trap Active!",
             dummyText = "Good luck!"
         };
         static readonly TutorialDirector.TutorialPage auditTrapTutorial = new()
@@ -38,8 +38,8 @@ namespace RepoAP.Core
         [HarmonyPostfix]
         public static void CreateAPTutorialPages(TutorialDirector __instance)
         {
-            if (!__instance.tutorialPages.Contains(pingTrapTutorial))
-                __instance.tutorialPages.Add(pingTrapTutorial);
+            if (!__instance.tutorialPages.Contains(lureTrapTutorial))
+                __instance.tutorialPages.Add(lureTrapTutorial);
             if (!__instance.tutorialPages.Contains(auditTrapTutorial))
                 __instance.tutorialPages.Add(auditTrapTutorial);
             /*if (!__instance.tutorialPages.Contains(deathlinkTutorial))
