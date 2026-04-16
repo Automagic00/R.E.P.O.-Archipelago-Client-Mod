@@ -80,6 +80,13 @@ namespace RepoAP
             object[] p = new object[] { playerSteamIdWhoWasPosessed };
             photonView.RPC(nameof(CustomRPCs.ClientDeathLinkFinished), RpcTarget.MasterClient, p);
         }
+        public void CallPingClientsWithNoise(GameObject inst, Sound noise, Vector3 position)
+        {
+            Plugin.Logger.LogInfo("Playing lure trap sound for clients");
+            PhotonView photonView = inst.GetComponent<PhotonView>();
+            object[] p = new object[] { (object)noise, position };
+            photonView.RPC(nameof(CustomRPCs.PingClientsWithNoise), RpcTarget.All, p);
+        }
 
 
 
@@ -143,6 +150,11 @@ namespace RepoAP
         public void ClientDeathLinkFinished(string playerSteamIdWhoWasPosessed)
         {
             RepoAP.Core.DeathLinkPatch.DeathLinkFinished(playerSteamIdWhoWasPosessed);
+        }
+        [PunRPC]
+        public void PingClientsWithNoise(object noise, Vector3 position)
+        {
+            ((Sound)noise).Play(position);
         }
     }
 }

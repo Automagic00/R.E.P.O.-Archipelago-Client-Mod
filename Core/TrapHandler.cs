@@ -101,12 +101,27 @@ namespace RepoAP.Core
             for (int i = 0; i < 6; i++)
             {
                 List<LevelPoint> inPlayerRooms = SemiFunc.LevelPointsGetInPlayerRooms();
+                Vector3 investigatePoint;
                 if (inPlayerRooms.Count > 0)
-                    SemiFunc.EnemyInvestigate(inPlayerRooms[UnityEngine.Random.Range(0, inPlayerRooms.Count)].transform.position, 100f, true);
+                    investigatePoint = inPlayerRooms[UnityEngine.Random.Range(0, inPlayerRooms.Count)].transform.position;
+                else 
+                    investigatePoint = GameDirector.instance.PlayerList[UnityEngine.Random.Range(0, GameDirector.instance.PlayerList.Count)].transform.position;
+                if (investigatePoint == null) 
+                {
+                    Plugin.Logger.LogWarning("Unable to find a valid investigate point for lure trap");
+                    yield return new WaitForSeconds(20f);
+                    continue;
+                }
+                SemiFunc.EnemyInvestigate(investigatePoint, 100f, true);
                 float investigateTime = (float)AccessTools.Field(typeof(EnemyDirector), "investigatePointTime").GetValue(EnemyDirector.instance);
                 AccessTools.Field(typeof(EnemyDirector), "investigatePointTimer").SetValue(EnemyDirector.instance, investigateTime);    // EnemyDirector.instance.investigatePointTimer = investigateTime;
                 AccessTools.Field(typeof(EnemyDirector), "investigatePointTime").SetValue(EnemyDirector.instance, Mathf.Min(investigateTime + 2f, 15f));   // EnemyDirector.instance.investigatePointTime = Mathf.Min(investigateTime + 2f, 30f);
-                PlayerAvatar.instance.truckReturn.Play(PlayerAvatar.instance.PlayerVisionTarget.VisionTransform.position);
+                
+                if (!SemiFunc.IsMultiplayer()) 
+                    Plugin.customRPCManager.PingClientsWithNoise(PlayerAvatar.instance.truckReturn, investigatePoint);
+                else 
+                    Plugin.customRPCManager.CallPingClientsWithNoise(Plugin.customRPCManagerObject, PlayerAvatar.instance.truckReturn, investigatePoint);
+
                 yield return new WaitForSeconds(20f);
             }
             lureTrapActive = false;
