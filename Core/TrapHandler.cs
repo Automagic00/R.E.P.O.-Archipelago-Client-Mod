@@ -15,8 +15,6 @@ namespace RepoAP.Core
 {
     internal class TrapHandler
     {
-        private static float lastProcessTime = 0f;
-        const float TRAP_TRIGGER_FREQUENCY = 5f;
         static bool lureTrapActive = false;
         // we will process traps here
 
@@ -25,15 +23,13 @@ namespace RepoAP.Core
         // APLC uses an EventHandler that emits an event every 5 seconds in StartOfRound.Update
         // maybe we call deathlink from here, too?
 
-        [HarmonyPatch(typeof(RunManager), "Update")]
-        [HarmonyPostfix]
-        static void UseTrapPatch(RunManager __instance, Level ___levelPrevious)
+        internal static void UseTrapPatch(RunManager __instance)
         {
             // we may want to use an event-driven approach later. this is just a proof-of-concept
             float currentTime = Time.unscaledTime;
 
-            if (!SemiFunc.IsMasterClientOrSingleplayer() || SemiFunc.MenuLevel() || RunManager.instance.levelCurrent == RunManager.instance.levelLobby || currentTime - lastProcessTime < TRAP_TRIGGER_FREQUENCY) return;
-            lastProcessTime = currentTime;
+            if (!SemiFunc.IsMasterClientOrSingleplayer() || SemiFunc.MenuLevel() || RunManager.instance.levelCurrent == RunManager.instance.levelLobby) return;
+            Level ___levelPrevious = (Level)AccessTools.Field(typeof(RunManager), "levelPrevious").GetValue(__instance);
             List<string> trapNames = [.. APSave.saveData.trapsUsed.Keys];
             foreach (string trap in trapNames)
             {
