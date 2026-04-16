@@ -80,11 +80,11 @@ namespace RepoAP
             object[] p = new object[] { playerSteamIdWhoWasPosessed };
             photonView.RPC(nameof(CustomRPCs.ClientDeathLinkFinished), RpcTarget.MasterClient, p);
         }
-        public void CallPingClientsWithNoise(GameObject inst, Sound noise, Vector3 position)
+        public void CallPingClientsWithNoise(GameObject inst, string fieldName, Vector3 position)
         {
             Plugin.Logger.LogInfo("Playing lure trap sound for clients");
             PhotonView photonView = inst.GetComponent<PhotonView>();
-            object[] p = new object[] { (object)noise, position };
+            object[] p = new object[] { fieldName, position };
             photonView.RPC(nameof(CustomRPCs.PingClientsWithNoise), RpcTarget.All, p);
         }
 
@@ -152,9 +152,15 @@ namespace RepoAP
             RepoAP.Core.DeathLinkPatch.DeathLinkFinished(playerSteamIdWhoWasPosessed);
         }
         [PunRPC]
-        public void PingClientsWithNoise(object noise, Vector3 position)
+        public void PingClientsWithNoise(string soundFieldName, Vector3 position)   // we can't pass a sound through an rpc
         {
-            ((Sound)noise).Play(position);
+            Sound noise = (Sound)AccessTools.Field(typeof(PlayerAvatar), soundFieldName)?.GetValue(PlayerAvatar.instance);
+            if (noise == null) 
+            {
+                Plugin.Logger.LogError($"Unable to play sound. No field found with the name '{soundFieldName}'");
+            }
+            else 
+                noise.Play(position, falloffMultiplier:2);
         }
     }
 }

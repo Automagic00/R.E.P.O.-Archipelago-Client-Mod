@@ -118,9 +118,9 @@ namespace RepoAP.Core
                 AccessTools.Field(typeof(EnemyDirector), "investigatePointTime").SetValue(EnemyDirector.instance, Mathf.Min(investigateTime + 2f, 15f));   // EnemyDirector.instance.investigatePointTime = Mathf.Min(investigateTime + 2f, 30f);
                 
                 if (!SemiFunc.IsMultiplayer()) 
-                    Plugin.customRPCManager.PingClientsWithNoise(PlayerAvatar.instance.truckReturn, investigatePoint);
+                    Plugin.customRPCManager.PingClientsWithNoise(nameof(PlayerAvatar.instance.truckReturn), investigatePoint);
                 else 
-                    Plugin.customRPCManager.CallPingClientsWithNoise(Plugin.customRPCManagerObject, PlayerAvatar.instance.truckReturn, investigatePoint);
+                    Plugin.customRPCManager.CallPingClientsWithNoise(Plugin.customRPCManagerObject, nameof(PlayerAvatar.instance.truckReturn), investigatePoint);
 
                 yield return new WaitForSeconds(20f);
             }
