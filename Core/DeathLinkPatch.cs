@@ -69,11 +69,10 @@ namespace RepoAP.Core
         /**
          * When a deathlink is received, either restart the level (singleplayer) or posess a random player and start a death countdown (multiplayer)
          */
-        [HarmonyPatch(typeof(RunManager), "Update")]
-        [HarmonyPostfix]
-        static void ReceiveDeathLinkPatch(RunManager __instance, bool ___allPlayersDead)
+        internal static void ReceiveDeathLinkPatch(RunManager __instance)
         {
             if (!SemiFunc.IsMasterClientOrSingleplayer() || !awaitingDeathLink) return;
+            bool ___allPlayersDead = (bool)AccessTools.Field(typeof(RunManager), "allPlayersDead").GetValue(__instance);
             if (___allPlayersDead || SemiFunc.MenuLevel() || RunManager.instance.levelCurrent == RunManager.instance.levelLobby)
             {
                 awaitingDeathLink = false;

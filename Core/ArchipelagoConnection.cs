@@ -27,6 +27,7 @@ namespace RepoAP
         public IEnumerator<bool> outgoingItemHandler;
         public IEnumerator<bool> checkItemsReceived;
         public IEnumerator<bool> messageHandler;
+        public event TickEventHandler TickInLevel;
 
         private float messageDelay = 0;
         //private float messageTimeStamp = Time.;
@@ -129,6 +130,8 @@ namespace RepoAP
 
                 deathLinkService.OnDeathLinkReceived += HandleIncomingDeathlink;
 
+                TickInLevel += DeathLinkPatch.ReceiveDeathLinkPatch;
+                TickInLevel += TrapHandler.UseTrapPatch;
 
                 if (DeathLinkEnabled())
                 {
@@ -233,6 +236,8 @@ namespace RepoAP
                 deathLinkService = null;
                 slotData = null;
                 ItemIndex = 0;
+                TickInLevel -= DeathLinkPatch.ReceiveDeathLinkPatch;
+                TickInLevel -= TrapHandler.UseTrapPatch;
                 //Locations.CheckedLocations.Clear();
                 //ItemLookup.ItemList.Clear();
 
@@ -551,5 +556,11 @@ namespace RepoAP
         }
 
         // could put something here called TickAPActions that patches RunManager.Update and emits an event every few seconds
+
+        internal void TickUpdate(RunManager __instance)
+        {
+            if (!connected) return;
+            TickInLevel.Invoke(__instance);
+        }
     }
 }
