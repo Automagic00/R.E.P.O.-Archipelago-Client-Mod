@@ -18,7 +18,7 @@ namespace RepoAP
             //Make sure pelly spawn is set to false
             if (Plugin.connection?.session != null && APSave.saveData.pellySpawning == false)
             {
-                Plugin.Logger.LogDebug("InValuableDirector");
+                Plugin.Logger.LogDebug("In ValuableDirector");
 
                 FieldInfo field = AccessTools.Field(typeof(ValuableDirector), "mediumValuables");
                 List<GameObject> value = (List<GameObject>)field.GetValue(__instance);
@@ -28,12 +28,8 @@ namespace RepoAP
                 {
                     foreach (var pelly in levelValuables.medium.Where(x => x.PrefabName.Contains("Pelly")).ToList())
                     {
-                        Plugin.Logger.LogInfo($"Pelly Found: {pelly.PrefabName}");
-                        if (APSave.saveData.pellysRequired.All(x => !pelly.PrefabName.Contains(x.ToString())))
-                        {
-                            Plugin.Logger.LogInfo($"Removing: {pelly.PrefabName}");
-                            levelValuables.medium.Remove(pelly);
-                        }
+                        Plugin.Logger.LogInfo($"Removing: {pelly.PrefabName}");
+                        levelValuables.medium.Remove(pelly);
                         
                     }
 

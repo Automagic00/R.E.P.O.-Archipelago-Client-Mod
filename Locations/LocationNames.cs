@@ -14,6 +14,7 @@ namespace RepoAP
         static public string standard_pelly = "Standard Pelly";
         static public string glass_pelly = "Glass Pelly";
         static public string gold_pelly = "Gold Pelly";
+        static public string[] pellys = [standard_pelly, glass_pelly, gold_pelly];
 
         //Shop Location Names
         static public string upgrade_pur = "Upgrade Purchase";
