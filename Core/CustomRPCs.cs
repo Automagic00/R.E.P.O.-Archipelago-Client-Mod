@@ -54,7 +54,7 @@ namespace RepoAP
             PhotonView photonView = inst.GetComponent<PhotonView>(); 
             object[] p = new object[] { APSave.saveData.pellysGathered.ToArray<string>(), APSave.saveData.valuablesGathered.ToArray<string>(), 
                 APSave.saveData.monsterSoulsGathered.ToArray<string>(), APSave.saveData.locationsScouted.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToJson(full:true) ), 
-                APSave.saveData.pellysRequired.ToString(), APSave.saveData.valuableHunt, APSave.saveData.monsterHunt, APSave.saveData.trapsUsed };  
+                APSave.saveData.pellysRequired, APSave.saveData.valuableHunt, APSave.saveData.monsterHunt, APSave.saveData.trapsUsed };  
             photonView.RPC(nameof(CustomRPCs.SyncSlotDataWithClientsRpc), RpcTarget.Others, p);    // using RpcTarget.All here may have created a race condition with APSaveData.CheckCompletion when both are called after a level is complete
         }
         public void CallClientChangeMonsterOrbName(GameObject inst, string enemyName)
@@ -114,7 +114,7 @@ namespace RepoAP
         }
 
         [PunRPC]
-        public void SyncSlotDataWithClientsRpc(string[] pellys_gathered, string[] valuables_gathered, string[] monster_souls_gathered, Dictionary<long, string> locations_scouted, string pellys_required, bool valuable_hunt, bool monster_hunt, Dictionary<string, int> trapsUsed)
+        public void SyncSlotDataWithClientsRpc(string[] pellys_gathered, string[] valuables_gathered, string[] monster_souls_gathered, Dictionary<long, string> locations_scouted, long pellys_required, bool valuable_hunt, bool monster_hunt, Dictionary<string, int> trapsUsed)
         {
             APSave.saveData ??= new APSaveData();
             //APSave.saveData.locationsChecked =                            // not needed by clients
@@ -128,7 +128,7 @@ namespace RepoAP
             //APSave.saveData.levelsUnlocked =                              // not needed by clients
             //APSave.saveData.itemReceivedIndex =                           // not needed by clients
             APSave.saveData.locationsScouted = locations_scouted.ToDictionary(kvp => kvp.Key, kvp => SerializableItemInfo.FromJson(kvp.Value));// needed for PhysGrabObjectPatch
-            APSave.saveData.pellysRequired = JArray.Parse(pellys_required); // needed
+            APSave.saveData.pellysRequired = pellys_required; // needed
             //APSave.saveData.pellySpawning = pelly_spawning;               // not needed by clients
             //APSave.saveData.levelQuota = level_quota;                     // not needed by clients
             //APSave.saveData.upgradeLocations = upgrade_locations;         // not used at all anymore

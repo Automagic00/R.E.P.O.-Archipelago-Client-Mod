@@ -49,7 +49,7 @@ namespace RepoAP
                     {
                         id = LocationData.PellyNameToID(name + RunManager.instance.levelCurrent.name);
                         wasCollected = APSave.WasPellyGathered(name, RunManager.instance.levelCurrent.name);
-                        huntObjective = APSave.IsPellyRequired(name);
+                        huntObjective = APSave.saveData.pellySpawning;
                     }
                     else if (hasValuable)
                     {

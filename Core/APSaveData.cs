@@ -29,7 +29,7 @@ namespace RepoAP
         public int itemReceivedIndex = 0;
         //public Dictionary<long, ItemInfo> locationsScouted = new Dictionary<long, ItemInfo>();
         public Dictionary<long, SerializableItemInfo> locationsScouted = new Dictionary<long, SerializableItemInfo>();
-        public JArray pellysRequired = new JArray();
+        public long pellysRequired;
         public bool pellySpawning;
         public long levelQuota;
         public long levelsCompleted;
@@ -106,8 +106,8 @@ namespace RepoAP
             Debug.Log(test2.GetType());*/
 
             saveData.levelQuota = (long)Plugin.connection.slotData["level_quota"];
-            saveData.pellysRequired = (JArray)Plugin.connection.slotData["pellys_required"];
-            saveData.pellySpawning = (bool)Plugin.connection.slotData["pelly_spawning"];
+            saveData.pellysRequired = (long)Plugin.connection.slotData["pellys_required"];
+            saveData.pellySpawning = saveData.pellysRequired > 0;
             saveData.upgradeLocations = (long)Plugin.connection.slotData["upgrade_locations"];
             saveData.shopStockSlotData = (long)Plugin.connection.slotData["shop_stock"];
             saveData.valuableHunt = (bool)Plugin.connection.slotData["valuable_hunt"];
@@ -452,12 +452,6 @@ namespace RepoAP
             return saveData.pellysGathered.Exists(x => x.Contains(level) && x.Contains(pelly));
         }
 
-        public static bool IsPellyRequired(string pelly)
-        {
-            pelly = LocationData.GetBaseName(pelly);
-            return saveData.pellysRequired.Any(x => pelly.Contains(x.ToString()));
-        }
-
         public static bool CheckCompletion(out string status)
         {
             if (Plugin.connection?.session == null)
@@ -486,56 +480,51 @@ namespace RepoAP
 
             status = $"{{truck}} Levels - {completedLevels}/{saveData.levelQuota}{(completedLevels >= saveData.levelQuota ? " {check}" : " {X}")}";
 
-            var pellys = saveData.pellysRequired;
-            var totalCount = saveData.pellysRequired.Count * LocationNames.all_levels_short.Count;
-            var collectedCount = 0;
+            long totalCount = saveData.pellysRequired;
+            int collectedCount = 0;
             
             //Check if Pelly Hunt is Complete
-            Plugin.Logger.LogInfo("Pellys Required:");
-            foreach(var pelly in saveData.pellysRequired)
+            Plugin.Logger.LogInfo($"Pellys Required: {saveData.pellysRequired}");
+            if (saveData.pellySpawning)
             {
-                Plugin.Logger.LogInfo($"-{pelly} {saveData.pellysRequired.Count}");
-            }
-            Plugin.Logger.LogInfo("Pellys Gathered:");
+                Plugin.Logger.LogInfo("Pellys Gathered:");
 
-            foreach (string pellyName in saveData.pellysGathered)
-            {
-                Plugin.Logger.LogInfo($"-{pellyName}");
-                if (saveData.pellysRequired.Any(x => pellyName.Contains(x.ToString())))
+                foreach (string pellyName in saveData.pellysGathered)
                 {
+                    Plugin.Logger.LogInfo($"-{pellyName}");
                     collectedCount++;
                 }
-            }
-            Plugin.Logger.LogInfo($"Pellys Collected: {collectedCount}/{totalCount}");
-            if (collectedCount < totalCount)
-            {
-                Plugin.Logger.LogInfo($"Pelly hunt not complete.");
-                goalMet = false;
-            }
-
-            foreach (long locID in locationsMissing)
-            {
-                string locName = Plugin.connection.session.Locations.GetLocationNameFromId(locID);  // this is inaccurate because the pelly goal tracks collection differently
-                if (locName.Contains("Pelly"))
+                Plugin.Logger.LogInfo($"Pellys Collected: {collectedCount}/{totalCount}");
+                if (collectedCount < totalCount)
                 {
-                    Plugin.Logger.LogInfo("Missing " + locName);
+                    Plugin.Logger.LogInfo($"Pelly hunt not complete.");
+                    goalMet = false;
                 }
-            }
 
-            if (RunManager.instance.levels.Contains(RunManager.instance.levelCurrent))
-            {
-                status += $"<br>{{?}} {RunManager.instance.levelCurrent.NarrativeName} Pellys:<br><indent=10%>";
-                foreach (var pelly in saveData.pellysRequired)
+                foreach (long locID in locationsMissing)
                 {
-                    status += saveData.pellysGathered.Any(x => x.Contains(pelly.ToString()) && x.Contains(RunManager.instance.levelCurrent.name)) ?
-                        $"{pelly.ToString().Replace(" Pelly", "")} {{check}} | " :
-                        $"{pelly.ToString().Replace(" Pelly", "")} {{X}} | ";
+                    string locName = Plugin.connection.session.Locations.GetLocationNameFromId(locID);  // this is inaccurate because the pelly goal tracks collection differently
+                    if (locName.Contains("Pelly"))
+                    {
+                        Plugin.Logger.LogInfo("Missing " + locName);
+                    }
                 }
-                status += "</indent>";
-            }
-            else
-            {
-                status += $"<br>{{?}} Pellys - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
+
+                if (RunManager.instance.levels.Contains(RunManager.instance.levelCurrent))
+                {
+                    status += $"<br>{{?}} {RunManager.instance.levelCurrent.NarrativeName} Pellys:<br><indent=10%>";
+                    foreach (var pelly in LocationNames.pellys)
+                    {
+                        status += saveData.pellysGathered.Any(x => x.Contains(pelly.ToString()) && x.Contains(RunManager.instance.levelCurrent.name)) ?
+                            $"{pelly.ToString().Replace(" Pelly", "")} {{check}} | " :
+                            $"{pelly.ToString().Replace(" Pelly", "")} {{X}} | ";
+                    }
+                    status += "</indent>";
+                }
+                else
+                {
+                    status += $"<br>{{?}} Pellys - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
+                }
             }
 
             //Check if Monster Hunt is complete

@@ -94,12 +94,8 @@ namespace RepoAP
                 string completionOutput = "-- Completetion Data --";
                 completionOutput += $"\nLevel Quota: {APSave.saveData.levelQuota}";
 
-                completionOutput += $"\nPellys Required: ";
+                completionOutput += $"\nPellys Required: {APSave.saveData.pellysRequired}";
 
-                foreach (var pelly in APSave.saveData.pellysRequired)
-                {
-                    completionOutput += ($"\n- {pelly.ToString()}");
-                }
                 completionOutput += ("\n\nPellys Gathered: ");
                 foreach (string pelly in APSave.saveData.pellysGathered)
                 {
