@@ -459,7 +459,7 @@ namespace RepoAP
 
         public static bool CheckCompletion(out string status)
         {
-            if (Plugin.connection.session == null)
+            if (Plugin.connection?.session == null)
             {
                 status = string.Empty;
                 return false;
