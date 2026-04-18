@@ -16,7 +16,7 @@ namespace RepoAP
         static void RemovePellysFromList(ValuableDirector __instance)
         {
             //Make sure pelly spawn is set to false
-            if (Plugin.connection.session != null && APSave.saveData.pellySpawning == false)
+            if (Plugin.connection?.session != null && APSave.saveData.pellySpawning == false)
             {
                 Plugin.Logger.LogDebug("InValuableDirector");
 

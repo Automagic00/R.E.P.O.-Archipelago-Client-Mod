@@ -62,9 +62,9 @@ namespace RepoAP
             harmony.PatchAll(typeof(DeathLinkPatch));
             harmony.PatchAll(typeof(EnemyDespawnPatch));
         }
-        private void Start()
+        internal static void Initialize()
         {
-            Logger.LogDebug("In Start");
+            Logger.LogDebug("In Initialize");
             connection = new ArchipelagoConnection();
             customRPCManagerObject = new GameObject("RepoAPCustomRPCManager")
             {
@@ -86,6 +86,7 @@ namespace RepoAP
                 Logger.LogError("Failed to register customRPCManagerObject. Multiplayer may be borked.");
             // this line is necessary to set the PhotonView ID to something unique (unless we find a way to do it dunamically and encure all clients get the same ID)
             customRPCManagerObject.GetComponent<PhotonView>().ViewID = myPrefabId.GetHashCode();
+            Logger.LogDebug($"customRPCManagerObject has ViewID {customRPCManagerObject.GetComponent<PhotonView>().ViewID}");
             ItemData.CreateItemDataTable();
 
         }
@@ -99,35 +100,14 @@ namespace RepoAP
             connection.ActivateCheck(locID);
         }
 
-        public void Update()
+        public static void ProcessItems()
         {
             //Debug.Log("Update");
-            if (!connection.connected)
-            {
-                return;
-            }
-            if (connection.checkItemsReceived != null)
-            {
-                connection.checkItemsReceived.MoveNext();
-            }
-
-
-            //if (_player != null)
-            //{
-                //Debug.Log("Try Item");
-            if (connection.incomingItemHandler != null)
-            {
-                connection.incomingItemHandler.MoveNext();
-            }
-
-            if (connection.outgoingItemHandler != null)
-            {
-                connection.outgoingItemHandler.MoveNext();
-            }
-            if (connection.messageHandler != null)
-            {
-                connection.messageHandler.MoveNext();
-            }
+            if (!connection.connected) return;
+            connection.checkItemsReceived?.MoveNext();
+            connection.incomingItemHandler?.MoveNext();
+            connection.outgoingItemHandler?.MoveNext();
+            connection.messageHandler?.MoveNext();
         }
 
         public static void UpdateAPAddress(string input)
@@ -203,5 +183,27 @@ namespace RepoAP
 
             }
         }*/
+    }
+
+    [HarmonyPatch(typeof(GameManager))]
+    internal static class GameManagerPatch
+    {
+        [HarmonyPatch("Awake")]
+        [HarmonyPostfix]
+        public static void AwakePatch(GameManager __instance)
+        {
+            if (__instance != GameManager.instance) return;
+            Plugin.Initialize();
+        }
+    }
+    [HarmonyPatch(typeof(RunManager))]
+    internal static class RunManagerPatch
+    {
+        [HarmonyPatch("Update")]
+        [HarmonyPostfix]
+        public static void UpdatePatch()
+        {
+            Plugin.ProcessItems();
+        }
     }
 }
