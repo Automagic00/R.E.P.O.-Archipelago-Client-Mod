@@ -54,7 +54,7 @@ namespace RepoAP
             PhotonView photonView = inst.GetComponent<PhotonView>(); 
             object[] p = new object[] { APSave.saveData.pellysGathered.ToArray<string>(), APSave.saveData.valuablesGathered.ToArray<string>(), 
                 APSave.saveData.monsterSoulsGathered.ToArray<string>(), APSave.saveData.locationsScouted.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToJson(full:true) ), 
-                APSave.saveData.pellysRequired.ToString(), APSave.saveData.valuableHunt, APSave.saveData.monsterHunt };  
+                APSave.saveData.pellysRequired.ToString(), APSave.saveData.valuableHunt, APSave.saveData.monsterHunt, APSave.saveData.trapsUsed };  
             photonView.RPC(nameof(CustomRPCs.SyncSlotDataWithClientsRpc), RpcTarget.Others, p);    // using RpcTarget.All here may have created a race condition with APSaveData.CheckCompletion when both are called after a level is complete
         }
         public void CallClientChangeMonsterOrbName(GameObject inst, string enemyName)
@@ -114,7 +114,7 @@ namespace RepoAP
         }
 
         [PunRPC]
-        public void SyncSlotDataWithClientsRpc(string[] pellys_gathered, string[] valuables_gathered, string[] monster_souls_gathered, Dictionary<long, string> locations_scouted, string pellys_required, bool valuable_hunt, bool monster_hunt)
+        public void SyncSlotDataWithClientsRpc(string[] pellys_gathered, string[] valuables_gathered, string[] monster_souls_gathered, Dictionary<long, string> locations_scouted, string pellys_required, bool valuable_hunt, bool monster_hunt, Dictionary<string, int> trapsUsed)
         {
             APSave.saveData ??= new APSaveData();
             //APSave.saveData.locationsChecked =                            // not needed by clients
@@ -134,6 +134,7 @@ namespace RepoAP
             //APSave.saveData.upgradeLocations = upgrade_locations;         // not used at all anymore
             APSave.saveData.valuableHunt = valuable_hunt;                   // needed
             APSave.saveData.monsterHunt = monster_hunt;                     // needed
+            APSave.saveData.trapsUsed = trapsUsed;
             Plugin.Logger.LogInfo("Ap data synced with host");
         }
         [PunRPC]

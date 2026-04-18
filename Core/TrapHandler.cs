@@ -88,11 +88,12 @@ namespace RepoAP.Core
             Plugin.connection.session.DataStorage[$"REPO-{Plugin.connection.session.Players.GetPlayerName(Plugin.connection.session.ConnectionInfo.Slot)}-trapsUsed"] = JObject.FromObject(APSave.saveData.trapsUsed);// needs better syncing later
         }
 
-        [HarmonyPatch(typeof(RunManager), nameof(RunManager.CalculateMoonLevel))]
+        [HarmonyPatch(typeof(RunManager), nameof(RunManager.CalculateMoonLevel))]       // THIS RUNS WHEN A CLIENT JOINS A LOBBY!?!?!?!?
         [HarmonyPrefix]
         static bool CalculateMoonLevelPatch(int _levelsCompleted, ref int __result)     // the moon phase DOES stay when restarting, but you don't see the popup
         {
-            __result = Math.Max((_levelsCompleted + 1) / 5, APSave.saveData.trapsUsed[ItemNames.moon_phase_trap]);
+            if (APSave.saveData == null || !APSave.saveData.trapsUsed.TryGetValue(ItemNames.moon_phase_trap, out int numUsed)) return false;
+            __result = Math.Max((_levelsCompleted + 1) / 5, numUsed);
             return false;
         }
 
