@@ -536,7 +536,7 @@ namespace RepoAP
         {
             if (connected && SemiFunc.IsMasterClientOrSingleplayer() && DeathLinkEnabled())
             {
-                deathLinkService.SendDeathLink(new DeathLink(session.Players.ActivePlayer.Name, "got scrapped by the Taxman."));
+                deathLinkService.SendDeathLink(new DeathLink(session.Players.ActivePlayer.Name, $"{session.Players.ActivePlayer.Name} got scrapped by the Taxman."));
             }
         }
 

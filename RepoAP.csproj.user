@@ -3,11 +3,11 @@
 
   <PropertyGroup>
     <!-- Replace these with your own locations -->
-    <REPO>D:\SteamLibrary\steamapps\common\REPO</REPO>
-	  <BepInCore>$(REPO)\BepInEx\core</BepInCore>
-    <MenuLib>$(REPO)\BepInEx\plugins\nickklmao-MenuLib</MenuLib>
-    <REPOLib>$(REPO)\BepInEx\plugins\Zehs-REPOLib</REPOLib>
-    <OutputFolder>$(REPO)\BepInEx\plugins</OutputFolder>
+    <REPO>D:\Games\SteamLibrary\steamapps\common\REPO</REPO>
+	  <BepInCore>D:\Software\com.kesomannen.gale\cache\BepInEx-BepInExPack\5.4.2100\BepInEx\core</BepInCore>
+    <MenuLib>D:\Software\com.kesomannen.gale\cache\nickklmao-MenuLib\2.5.1\BepInEx\plugins\nickklmao-MenuLib</MenuLib>
+    <REPOLib>D:\Software\com.kesomannen.gale\cache\Zehs-REPOLib\3.0.3\BepInEx\plugins\Zehs-REPOLib</REPOLib>
+    <OutputFolder>D:\Software\com.kesomannen.gale\repo\profiles\ArchipelaREPO - Test Branch\BepInEx\plugins\Automagic-Archipelago_Randomizer_for_REPO</OutputFolder>
   </PropertyGroup>
 
   <PropertyGroup>
