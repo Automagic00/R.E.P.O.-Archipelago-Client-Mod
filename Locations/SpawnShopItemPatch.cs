@@ -363,42 +363,55 @@ namespace RepoAP
         }
     }
 
-    [HarmonyPatch(typeof(ItemAttributes),"Start")]
 	class APItemNamePatch
     {
-		[HarmonyPostfix]
+
+        static List<ItemAttributes> apItems = [];
+
+        [HarmonyPatch(typeof(ItemAttributes), "Start")]
+        [HarmonyPostfix]
 		static void NamePatch(ref string ___itemName, ItemAttributes __instance)
         {
 			if (___itemName.Contains("Archipelago"))
             {
 				__instance.gameObject.AddComponent<CustomRPCs>();
-				if (SemiFunc.IsMasterClientOrSingleplayer())
-				{
-					if (RunManager.instance.levelCurrent.name.Contains("Shop"))
-					{
-						string name = __instance.name;
-						if (name.Any(Char.IsDigit))
-						{
-							name = new string(name.Where(x => char.IsDigit(x)).ToArray());
-						}
-						___itemName += " " + name;
-						//Debug.Log(LocationData.AddBaseId(Int64.Parse(name)));
-						SerializableItemInfo itemInfo = APSave.GetScoutedShopItem(LocationData.AddBaseId(Int64.Parse(name)));
-
-                        ___itemName = $"{itemInfo.Player}'s {itemInfo.ItemName}";
-
-						if (GameManager.instance.gameMode == 1)
-						{
-
-							FieldInfo field = AccessTools.Field(typeof(ItemUpgrade), "photonView");
-							//PhotonView photonView = (PhotonView)field.GetValue(__instance.GetComponent<ItemUpgrade>());	// this is unused
-							Plugin.customRPCManager.CallUpdateItemNameRPC(___itemName, __instance.gameObject);
-							return;
-						}
-					}
-				}
-			}
+                if (SemiFunc.IsMasterClientOrSingleplayer() && SemiFunc.RunIsShop())
+                {
+                    apItems.Add(__instance);
+                }
+            }
         }
+        [HarmonyPatch(typeof(LevelGenerator), "GenerateDone")]  // we could do this after an earlier method like NavMeshSetup,
+        [HarmonyPostfix]                                        // but by doing it this late we make ABSOLUTELY sure that the items exist on the client and have all of their fields initialized
+        static void SyncAPItemNamesWithClients()
+        {
+            if (SemiFunc.IsMasterClientOrSingleplayer() && SemiFunc.RunIsShop())
+            {
+                Plugin.Logger.LogDebug($"In SyncAPItemNamesWithClients. apItems has {apItems.Count} entries");
+                foreach(ItemAttributes apItem in apItems)
+                {
+                    string name = apItem.name;
+                    if (name.Any(Char.IsDigit))
+                    {
+                        name = new string(name.Where(x => char.IsDigit(x)).ToArray());
+                    }
+
+                    SerializableItemInfo itemInfo = APSave.GetScoutedShopItem(LocationData.AddBaseId(Int64.Parse(name)));
+                    string newItemName = $"{itemInfo.Player}'s {itemInfo.ItemName}";
+
+                    if (GameManager.instance.gameMode == 1)
+                    {
+                        Plugin.customRPCManager.CallUpdateItemNameRPC(newItemName, apItem.gameObject);
+                    }
+                    else
+                    {
+                        AccessTools.Field(typeof(ItemAttributes), "itemName").SetValue(apItem, newItemName);
+                    }
+                }
+                apItems.Clear();
+            }
+        }
+
     }
 
 

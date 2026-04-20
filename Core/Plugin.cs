@@ -60,6 +60,7 @@ namespace RepoAP
             var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
             harmony.PatchAll(typeof(DeathLinkPatch));
+            harmony.PatchAll(typeof(APItemNamePatch));
             harmony.PatchAll(typeof(EnemyDespawnPatch));
         }
         internal static void Initialize()

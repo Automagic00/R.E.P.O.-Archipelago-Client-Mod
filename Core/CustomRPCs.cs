@@ -28,7 +28,7 @@ namespace RepoAP
             Plugin.Logger.LogInfo("Calling UpdateItemNameRPC");
             PhotonView photonView = inst.GetComponent<PhotonView>();
             object[] p = new object[] { name};
-            photonView.RPC(nameof(CustomRPCs.UpdateItemNameRPC), RpcTarget.Others, p);
+            photonView.RPC(nameof(CustomRPCs.UpdateItemNameRPC), RpcTarget.AllBuffered, p);
         }
 
         public void CallFocusTextRPC(string message, UnityEngine.Color mainCol, UnityEngine.Color flashCol, float lingerTime, GameObject inst)
