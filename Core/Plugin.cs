@@ -64,6 +64,7 @@ namespace RepoAP
             harmony.PatchAll(typeof(UpgradeSpawningPatch));
             harmony.PatchAll(typeof(APItemNamePatch));
             harmony.PatchAll(typeof(EnemyDespawnPatch));
+            harmony.PatchAll(typeof(TrapHandler));
         }
         internal static void Initialize()
         {

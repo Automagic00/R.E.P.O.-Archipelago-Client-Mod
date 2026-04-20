@@ -54,7 +54,7 @@ namespace RepoAP
             PhotonView photonView = inst.GetComponent<PhotonView>(); 
             object[] p = new object[] { APSave.saveData.pellysGathered.ToArray<string>(), APSave.saveData.valuablesGathered.ToArray<string>(), 
                 APSave.saveData.monsterSoulsGathered.ToArray<string>(), APSave.saveData.locationsScouted.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToJson(full:true) ), 
-                APSave.saveData.pellysRequired.ToString(), APSave.saveData.valuableHunt, APSave.saveData.monsterHunt };  
+                APSave.saveData.pellysRequired.ToString(), APSave.saveData.valuableHunt, APSave.saveData.monsterHunt, APSave.saveData.trapsUsed };  
             photonView.RPC(nameof(CustomRPCs.SyncSlotDataWithClientsRpc), RpcTarget.Others, p);    // using RpcTarget.All here may have created a race condition with APSaveData.CheckCompletion when both are called after a level is complete
         }
         public void CallClientChangeMonsterOrbName(GameObject inst, string enemyName)
@@ -79,6 +79,13 @@ namespace RepoAP
             PhotonView photonView = inst.GetComponent<PhotonView>();
             object[] p = new object[] { playerSteamIdWhoWasPosessed };
             photonView.RPC(nameof(CustomRPCs.ClientDeathLinkFinished), RpcTarget.MasterClient, p);
+        }
+        public void CallPingClientsWithNoise(GameObject inst, string fieldName, Vector3 position)
+        {
+            Plugin.Logger.LogInfo("Playing lure trap sound for clients");
+            PhotonView photonView = inst.GetComponent<PhotonView>();
+            object[] p = new object[] { fieldName, position };
+            photonView.RPC(nameof(CustomRPCs.PingClientsWithNoise), RpcTarget.All, p);
         }
 
 
@@ -107,7 +114,7 @@ namespace RepoAP
         }
 
         [PunRPC]
-        public void SyncSlotDataWithClientsRpc(string[] pellys_gathered, string[] valuables_gathered, string[] monster_souls_gathered, Dictionary<long, string> locations_scouted, string pellys_required, bool valuable_hunt, bool monster_hunt)
+        public void SyncSlotDataWithClientsRpc(string[] pellys_gathered, string[] valuables_gathered, string[] monster_souls_gathered, Dictionary<long, string> locations_scouted, string pellys_required, bool valuable_hunt, bool monster_hunt, Dictionary<string, int> trapsUsed)
         {
             APSave.saveData ??= new APSaveData();
             //APSave.saveData.locationsChecked =                            // not needed by clients
@@ -127,6 +134,7 @@ namespace RepoAP
             //APSave.saveData.upgradeLocations = upgrade_locations;         // not used at all anymore
             APSave.saveData.valuableHunt = valuable_hunt;                   // needed
             APSave.saveData.monsterHunt = monster_hunt;                     // needed
+            APSave.saveData.trapsUsed = trapsUsed;
             Plugin.Logger.LogInfo("Ap data synced with host");
         }
         [PunRPC]
@@ -143,6 +151,17 @@ namespace RepoAP
         public void ClientDeathLinkFinished(string playerSteamIdWhoWasPosessed)
         {
             RepoAP.Core.DeathLinkPatch.DeathLinkFinished(playerSteamIdWhoWasPosessed);
+        }
+        [PunRPC]
+        public void PingClientsWithNoise(string soundFieldName, Vector3 position)   // we can't pass a sound through an rpc
+        {
+            Sound noise = (Sound)AccessTools.Field(typeof(PlayerAvatar), soundFieldName)?.GetValue(PlayerAvatar.instance);
+            if (noise == null) 
+            {
+                Plugin.Logger.LogError($"Unable to play sound. No field found with the name '{soundFieldName}'");
+            }
+            else 
+                noise.Play(position, falloffMultiplier:2);
         }
     }
 }

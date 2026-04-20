@@ -79,5 +79,11 @@ namespace RepoAP
         static public string zero_grav_orb = "Zero Gravity Orb Unlock";
         static public string duck_bucket = "Duck Bucket Unlock";
         static public string phase_bridge = "Phase Bridge Unlock";
+
+        // Traps
+        static public string monster_trap = "Extra Monster Trap";
+        static public string audit_trap = "Audit Trap";
+        static public string lure_trap = "Monster Lure Trap";
+        static public string moon_phase_trap = "Progressive Moon Phase Trap";
     }
 }

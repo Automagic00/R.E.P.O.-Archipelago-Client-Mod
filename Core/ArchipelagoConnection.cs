@@ -12,6 +12,7 @@ using Archipelago.MultiClient.Net.MessageLog.Parts;
 using Archipelago.MultiClient.Net.Models;
 using Archipelago.MultiClient.Net.Packets;
 using MenuLib.MonoBehaviors;
+using Newtonsoft.Json.Linq;
 using RepoAP.Core;
 using UnityEngine;
 
@@ -140,6 +141,8 @@ namespace RepoAP
                 session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-pellysGathered"].Initialize(new List<string>());
                 session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-valuablesGathered"].Initialize(new List<string>());
                 session.DataStorage[$"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-monsterSoulsGathered"].Initialize(new List<string>());
+                APSave.saveData.trapsUsed[ItemNames.monster_trap] = 0; APSave.saveData.trapsUsed[ItemNames.audit_trap] = 0; APSave.saveData.trapsUsed[ItemNames.lure_trap] = 0; APSave.saveData.trapsUsed[ItemNames.moon_phase_trap] = 0;
+                session.DataStorage[$"REPO-{Plugin.connection.session.Players.GetPlayerName(Plugin.connection.session.ConnectionInfo.Slot)}-trapsUsed"].Initialize(JObject.FromObject(APSave.saveData.trapsUsed));
 
                 _ = Plugin.connection.SyncCompletionProgress(APSave.saveData.levelsCompleted, APSave.saveData.pellysGathered, APSave.saveData.valuablesGathered, APSave.saveData.monsterSoulsGathered);
             }
@@ -489,6 +492,7 @@ namespace RepoAP
                 Task<List<string>> getPellysGathered = SyncAPClientServerData($"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-pellysGathered", pellys_gathered);
                 Task<List<string>> getValuablesGathered = SyncAPClientServerData($"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-valuablesGathered", valuables_gathered);
                 Task<List<string>> getMonsterSoulsGathered = SyncAPClientServerData($"REPO-{session.Players.GetPlayerName(session.ConnectionInfo.Slot)}-monsterSoulsGathered", monster_souls_gathered);
+                APSave.saveData.trapsUsed = await Plugin.connection.session.DataStorage[$"REPO-{Plugin.connection.session.Players.GetPlayerName(Plugin.connection.session.ConnectionInfo.Slot)}-trapsUsed"].GetAsync<Dictionary<string, int>>();
                 APSave.saveData.levelsCompleted = await getLevelsCompleted;
                 APSave.saveData.pellysGathered = await getPellysGathered;
                 APSave.saveData.valuablesGathered = await getValuablesGathered;
@@ -545,5 +549,7 @@ namespace RepoAP
         {
             return (Plugin.BoundConfig.OverrideMWDeathlink.Value && Plugin.BoundConfig.Deathlink.Value) || (!Plugin.BoundConfig.OverrideMWDeathlink.Value && (bool)Plugin.connection.slotData["death_link"]);
         }
+
+        // could put something here called TickAPActions that patches RunManager.Update and emits an event every few seconds
     }
 }
