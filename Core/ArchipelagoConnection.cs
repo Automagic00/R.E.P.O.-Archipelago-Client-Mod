@@ -169,6 +169,14 @@ namespace RepoAP
 
             if (SemiFunc.MenuLevel())
             {
+                if (result is LoginSuccessful)
+                {
+                    Plugin.BoundConfig.APServerAddress.Value = Plugin.apAddress;
+                    Plugin.BoundConfig.APServerPort.Value = Plugin.apPort;
+                    Plugin.BoundConfig.APPassword.Value = Plugin.apPassword;
+                    Plugin.BoundConfig.APSlotName.Value = Plugin.apSlot;
+                }
+
                 connectingPage.ClosePage(false);
                 MenuBuilder.BuildPopup();
             }
@@ -240,7 +248,7 @@ namespace RepoAP
                 messageData md = new messageData($"Client Disconnected! Trying to Reconnect...", UnityEngine.Color.white, UnityEngine.Color.red, 4f);
 
                 messageItems.Enqueue(md);
-                await TryConnect(Plugin.apAdress, int.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
+                await TryConnect(Plugin.apAddress, int.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);
             }
             catch(Exception e)
             {
