@@ -14,6 +14,10 @@ namespace RepoAP
         public ConfigEntry<uint> ValuableSubstitutionChance;
         public ConfigEntry<bool> Deathlink;
         public ConfigEntry<bool> OverrideMWDeathlink;
+        public ConfigEntry<string> APServerAddress;
+        public ConfigEntry<string> APServerPort;
+        public ConfigEntry<string> APPassword;
+        public ConfigEntry<string> APSlotName;
         public PluginConfig(ConfigFile cfg)
         {
             DisplayAPMessagesOnTruckScreen = cfg.Bind("General", "Display Archipelago messages on truck screen", true, "If true, the truck screen will display messages from the multiworld chat. " +
@@ -28,6 +32,10 @@ namespace RepoAP
                 "When you die, everyone who enabled death link dies. Of course, the reverse is true too.");
             OverrideMWDeathlink = cfg.Bind("General", "Override yaml death link option", false,
                 "If true, the mod config will be used to turn death link on/off instead of the yaml option.");
+            APServerAddress = cfg.Bind("Connection", "Address", "archipelago.gg", "The address of the multiworld server (usually archipelago.gg).");
+            APServerPort = cfg.Bind("Connection", "Port", "", "The port that the multiworld is hosted on.");
+            APPassword = cfg.Bind("Connection", "Password", "", "The password for the multiworld, if it has one.");
+            APSlotName = cfg.Bind("Connection", "Slot Name", "", "Your slot name in the multiworld.");
 
             ClearUnusedEntries(cfg);
         }
