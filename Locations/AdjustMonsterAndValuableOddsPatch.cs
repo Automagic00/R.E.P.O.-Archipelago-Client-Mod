@@ -60,7 +60,7 @@ namespace RepoAP.Locations
             }
         }
     }
-    [HarmonyPatch(typeof(ValuableDirector), "Spawn")]  // LevelGenerator.Generate performs all steps of generation. In the valuables phase, it calls ValuableDirector.SetupHost
+    [HarmonyPatch(typeof(ValuableDirector), "SpawnValuable")]  // LevelGenerator.Generate performs all steps of generation. In the valuables phase, it calls ValuableDirector.SetupHost
     class AdjustValuableOddsPatch
     {
         [HarmonyPrefix]

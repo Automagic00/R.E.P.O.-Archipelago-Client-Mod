@@ -30,6 +30,7 @@ namespace RepoAP.Core
 
             if (!SemiFunc.IsMasterClientOrSingleplayer() || SemiFunc.MenuLevel() || RunManager.instance.levelCurrent == RunManager.instance.levelLobby) return;
             Level ___levelPrevious = (Level)AccessTools.Field(typeof(RunManager), "levelPrevious").GetValue(__instance);
+
             List<string> trapNames = [.. APSave.saveData.trapsUsed.Keys];
             foreach (string trap in trapNames)
             {
@@ -41,8 +42,7 @@ namespace RepoAP.Core
                     switch (trap)
                     {
                         case "Extra Monster Trap":
-                            if (__instance.levelCurrent == __instance.levelArena || ___levelPrevious == __instance.levelArena || 
-                                __instance.levelCurrent == __instance.levelShop || SemiFunc.IsMainMenu()) break;
+                            if (!SemiFunc.RunIsLevel()) break;
                             EnemySetup randomEnemy = EnemyDirector.instance.enemiesDifficulty3[UnityEngine.Random.Range(0, EnemyDirector.instance.enemiesDifficulty3.Count)];
                             LevelPoint selectedSpawnPoint = LevelGenerator.Instance.LevelPathPoints[UnityEngine.Random.Range(0, LevelGenerator.Instance.LevelPathPoints.Count)];
                             LevelGenerator.Instance.EnemySpawn(randomEnemy, selectedSpawnPoint.transform.position);
@@ -50,14 +50,13 @@ namespace RepoAP.Core
                             trapUsed = true;
                             break;
                         case "Audit Trap":
-                            if (__instance.levelCurrent != __instance.levelShop) break;
+                            if (!SemiFunc.RunIsShop()) break;
                             SemiFunc.StatSetRunCurrency(StatsManager.instance.GetRunStatCurrency() / 2);
                             trapUsed = true;
                             TutorialDirector.instance.ActivateTip("AuditTrap", 0.0f, false);
                             break;
                         case "Monster Lure Trap":
-                            if (__instance.levelCurrent == __instance.levelArena || ___levelPrevious == __instance.levelArena ||
-                                __instance.levelCurrent == __instance.levelShop || SemiFunc.IsMainMenu()) break;
+                            if (!SemiFunc.RunIsLevel()) break;
                             if (!lureTrapActive)
                             {
                                 lureTrapActive = true;

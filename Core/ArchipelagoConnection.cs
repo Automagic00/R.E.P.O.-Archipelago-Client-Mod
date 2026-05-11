@@ -293,7 +293,7 @@ namespace RepoAP
             }
         }
         
-        public void SyncLocations()
+        /*public void SyncLocations()
         {
             int serverLocCount = session.Locations.AllLocationsChecked.Count;
             Dictionary<string, int> clientLocCount = StatsManager.instance.dictionaryOfDictionaries["archipelago items sent to other players"];
@@ -304,12 +304,12 @@ namespace RepoAP
                 Dictionary<string,int> clientLocs = StatsManager.instance.dictionaryOfDictionaries["Locations Obtained"];
                 Plugin.Logger.LogInfo("Server: " + serverLocCount + "\nClient Count: " + clientLocCount + "\nClient Raw: " + clientLocs.Count);
 
-                /*foreach (string location in clientLocs)
-                {
-                    ActivateCheck(long.Parse(location));
-                }*/
+                //foreach (string location in clientLocs)
+                //{
+                //    ActivateCheck(long.Parse(location));
+                //}
             }
-        }
+        }*/
 
         public string GetLocationName(long id)
         {

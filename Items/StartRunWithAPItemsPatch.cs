@@ -59,7 +59,7 @@ namespace RepoAP.Items
         [HarmonyPostfix]
         static void RunStartStatsPatch(RunManager __instance, bool ___gameOver)
         {
-            if (!___gameOver && __instance.levelCurrent == __instance.levelArena)
+            if (!___gameOver && SemiFunc.RunIsArena())
             {
                 Plugin.Logger.LogDebug("Granting ap items from RunManager.ResetProgress");
                 StartRunWithAPItems.GrantAPItems();
