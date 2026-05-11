@@ -41,7 +41,7 @@ namespace RepoAP
 				MenuAPI.CreateREPOButton("Archipelago", () => 
 				{
 					MenuBuilder.BuildPopup();
-				}, parent, new Vector2(145f, 27f));
+				}, parent, new Vector2(145f, 22f));
 				//repoPage.maskPadding = new Padding(left: 0, top: 0, right: 0, bottom: 0);
 				//Closes this page
 				//closePagesAddedOnTop:
@@ -101,9 +101,9 @@ namespace RepoAP
 				repoPage.ClosePage(true);
 			}, parent, new Vector2(590f, 25f)));
 
-			repoPage.OpenPage(true);
+            repoPage.OpenPage(true);
 
-		}
+        }
 
 		public static void BuildConnectingPopUp()
         {

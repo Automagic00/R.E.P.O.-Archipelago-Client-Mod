@@ -275,6 +275,7 @@ namespace RepoAP
                 Plugin.Logger.LogDebug($"In SyncAPItemNamesWithClients. apItems has {apItems.Count} entries");
                 foreach(ItemAttributes apItem in apItems)
                 {
+                    if (apItem == null) continue;
                     string name = apItem.name;
                     if (name.Any(Char.IsDigit))
                     {
@@ -295,6 +296,12 @@ namespace RepoAP
                 }
                 apItems.Clear();
             }
+        }
+        [HarmonyPatch(typeof(ItemAttributes), "GetItemNameLocalized")]
+        [HarmonyPostfix]
+        static void ReplaceLocalizedNameOfAPItems(ref string __result, ref string ___itemName, ItemAttributes __instance)
+        {
+            if (__instance.item.name.Equals(ItemNames.ap_item)) __result = ___itemName;
         }
 
     }

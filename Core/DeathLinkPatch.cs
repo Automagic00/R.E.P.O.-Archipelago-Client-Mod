@@ -41,8 +41,8 @@ namespace RepoAP.Core
         [HarmonyPrefix]
         static void SendDeadPatch(RunManager __instance, bool _levelFailed, bool ___gameOver, Level ___levelPrevious)
         {
-            if (!SemiFunc.IsMasterClientOrSingleplayer() || !_levelFailed || ___gameOver || __instance.levelCurrent == __instance.levelArena || ___levelPrevious == __instance.levelArena || 
-                __instance.levelCurrent == __instance.levelShop || SemiFunc.IsMainMenu()) return;   // that's a lot of conditions
+            if (!SemiFunc.IsMasterClientOrSingleplayer() || !_levelFailed || ___gameOver || SemiFunc.RunIsArena() || SemiFunc.IsLevelArena(___levelPrevious) || 
+                SemiFunc.RunIsShop() || SemiFunc.IsMainMenu()) return;   // that's a lot of conditions
             if (!isDeadFromDeathLink)
             {
                 Plugin.Logger.LogInfo("All players dead. Sending death link");
@@ -113,7 +113,7 @@ namespace RepoAP.Core
             else
             {
                 Plugin.Logger.LogDebug("Running singleplayer deathlink");
-                if (__instance.levelCurrent == __instance.levelShop) RunManager.instance.ChangeLevel(false, false, _changeLevelType: RunManager.ChangeLevelType.Shop);
+                if (SemiFunc.RunIsShop()) RunManager.instance.ChangeLevel(false, false, _changeLevelType: RunManager.ChangeLevelType.Shop);
                 else RunManager.instance.ChangeLevel(false, false, _changeLevelType: RunManager.ChangeLevelType.RunLevel);
                 awaitingDeathLink = false;
                 DeathLinkFinished("it doesn't matter what goes here because playersWithActiveDeathCountdown isn't checked in singleplayer");
