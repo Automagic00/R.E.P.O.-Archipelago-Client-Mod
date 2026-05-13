@@ -60,12 +60,14 @@ namespace RepoAP
             var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
             harmony.PatchAll(typeof(DeathLinkPatch));
-            harmony.PatchAll(typeof(ShopPopulateItemVolumesPatch));
+            //harmony.PatchAll(typeof(ShopPopulateItemVolumesPatch));
             harmony.PatchAll(typeof(UpgradeSpawningPatch));
             harmony.PatchAll(typeof(APItemNamePatch));
             harmony.PatchAll(typeof(EnemyDespawnPatch));
             harmony.PatchAll(typeof(TrapHandler));
             harmony.PatchAll(typeof(Events));
+
+            REPOLib.BundleLoader.OnAllBundlesLoaded += FixAPStoreItems;
         }
         internal static void Initialize()
         {
@@ -94,7 +96,23 @@ namespace RepoAP
             Logger.LogDebug($"customRPCManagerObject has ViewID {customRPCManagerObject.GetComponent<PhotonView>().ViewID}");
             ItemData.CreateItemDataTable();
 
+
         }
+
+        private static void FixAPStoreItems()
+        {
+            List<Item> itemsToRegister = (List<Item>)AccessTools.Field(typeof(REPOLib.Modules.Items), "_itemsToRegister").GetValue(null);
+            foreach (var item in itemsToRegister)
+            {
+                if (item?.itemName == "Archipelago Item")
+                {
+                    if (!item.prefab.Prefab.TryGetComponent<ItemAttributes>(out ItemAttributes attributes)) continue;
+                    attributes.gameObject.AddComponent<ItemRPCs>();
+                    Logger.LogDebug("Assigned ItemRPCs to the Archipelago Item prefab");
+                }
+            }
+        }
+
         public static ArchipelagoConnection GetConnection()
         {
             return connection;

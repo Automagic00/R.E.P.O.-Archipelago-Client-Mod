@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Archipelago.MultiClient.Net.Models;
 using HarmonyLib;
 using Photon.Pun;
+using RepoAP.Core;
 using UnityEngine;
 
 namespace RepoAP
@@ -79,7 +80,7 @@ namespace RepoAP
                 return;
             List<Item> allPotentialItems = [.. ShopManager.instance.potentialItems.Where(item => IsItemUnlockedInMultiworld(item))];    
             List<Item> allpotentialItemConsumables = [.. ShopManager.instance.potentialItemConsumables.Where(item => IsItemUnlockedInMultiworld(item))];
-            List<Item> allpotentialItemUpgrades = [.. ShopManager.instance.potentialItemUpgrades.Where(item => item != StatsManager.instance.itemDictionary[ItemNames.ap_item])];
+            List<Item> allpotentialItemUpgrades = [];
             List<Item> allpotentialItemHealthPacks = [.. ShopManager.instance.potentialItemHealthPacks.Where(item => IsItemUnlockedInMultiworld(item))];
             Dictionary<SemiFunc.itemSecretShopType, List<Item>> allPotentialSecretItems = [];
 
@@ -107,6 +108,18 @@ namespace RepoAP
             }
             foreach (IList<Item> list in allPotentialSecretItems.Values)
                 list.Shuffle<Item>();
+
+            int shopItemsToReplace = Plugin.ShopItemsAvailable.Count;
+
+            foreach (Item upgrade in ShopManager.instance.potentialItemUpgrades)
+            {
+                if (shopItemsToReplace > 0)
+                {
+                    allpotentialItemUpgrades.Add(StatsManager.instance.itemDictionary[ItemNames.ap_item]);
+                    shopItemsToReplace--;
+                }
+                else allpotentialItemUpgrades.Add(upgrade);
+            }
 
             ShopManager.instance.potentialItems = allPotentialItems;
             ShopManager.instance.potentialItemConsumables = allpotentialItemConsumables;
@@ -161,84 +174,11 @@ namespace RepoAP
         }
     }
 
-    [HarmonyPatch(typeof(PunManager), "SpawnShopItem")]
-    class SpawnShopItemPatch
-	{
-        [HarmonyPrefix]
-		static bool ReplaceItemPatch(ref bool __result, ref ItemVolume itemVolume, ref List<Item> itemList, ref int spawnCount, bool isSecret = false)
-		{
-            // handle upgrade spawning ourself (need to check if the itemVolume is for upgrades) SemiFunc.ItemVolume.upgrade
-            if (itemList.Count <= 0 || itemVolume.itemVolume != SemiFunc.itemVolume.upgrade)
-			{
-                return true;
-            }
-            for (int i = itemList.Count - 1; i >= 0; i--)
-			{
-                Item item;
-				//Replaces upgrades with AP items
-				if ((itemList[i].itemName.Contains("Upgrade") && !itemList[i].name.Contains("Counted")) && Plugin.ShopItemsAvailable.Count > 0)
-				{
-                    item = StatsManager.instance.itemDictionary[ItemNames.ap_item];
-				}
-				else
-				{
-                    item = itemList[i];
-                }
-                
-                if (item.itemVolume == itemVolume.itemVolume)
-				{
-                    ShopManager.instance.itemRotateHelper.transform.parent = itemVolume.transform;
-					ShopManager.instance.itemRotateHelper.transform.localRotation = item.spawnRotationOffset;
-					Quaternion rotation = ShopManager.instance.itemRotateHelper.transform.rotation;
-					ShopManager.instance.itemRotateHelper.transform.parent = ShopManager.instance.transform;
-					if (SemiFunc.IsMultiplayer())
-					{
-						var inst = PhotonNetwork.InstantiateRoomObject(item.prefab.ResourcePath, itemVolume.transform.position, rotation, 0, null);
-						Plugin.LastShopItemChecked++;
-						if (item.itemType == SemiFunc.itemType.item_upgrade && item.name == ItemNames.ap_item)
-						{
-                            Plugin.Logger.LogDebug($"Replacing {itemList[i].itemName} with a random AP item");
-                            System.Random rand = new System.Random();
-							int randomIndex = rand.Next(Plugin.ShopItemsAvailable.Count);
-							int itemID = Plugin.ShopItemsAvailable[randomIndex];
-							inst.name += "_Counted_" + itemID;
-							Plugin.ShopItemsAvailable.RemoveAt(randomIndex);
-						}
-					}
-					else
-					{
-						var inst = UnityEngine.Object.Instantiate<GameObject>(item.prefab.Prefab, itemVolume.transform.position, rotation);
-						Plugin.LastShopItemChecked++;
-						if (item.itemType == SemiFunc.itemType.item_upgrade && item.name == ItemNames.ap_item)
-						{
-                            Plugin.Logger.LogDebug($"Replacing {itemList[i].itemName} with a random AP item");
-                            System.Random rand = new System.Random();
-							int randomIndex = rand.Next(Plugin.ShopItemsAvailable.Count);
-							int itemID = Plugin.ShopItemsAvailable[randomIndex];
-							inst.name += "_Counted_" + itemID;
-							Plugin.ShopItemsAvailable.RemoveAt(randomIndex);
-							Plugin.Logger.LogDebug($"Spawned AP Item with ID: {itemID}");
-						}
-					}
-					itemList.RemoveAt(i);
-					if (!isSecret)
-					{
-						spawnCount++;
-					}
-					__result = true;
-					return false;
-				}
-			}
-			__result = false;
-			return false;
-		}
-	}
-
     /*
      * Refreshes available shop items once per visit
      */
     [HarmonyPatch(typeof(PunManager), nameof(PunManager.ShopPopulateItemVolumes))]
-	class ApStoreItemsPatch
+    class ApStoreItemsPatch
 	{
         [HarmonyPrefix]
         static void RefreshAvailableAPShopItems()	
@@ -247,56 +187,55 @@ namespace RepoAP
             APSave.UpdateAvailableItems();
         }
     }
-
-	class APItemNamePatch
+    [HarmonyPatch(typeof(UpgradeStand), "SpawnNewUpgrades")]
+    class ApUpgradeStandItemsPatch
     {
+        [HarmonyPrefix]
+        static void RefreshAvailableAPShopItems()
+        {
+            Plugin.Logger.LogInfo("Refreshing Available AP Shop Items");
+            APSave.UpdateAvailableItems();
+        }
+    }
 
-        static List<ItemAttributes> apItems = [];
-
+    class APItemNamePatch
+    {
         [HarmonyPatch(typeof(ItemAttributes), "Start")]
         [HarmonyPostfix]
-		static void NamePatch(ref string ___itemName, ItemAttributes __instance)
+        static void NamePatch(ref string ___itemName, ItemAttributes __instance)
         {
-			if (___itemName.Contains("Archipelago"))
+            if (___itemName.Contains("Archipelago"))
             {
-				__instance.gameObject.AddComponent<CustomRPCs>();
                 if (SemiFunc.IsMasterClientOrSingleplayer() && SemiFunc.RunIsShop())
                 {
-                    apItems.Add(__instance);
-                }
-            }
-        }
-        [HarmonyPatch(typeof(LevelGenerator), "GenerateDone")]  // we could do this after an earlier method like NavMeshSetup,
-        [HarmonyPostfix]                                        // but by doing it this late we make ABSOLUTELY sure that the items exist on the client and have all of their fields initialized
-        static void SyncAPItemNamesWithClients()
-        {
-            if (SemiFunc.IsMasterClientOrSingleplayer() && SemiFunc.RunIsShop())
-            {
-                Plugin.Logger.LogDebug($"In SyncAPItemNamesWithClients. apItems has {apItems.Count} entries");
-                foreach(ItemAttributes apItem in apItems)
-                {
-                    if (apItem == null) continue;
-                    string name = apItem.name;
-                    if (name.Any(Char.IsDigit))
-                    {
-                        name = new string(name.Where(x => char.IsDigit(x)).ToArray());
-                    }
+                    if (Plugin.ShopItemsAvailable.Count <= 0) return;
+                    Plugin.Logger.LogDebug($"Assigning {___itemName} a random AP item");
+                    System.Random rand = new System.Random();
+                    int randomIndex = rand.Next(Plugin.ShopItemsAvailable.Count);
+                    int itemID = Plugin.ShopItemsAvailable[randomIndex];
+                    __instance.gameObject.name += "_Counted_" + itemID;
+                    Plugin.ShopItemsAvailable.RemoveAt(randomIndex);
+                    string name = __instance.gameObject.name;
+
+                    if (!name.Any(Char.IsDigit)) return;
+                    
+                    name = new string(name.Where(x => char.IsDigit(x)).ToArray());
 
                     SerializableItemInfo itemInfo = APSave.GetScoutedShopItem(LocationData.AddBaseId(Int64.Parse(name)));
                     string newItemName = $"{itemInfo.Player}'s {itemInfo.ItemName}";
 
-                    if (GameManager.instance.gameMode == 1)
+                    if (GameManager.instance.gameMode == 1 && __instance.gameObject.GetComponent<ItemRPCs>() != null)
                     {
-                        Plugin.customRPCManager.CallUpdateItemNameRPC(newItemName, apItem.gameObject);
+                        __instance.gameObject.GetComponent<ItemRPCs>().CallUpdateItemNameRPC(newItemName, __instance.gameObject);
                     }
                     else
                     {
-                        AccessTools.Field(typeof(ItemAttributes), "itemName").SetValue(apItem, newItemName);
+                        AccessTools.Field(typeof(ItemAttributes), "itemName").SetValue(__instance, newItemName);
                     }
                 }
-                apItems.Clear();
             }
         }
+
         [HarmonyPatch(typeof(ItemAttributes), "GetItemNameLocalized")]
         [HarmonyPostfix]
         static void ReplaceLocalizedNameOfAPItems(ref string __result, ref string ___itemName, ItemAttributes __instance)

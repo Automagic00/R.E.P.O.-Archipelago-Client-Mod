@@ -14,22 +14,6 @@ namespace RepoAP
 {
     public class CustomRPCs : MonoBehaviour
     {
-        /*public static void AppendMethods()
-        {
-            MethodInfo updateItemNameRPC = typeof(CustomRPCs).GetMethod("UpdateItemNameRPC");
-            if (updateItemNameRPC != null)
-            {
-
-            }
-        }*/
-
-        public void CallUpdateItemNameRPC(string name, GameObject inst)
-        {
-            Plugin.Logger.LogInfo("Calling UpdateItemNameRPC");
-            PhotonView photonView = inst.GetComponent<PhotonView>();
-            object[] p = new object[] { name};
-            photonView.RPC(nameof(CustomRPCs.UpdateItemNameRPC), RpcTarget.AllBuffered, p);
-        }
 
         public void CallFocusTextRPC(string message, UnityEngine.Color mainCol, UnityEngine.Color flashCol, float lingerTime, GameObject inst)
         {
@@ -92,17 +76,6 @@ namespace RepoAP
 
 
 
-        [PunRPC]
-        public void UpdateItemNameRPC(string name, PhotonMessageInfo info)
-        {
-            Plugin.Logger.LogInfo("UpdateItemNameRPC Called");
-            var inst = info.photonView.gameObject.GetComponent<ItemAttributes>();
-            //ItemAttributes att = inst.GetComponent<ItemAttributes>();
-
-            FieldInfo field = AccessTools.Field(typeof(ItemAttributes), "itemName");
-            field.SetValue(inst, name.Replace("_"," "));
-
-        }
         [PunRPC]
         public void FocusTextRPC(string message, UnityEngine.Color mainCol, UnityEngine.Color flashCol, float lingerTime)
         {
