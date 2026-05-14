@@ -215,6 +215,31 @@ namespace RepoAP
             ids.Add(base_shop_offset++);
             names.Add(ItemNames.moon_phase_trap);
 
+            // Cosmetic Update
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.roll_staff);
+
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.void_staff);
+
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.zero_grav_staff);
+
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.leaf_blower);
+
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.scout_vehicle);
+
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.hauler_vehicle);
+
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.defibro);
+
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.semibot_walkies);
+
             for (int i = 0; i < ids.Count;i++)
             {
                 itemIDToName.Add(ids[i], names[i]);

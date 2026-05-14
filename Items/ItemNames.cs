@@ -38,28 +38,33 @@ namespace RepoAP
         static public string sledge_hammer = "Sledge Hammer Unlock";
         static public string sword = "Sword Unlock";
         static public string inflatable_hammer = "Inflatable Hammer Unlock";
-        static public string prodzap = "Prodzap Unlock";
 
         // Ranged Weapons
         static public string gun = "Gun Unlock";
         static public string shotgun = "Shotgun Unlock";
-        static public string tranq_gun = "Tranq Gun Unlock";
-        static public string pulse_pistol = "Pulse Pistol Unlock";
         static public string photon_blaster = "Photon Blaster Unlock";
-        static public string boltzap = "Boltzap Unlock";
         static public string cart_cannon = "C.A.R.T. Cannon Unlock";
         static public string cart_laser = "C.A.R.T. Laser Unlock";
+        static public string roll_staff = "Roll Staff Unlock";
+        static public string void_staff = "Void Staff Unlock";
 
         // Explosive Weapons
         static public string grenade = "Grenade Unlock";
-        static public string shock_grenade = "Shockwave Grenade Unlock";            
-        static public string stun_grenade = "Stun Grenade Unlock";
         static public string human_grenade = "Human Grenade Unlock";
         static public string duct_taped_grenade = "Duct Taped Grenades Unlock";  
-        static public string shockwave_mine = "Shockwave Mine Unlock";
-        static public string stun_mine = "Trapzap Unlock";
         static public string explosive_mine = "Explosive Mine Unlock";
         static public string rubber_duck = "Rubber Duck Unlock";
+
+        // Stun Weapons
+        static public string prodzap = "Prodzap Unlock";
+        static public string tranq_gun = "Tranq Gun Unlock";
+        static public string pulse_pistol = "Pulse Pistol Unlock";
+        static public string boltzap = "Boltzap Unlock";
+        static public string shock_grenade = "Shockwave Grenade Unlock";
+        static public string stun_grenade = "Stun Grenade Unlock";
+        static public string shockwave_mine = "Shockwave Mine Unlock";
+        static public string stun_mine = "Trapzap Unlock";
+        static public string zero_grav_staff = "Zero Gravity Staff Unlock";
 
         // Drones
         static public string recharge_drone = "Recharge Drone Unlock";
@@ -72,6 +77,10 @@ namespace RepoAP
         static public string pocket_cart = "POCKET C.A.R.T. Unlock";    
         static public string cart = "C.A.R.T. Unlock";
 
+        // Vehicles
+        static public string scout_vehicle = "Scout Unlock";
+        static public string hauler_vehicle = "Hauler Unlock";
+
         // Misc
         static public string valuable_detector = "Valuable Tracker Unlock";        
         static public string extraction_detector = "Extraction Tracker Unlock";    
@@ -79,6 +88,9 @@ namespace RepoAP
         static public string zero_grav_orb = "Zero Gravity Orb Unlock";
         static public string duck_bucket = "Duck Bucket Unlock";
         static public string phase_bridge = "Phase Bridge Unlock";
+        static public string leaf_blower = "Leaf Blower Unlock";
+        static public string defibro = "Defibro Unlock";
+        static public string semibot_walkies = "Semibot Walkies Unlock";
 
         // Traps
         static public string monster_trap = "Extra Monster Trap";
