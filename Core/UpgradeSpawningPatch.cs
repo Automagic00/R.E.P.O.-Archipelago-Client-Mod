@@ -33,6 +33,7 @@ namespace RepoAP.Core
             Vector3 distBetweenUpgrades = upgradeItemVolumeList[7].transform.position - upgradeItemVolumeList[8].transform.position;    // these two are right next to one another, which is needed
             // when you load a save, the upgrade volumes are at z=-14.02. all other times, they are either at -19.28 or -16.78
             Vector3 newRowStartPosition = (upgradeItemVolumeList[7].transform.position + directionToSpawnUpgrades * 26f) - distBetweenUpgrades;
+            newRowStartPosition.y += 1;
 
             List<ItemVolume> newUpgradeItemVolumes = [];
             for (int i = 0; i < MAX_UPGRADE_ROWS; i++)

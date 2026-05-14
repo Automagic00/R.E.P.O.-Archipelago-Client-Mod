@@ -27,8 +27,9 @@ namespace RepoAP
             bool hasValuable = name.Contains("Valuable");
             bool hasPelly = name.Contains("Pelly");
             bool isSurplus = name.Contains("Surplus");
+            bool isComsetic = name.Contains("Cosmetic");
 
-            if (!isSurplus && (hasSoul || hasValuable || hasPelly))
+            if (!isSurplus && (hasSoul || hasValuable || hasPelly || isComsetic))
             {
                 string label = "";
 
