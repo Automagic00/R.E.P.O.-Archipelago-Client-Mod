@@ -84,19 +84,13 @@ namespace RepoAP
             List<Item> allpotentialItemHealthPacks = [.. ShopManager.instance.potentialItemHealthPacks.Where(item => IsItemUnlockedInMultiworld(item))];
             Dictionary<SemiFunc.itemSecretShopType, List<Item>> allPotentialSecretItems = [];
 
-            foreach (List<Item> secretList in ShopManager.instance.potentialSecretItems.Values) allPotentialItems.AddRange(secretList.Where(secretItem => IsItemUnlockedInMultiworld(secretItem)));
+            foreach (var secretPair in ShopManager.instance.potentialSecretItems)
+                allPotentialSecretItems[secretPair.Key] = [.. secretPair.Value.Where(item => IsItemUnlockedInMultiworld(item))];
 
             bool oldUpgradeListIsEmpty = allpotentialItemUpgrades.Count() == 0;
             foreach (Item obj in StatsManager.instance.itemDictionary.Values)
             {
-                if (obj.itemType != SemiFunc.itemType.cart && obj.itemType != SemiFunc.itemType.pocket_cart && obj.itemType != SemiFunc.itemType.item_upgrade &&
-                    obj.itemType != SemiFunc.itemType.power_crystal && obj.itemType != SemiFunc.itemType.healthPack && (IsItemUnlockedInMultiworld(obj) || UnityEngine.Random.Range(0, 100) < 10))
-                {
-                    if (!allPotentialSecretItems.ContainsKey(SemiFunc.itemSecretShopType.shop_attic))
-                        allPotentialSecretItems.Add(SemiFunc.itemSecretShopType.shop_attic, []);
-                    allPotentialSecretItems[SemiFunc.itemSecretShopType.shop_attic].Add(obj);
-                }
-                else if (oldUpgradeListIsEmpty && obj.itemType == SemiFunc.itemType.item_upgrade && obj != StatsManager.instance.itemDictionary[ItemNames.ap_item])
+                if (oldUpgradeListIsEmpty && obj.itemType == SemiFunc.itemType.item_upgrade && obj != StatsManager.instance.itemDictionary[ItemNames.ap_item])
                 {
                     allpotentialItemUpgrades.Add(obj);
                 }
@@ -106,8 +100,6 @@ namespace RepoAP
             {
                 allpotentialItemUpgrades.Shuffle<Item>();
             }
-            foreach (IList<Item> list in allPotentialSecretItems.Values)
-                list.Shuffle<Item>();
 
             int shopItemsToReplace = Plugin.ShopItemsAvailable.Count;
 
