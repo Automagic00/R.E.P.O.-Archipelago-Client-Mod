@@ -129,51 +129,6 @@ namespace RepoAP
         }
     }
 
-
-    /*
-     * If potentialItems and potentialItemConsumables are both empty, nothing else can spawn. This is stupid because the method only gets called if the level currently being generated
-     * is the shop. We change that here.
-     */
-    class ShopPopulateItemVolumesPatch
-    {
-        private static readonly FieldInfo potentialItemsInfo = AccessTools.Field(typeof(ShopManager), nameof(ShopManager.potentialItems));
-        private static readonly FieldInfo potentialItemConsumablesInfo = AccessTools.Field(typeof(ShopManager), nameof(ShopManager.potentialItemConsumables));
-        private static readonly FieldInfo itemSpawnTargetAmountInfo = AccessTools.Field(typeof(ShopManager), nameof(ShopManager.itemSpawnTargetAmount));
-
-        [HarmonyPatch(typeof(PunManager), nameof(PunManager.ShopPopulateItemVolumes))]
-        [HarmonyTranspiler]
-        static IEnumerable<CodeInstruction> PreventStupidZeroUpgradesPatch(IEnumerable<CodeInstruction> instructions)
-        {
-            Plugin.Logger.LogInfo("Patching ShopPopulateItemVolumes with a transpiler to let upgrades spawn...");
-            bool found1 = false;
-            bool found2 = false;
-            int breakIndex = -1;
-
-            // find the load instructions for a sequence of potentialItems, potentialItemConsumables, and the break instruction that all happen before 
-            // a >=.If we do, remove the break (leave) instruction.
-            var codes = new List<CodeInstruction>(instructions);
-            for (var i = 0; i < codes.Count; i++)
-            {
-                if (codes[i].LoadsField(potentialItemsInfo)) found1 = true;                            // Found first list
-                else if (found1 && codes[i].LoadsField(potentialItemConsumablesInfo)) found2 = true;   // Found second list
-                else if (found1 && found2 && codes[i].LoadsField(itemSpawnTargetAmountInfo)) break;    // Too far
-                else if (found1 && found2 && codes[i].opcode == OpCodes.Leave)                         // Found break. This is the right place
-                {
-                    breakIndex = i; // mark it for destruction
-                    break;          // irony
-                }
-            }
-            if (breakIndex != -1)
-            {
-                codes[breakIndex].opcode = OpCodes.Nop;
-                Plugin.Logger.LogInfo($"Successfully patched ShopPopulateItemVolumes.");
-                return codes;
-            }
-            Plugin.Logger.LogInfo("Failed to patch ShopPopulateItemVolumes. Target instruction not found!");
-            return instructions;
-        }
-    }
-
     /*
      * Refreshes available shop items once per visit
      */
