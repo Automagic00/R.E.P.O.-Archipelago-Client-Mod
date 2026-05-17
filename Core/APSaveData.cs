@@ -253,10 +253,23 @@ namespace RepoAP
             Plugin.ShopItemsAvailable = new List<int>();
             Plugin.ShopItemsBought = GetShopLocationsChecked();
 
+            List<int> shopItemsAlreadySpawned = [];
+            if (SemiFunc.RunIsShop())
+            {
+                var spawnedShopUpgrades = UnityEngine.Object.FindObjectsOfType<ItemUpgrade>().Where(upgrade =>
+                    upgrade.GetComponent<ItemAttributes>().item.Equals(StatsManager.instance.itemDictionary[ItemNames.ap_item])).Select(upgrade => upgrade.GetComponent<ItemAttributes>()); // need to get all spawned ap items and make sure new upgrades do not grant the saem item
+                foreach (ItemAttributes item in spawnedShopUpgrades)
+                {
+                    long id = LocationData.ShopItemToID(item.name);
+                    if (id != 0)
+                        shopItemsAlreadySpawned.Add((int)LocationData.RemoveBaseId(id));
+                }
+            }
+
             for (int i = 1; i <= (APSave.saveData.shopStockSlotData * (APSave.saveData.shopStockReceived + 1)); i++)
             {
                 //Debug.Log($"Stocking item {i}");
-                if (!Plugin.ShopItemsBought.Contains(i) && Plugin.connection.session.Locations.AllMissingLocations.Contains(ItemData.AddBaseId(i)))
+                if (!Plugin.ShopItemsBought.Contains(i) && !shopItemsAlreadySpawned.Contains(i) && Plugin.connection.session.Locations.AllMissingLocations.Contains(ItemData.AddBaseId(i)))
                 {
                     Plugin.ShopItemsAvailable.Add(i);
                 }
