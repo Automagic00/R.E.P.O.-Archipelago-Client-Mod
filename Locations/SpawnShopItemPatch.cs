@@ -87,30 +87,24 @@ namespace RepoAP
             foreach (var secretPair in ShopManager.instance.potentialSecretItems)
                 allPotentialSecretItems[secretPair.Key] = [.. secretPair.Value.Where(item => IsItemUnlockedInMultiworld(item))];
 
-            bool oldUpgradeListIsEmpty = allpotentialItemUpgrades.Count() == 0;
-            foreach (Item obj in StatsManager.instance.itemDictionary.Values)
+            if (ShopManager.instance.potentialItemUpgrades.Count() == 0)
             {
-                if (oldUpgradeListIsEmpty && obj.itemType == SemiFunc.itemType.item_upgrade && obj != StatsManager.instance.itemDictionary[ItemNames.ap_item])
+                foreach (Item obj in StatsManager.instance.itemDictionary.Values)
                 {
-                    allpotentialItemUpgrades.Add(obj);
+                    if (obj.itemType == SemiFunc.itemType.item_upgrade && obj != StatsManager.instance.itemDictionary[ItemNames.ap_item])
+                    {
+                        allpotentialItemUpgrades.Add(obj);
+                    }
                 }
-            }
-
-            if (oldUpgradeListIsEmpty)
-            {
                 allpotentialItemUpgrades.Shuffle<Item>();
             }
+            else allpotentialItemUpgrades = ShopManager.instance.potentialItemUpgrades;
 
-            int shopItemsToReplace = Plugin.ShopItemsAvailable.Count;
-
-            foreach (Item upgrade in ShopManager.instance.potentialItemUpgrades)
+            int shopItemsToReplace = Math.Min(Plugin.ShopItemsAvailable.Count, allpotentialItemUpgrades.Count);
+            for (int i = shopItemsToReplace - 1; i >= 0; i--)
             {
-                if (shopItemsToReplace > 0)
-                {
-                    allpotentialItemUpgrades.Add(StatsManager.instance.itemDictionary[ItemNames.ap_item]);
-                    shopItemsToReplace--;
-                }
-                else allpotentialItemUpgrades.Add(upgrade);
+                allpotentialItemUpgrades.RemoveAt(i);
+                allpotentialItemUpgrades.Add(StatsManager.instance.itemDictionary[ItemNames.ap_item]);
             }
 
             ShopManager.instance.potentialItems = allPotentialItems;
@@ -134,14 +128,34 @@ namespace RepoAP
             APSave.UpdateAvailableItems();
         }
     }
-    [HarmonyPatch(typeof(UpgradeStand), "SpawnNewUpgrades")]
     class ApUpgradeStandItemsPatch
     {
+        static int apShopItemsAvailable = 0;
+
+        [HarmonyPatch(typeof(UpgradeStand), "SpawnNewUpgrades")]
         [HarmonyPrefix]
         static void RefreshAvailableAPShopItems()
         {
             Plugin.Logger.LogInfo("Refreshing Available AP Shop Items");
             APSave.UpdateAvailableItems();
+            apShopItemsAvailable = Plugin.ShopItemsAvailable.Count;
+        }
+        [HarmonyPatch(typeof(UpgradeStand), "GetWeightedUpgradeExcluding")]
+        [HarmonyPostfix]
+        static void NormalizeItemWeightForApItems(ref Item __result)
+        {
+            Plugin.Logger.LogInfo($"Ap Shop items available: {apShopItemsAvailable}");
+            if (apShopItemsAvailable > 0 && UnityEngine.Random.Range(0, 2) == 1)
+            {
+                __result = StatsManager.instance.itemDictionary[ItemNames.ap_item];
+                apShopItemsAvailable--;
+            }
+            else if (apShopItemsAvailable <= 0 && __result == StatsManager.instance.itemDictionary[ItemNames.ap_item])
+            {
+                List<Item> allUpgrades = [.. StatsManager.instance.itemDictionary.Values.Where(value =>
+                        value.itemType == SemiFunc.itemType.item_upgrade && value != StatsManager.instance.itemDictionary[ItemNames.ap_item])];
+                __result = allUpgrades[UnityEngine.Random.Range(0, allUpgrades.Count)];
+            }
         }
     }
 
