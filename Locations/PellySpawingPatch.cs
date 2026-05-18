@@ -20,10 +20,6 @@ namespace RepoAP
             {
                 Plugin.Logger.LogDebug("In ValuableDirector");
 
-                FieldInfo field = AccessTools.Field(typeof(ValuableDirector), "mediumValuables");
-                List<GameObject> value = (List<GameObject>)field.GetValue(__instance);
-
-
                 foreach (LevelValuables levelValuables in LevelGenerator.Instance.Level.ValuablePresets)
                 {
                     foreach (var pelly in levelValuables.medium.Where(x => x.PrefabName.Contains("Pelly")).ToList())

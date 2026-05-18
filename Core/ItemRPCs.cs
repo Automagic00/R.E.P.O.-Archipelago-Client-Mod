@@ -38,9 +38,8 @@ namespace RepoAP.Core
 
         private IEnumerator SetItemNameDelayed(ItemAttributes inst, string newItemName)
         {
-            FieldInfo field = AccessTools.Field(typeof(ItemAttributes), "itemName");
             yield return null;
-            field.SetValue(inst, newItemName.Replace("_", " "));
+            inst.itemName = newItemName.Replace("_", " ");
         }
     }
 }

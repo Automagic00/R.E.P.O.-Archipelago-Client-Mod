@@ -86,7 +86,8 @@ namespace RepoAP.Locations
                 APSave.WasValuableGathered(_valuable.PrefabName))
             {
                 string nameBefore = realValuable.PrefabName;
-                List<PrefabRef> unfoundValuables = [.. ((List<PrefabRef>)AccessTools.Field(typeof(ValuableDirector), valuableGroup).GetValue(__instance))
+                // we can do this programmatically if we don't publicize
+                List<PrefabRef> unfoundValuables = [.. ((List<PrefabRef>)AccessTools.Field(typeof(ValuableDirector), valuableGroup).GetValue(__instance)) 
                     .Where(prefab => prefab != realValuable && !(prefab.PrefabName.Contains("Pelly") ? 
                         APSave.WasPellyGathered(prefab.PrefabName, RunManager.instance.levelCurrent.name) : 
                         APSave.WasValuableGathered(prefab.PrefabName)))];

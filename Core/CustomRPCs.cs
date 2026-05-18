@@ -128,6 +128,7 @@ namespace RepoAP
         [PunRPC]
         public void PingClientsWithNoise(string soundFieldName, Vector3 position)   // we can't pass a sound through an rpc
         {
+            // we can do this programmatically if we don't publicize (although there's probably a better way)
             Sound noise = (Sound)AccessTools.Field(typeof(PlayerAvatar), soundFieldName)?.GetValue(PlayerAvatar.instance);
             if (noise == null) 
             {

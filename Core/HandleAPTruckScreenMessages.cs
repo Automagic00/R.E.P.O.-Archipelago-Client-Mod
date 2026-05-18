@@ -21,10 +21,9 @@ namespace RepoAP.Core
             {
                 if (customFormattedNickname != string.Empty)
                 {
-                    FieldInfo taxmanNameField = AccessTools.Field(typeof(TruckScreenText), "nicknameTaxman");
-                    nicknameCacheman = (string)taxmanNameField.GetValue(__instance);
+                    nicknameCacheman = __instance.nicknameTaxman;
 
-                    taxmanNameField.SetValue(__instance, customFormattedNickname);
+                    __instance.nicknameTaxman = customFormattedNickname;
                 }
             }
 
@@ -32,7 +31,7 @@ namespace RepoAP.Core
             {
                 if (nicknameCacheman != string.Empty)
                 {
-                    AccessTools.Field(typeof(TruckScreenText), "nicknameTaxman").SetValue(__instance, nicknameCacheman);
+                    __instance.nicknameTaxman = nicknameCacheman;
                 }
             }
 
@@ -83,10 +82,7 @@ namespace RepoAP.Core
                 float currentTime = Time.unscaledTime;
                 if (Plugin.connection != null)
                 {
-                    var currentLineIndex = (int)AccessTools.Field(typeof(TruckScreenText), "currentLineIndex").GetValue(__instance);
-                    var currentPageIndex = (int)AccessTools.Field(typeof(TruckScreenText), "currentPageIndex").GetValue(__instance);
-
-                    if (currentLineIndex >= __instance.pages[currentPageIndex].textLines.Count && currentTime - lastProcessTime >= CHAT_MESSAGE_FREQUENCY)
+                    if (__instance.currentLineIndex >= __instance.pages[__instance.currentPageIndex].textLines.Count && currentTime - lastProcessTime >= CHAT_MESSAGE_FREQUENCY)
                     {
                         int processedMessages = 0;
                         while (processedMessages < MESSAGE_BATCH_SIZE && messageQueue.TryDequeue(out var nextMessage))

@@ -53,7 +53,7 @@ namespace RepoAP
             }
         }
 
-		public static void Send(FieldInfo totalHaulField)
+		public static void Send()
         {
 			//totalHaul = (int)totalHaulField.GetValue(RoundDirector.instance);
 
@@ -70,7 +70,7 @@ namespace RepoAP
 			}
 		}
 
-	    public static void SendFirst(FieldInfo totalHaulField)
+	    public static void SendFirst()
 	    {
             //totalHaul = (int)totalHaulField.GetValue(RoundDirector.instance);
 
@@ -88,9 +88,6 @@ namespace RepoAP
     [HarmonyPatch(typeof(ExtractionPoint))]
     class ExtractionSendCheckPatch
     {
-		static FieldInfo field = AccessTools.Field(typeof(RoundDirector), "totalHaul");
-		//static int totalHaul;
-
         [HarmonyPrefix, HarmonyPatch("DestroyAllPhysObjectsInHaulList")]
         static void ExtractAllPatch()
         {
@@ -100,7 +97,7 @@ namespace RepoAP
 				return;
             }
 
-			ExtractSendCheck.Send(field);
+			ExtractSendCheck.Send();
 		}
 		[HarmonyPrefix, HarmonyPatch("DestroyTheFirstPhysObjectsInHaulList")]
 		static void ExtractFirstPatch()
@@ -111,7 +108,7 @@ namespace RepoAP
 				return;
 			}
 
-			ExtractSendCheck.SendFirst(field);
+			ExtractSendCheck.SendFirst();
 		}
         [HarmonyPostfix, HarmonyPatch("DestroyAllPhysObjectsInHaulList")]
         static void ExtractAllSyncWithClientsPatch()

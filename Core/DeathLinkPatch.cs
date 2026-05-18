@@ -63,7 +63,7 @@ namespace RepoAP.Core
         static void CallDeathLinkFinishedWhenLocalPlayerDead(PlayerAvatar __instance)
         {
             if (!SemiFunc.IsMultiplayer()) return;
-            Plugin.customRPCManager.CallClientDeathLinkFinished(Plugin.customRPCManagerObject, (string)AccessTools.Field(typeof(PlayerAvatar), "steamID").GetValue(__instance));
+            Plugin.customRPCManager.CallClientDeathLinkFinished(Plugin.customRPCManagerObject, __instance.steamID);
         }
 
         /**
@@ -72,8 +72,7 @@ namespace RepoAP.Core
         internal static void ReceiveDeathLinkPatch(RunManager __instance)
         {
             if (!SemiFunc.IsMasterClientOrSingleplayer() || !awaitingDeathLink) return;
-            bool ___allPlayersDead = (bool)AccessTools.Field(typeof(RunManager), "allPlayersDead").GetValue(__instance);
-            if (___allPlayersDead || SemiFunc.MenuLevel() || RunManager.instance.levelCurrent == RunManager.instance.levelLobby)
+            if (__instance.allPlayersDead || SemiFunc.MenuLevel() || RunManager.instance.levelCurrent == RunManager.instance.levelLobby)
             {
                 awaitingDeathLink = false;
                 return; 
@@ -81,8 +80,8 @@ namespace RepoAP.Core
             if (SemiFunc.IsMultiplayer() && GameDirector.instance.PlayerList.Count > 1)
             {
                 Plugin.Logger.LogDebug("Running multiplayer deathlink");
-                List<PlayerAvatar> candidatePlayers = GameDirector.instance.PlayerList.Where(player => !(bool)AccessTools.Field(typeof(PlayerAvatar), "isDisabled").GetValue(player) && 
-                !playersWithActiveDeathCountdown.Contains((string)AccessTools.Field(typeof(PlayerAvatar), "steamID").GetValue(player))).ToList();   // Find all players who are alive and don't have an active death countdown
+                List<PlayerAvatar> candidatePlayers = GameDirector.instance.PlayerList.Where(player => !player.isDisabled && 
+                !playersWithActiveDeathCountdown.Contains(player.steamID)).ToList();   // Find all players who are alive and don't have an active death countdown
                 if (candidatePlayers.Count <= 0)
                 {
                     Plugin.Logger.LogDebug("No deathlink candidates");
@@ -92,9 +91,9 @@ namespace RepoAP.Core
                 Plugin.Logger.LogDebug($"Found {candidatePlayers.Count} deathlink candidate(s)");
 
                 int idOfChosenPlayer = UnityEngine.Random.Range(0, candidatePlayers.Count);
-                string steamIdOfChosenPlayer = (string)AccessTools.Field(typeof(PlayerAvatar), "steamID").GetValue(candidatePlayers[idOfChosenPlayer]);
+                string steamIdOfChosenPlayer = candidatePlayers[idOfChosenPlayer].steamID;
 
-                if (steamIdOfChosenPlayer == (string)AccessTools.Field(typeof(PlayerAvatar), "steamID").GetValue(PlayerAvatar.instance))
+                if (steamIdOfChosenPlayer == PlayerAvatar.instance.steamID)
                 {
                     Plugin.Logger.LogDebug("Candidate was me. Starting deathlink countdown");
                     PosessDeathlink(playerWhoDied, steamIdOfChosenPlayer);  // will eventually need to send deathlink info here if we want to get creative with death messages
@@ -126,12 +125,12 @@ namespace RepoAP.Core
          */
         public static void PosessDeathlink(string playerWhoDied, string playerSteamIDToPosess)  // eventually need to make this internal
         {
-            if (playerSteamIDToPosess != (string)AccessTools.Field(typeof(PlayerAvatar), "steamID").GetValue(PlayerAvatar.instance)) {
+            if (playerSteamIDToPosess != PlayerAvatar.instance.steamID) {
                 Plugin.Logger.LogInfo("Deathlink came through but it wasn't for me");
                 return; 
             }
             Plugin.Logger.LogInfo($"Starting deathlink sequence for player with steam id {playerSteamIDToPosess}");
-            if ((bool)AccessTools.Field(typeof(PlayerAvatar), "isDisabled").GetValue(PlayerAvatar.instance))
+            if (PlayerAvatar.instance.isDisabled)
                 return;
             Plugin.Logger.LogDebug("This player is marked for deathlink");
             try
@@ -186,7 +185,7 @@ namespace RepoAP.Core
 
         public static void DeathlinkSelfDestruct(string playerIdWhoWasPosessed)
         {
-            AccessTools.Field(typeof(PlayerHealth), "health").SetValue(PlayerAvatar.instance.playerHealth, 0);
+            PlayerAvatar.instance.playerHealth.health = 0;
             PlayerAvatar.instance.playerHealth.Hurt(1, false);
             Plugin.Logger.LogDebug("I should be dead from deathlink now");
             Plugin.customRPCManager.CallClientDeathLinkFinished(Plugin.customRPCManagerObject, playerIdWhoWasPosessed);
@@ -198,7 +197,7 @@ namespace RepoAP.Core
         public static void DeathLinkFinished(string playerIdWhoWasPosessed)
         {
             playersWithActiveDeathCountdown.Remove(playerIdWhoWasPosessed);
-            if ((bool)AccessTools.Field(typeof(RunManager), "allPlayersDead").GetValue(RunManager.instance))
+            if (RunManager.instance.allPlayersDead)
                 isDeadFromDeathLink = true;
         }
     }
