@@ -13,16 +13,9 @@ namespace RepoAP
 	[HarmonyPatch(typeof(ExtractionPoint), "DestroyAllPhysObjectsInShoppingList")]
     class ShopSendCheckPatch
     {
-		static FieldInfo field = AccessTools.Field(typeof(ShopManager), "shoppingList");
-		static List<ItemAttributes> shoppingList;
-
-		static FieldInfo field2 = AccessTools.Field(typeof(ItemAttributes), "value");
-		static int value;
-
         [HarmonyPrefix]
         static bool ShopCheckPatch(ExtractionPoint __instance)
         {
-			shoppingList = (List<ItemAttributes>)field.GetValue(ShopManager.instance);
 			Plugin.Logger.LogInfo("Connected in shop check");
 			if (SemiFunc.IsMasterClientOrSingleplayer())
 			{
@@ -34,8 +27,8 @@ namespace RepoAP
 				}
 				foreach (PlayerAvatar player in GameDirector.instance.PlayerList)
                 {
-					PlayerDeathHead playerDeathHead = (PlayerDeathHead)AccessTools.Field(typeof(PlayerAvatar), "playerDeathHead").GetValue(player);
-                    if ((bool)AccessTools.Field(typeof(PlayerDeathHead), "inExtractionPoint").GetValue(playerDeathHead))
+					PlayerDeathHead playerDeathHead = player.playerDeathHead;
+                    if (playerDeathHead.inExtractionPoint)
                     {
                         float localPlayerHaulScore = playerDeathHead.GetLocalPlayerHaulScore(__instance.gameObject);
                         if (localPlayerHaulScore > 0f)
@@ -45,20 +38,18 @@ namespace RepoAP
                     }
 
                     // playerDeathHead is now internal
-                    AccessTools.Method(typeof(PlayerDeathHead), nameof(PlayerDeathHead.Revive)).Invoke(
-						playerDeathHead, []);
+                    playerDeathHead.Revive();
                 }
 				List<ItemAttributes> list = new List<ItemAttributes>();
 
 
-				foreach (ItemAttributes shopping in shoppingList)
+				foreach (ItemAttributes shopping in ShopManager.instance.shoppingList)
 				{
-                    value = (int)field2.GetValue(shopping);
-                    if (!shopping || !shopping.GetComponent<PhysGrabObject>() || SemiFunc.StatGetRunCurrency() - value < 0)
+                    if (!shopping || !shopping.GetComponent<PhysGrabObject>() || SemiFunc.StatGetRunCurrency() - shopping.value < 0)
                     {
                         continue;
                     }
-                    SemiFunc.StatSetRunCurrency(SemiFunc.StatGetRunCurrency() - value);
+                    SemiFunc.StatSetRunCurrency(SemiFunc.StatGetRunCurrency() - shopping.value);
 
                     if (shopping.item.name == ItemNames.ap_item)
                     {
@@ -95,9 +86,7 @@ namespace RepoAP
                 }
 				foreach (ItemAttributes itemAttributes2 in list)
 				{
-					List<ItemAttributes> newValue = (List<ItemAttributes>)field.GetValue(ShopManager.instance);
-					newValue.Remove(itemAttributes2);
-					field.SetValue(ShopManager.instance,newValue);
+                    ShopManager.instance.shoppingList.Remove(itemAttributes2);
 				}
 				SemiFunc.ShopUpdateCost();
 			}

@@ -101,6 +101,7 @@ namespace RepoAP
 
         private static void FixAPStoreItems()
         {
+            // it's one field referenced one time. not worth publicizing the whole mod
             List<Item> itemsToRegister = (List<Item>)AccessTools.Field(typeof(REPOLib.Modules.Items), "_itemsToRegister").GetValue(null);
             foreach (var item in itemsToRegister)
             {

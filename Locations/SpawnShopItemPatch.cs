@@ -191,7 +191,7 @@ namespace RepoAP
                     }
                     else
                     {
-                        AccessTools.Field(typeof(ItemAttributes), "itemName").SetValue(__instance, newItemName);
+                        __instance.itemName = newItemName;
                     }
                 }
             }

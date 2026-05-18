@@ -17,11 +17,15 @@
   </PropertyGroup>
 
   <PropertyGroup>
-	<NoWarn>$(NoWarn); MSB3277</NoWarn >
+	<NoWarn>$(NoWarn); MSB3277</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Archipelago.MultiClient.Net" Version="6.6.0" />
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
 	<PackageReference Include="BepInEx.Core" Version="5.4.21" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
     <PackageReference Include="ILRepack.Lib.MSBuild" Version="2.1.18" />
@@ -38,7 +42,7 @@
 	<Reference Include="$(BepInCore)\BepInEx.dll" />
 	<Reference Include="$(BepInCore)\MonoMod.Utils.dll" />
 
-    <Reference Include="$(Managed)\Assembly-CSharp.dll" />
+    <Reference Include="$(Managed)\Assembly-CSharp.dll" Publicize="true"/>
     <Reference Include="$(Managed)\Assembly-CSharp-firstpass.dll" />
     <Reference Include="$(Managed)\PhotonUnityNetworking.dll" />
 	<Reference Include="BepInEx.Preloader">
