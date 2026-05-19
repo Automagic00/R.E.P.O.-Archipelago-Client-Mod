@@ -141,23 +141,23 @@ namespace RepoAP
 
             if (Input.GetKeyDown(KeyCode.F10))
             {
-                string output = "--- Valuable Weights ---";
-                foreach (var levelValuables in LevelGenerator.Instance.Level.ValuablePresets)
-                {
-                    var allValuables = levelValuables.tiny;
-                    allValuables.AddRange(levelValuables.small);
-                    allValuables.AddRange(levelValuables.medium);
-                    allValuables.AddRange(levelValuables.big);
-                    allValuables.AddRange(levelValuables.wide);
-                    allValuables.AddRange(levelValuables.tall);
-                    allValuables.AddRange(levelValuables.veryTall);
-
-
-                    foreach (var val in allValuables)
+                    string output = "--- Valuable Weights ---";
+                    foreach (var levelValuables in LevelGenerator.Instance.Level.ValuablePresets)
                     {
-                        output += $"\n{val.PrefabName} - {LevelGenerator.Instance.Level.name}: {val.Prefab.GetComponent<ValuableObject>().physAttributePreset}".Replace("PhysAttribute", "").Replace("()", "");
+                        var allValuables = levelValuables.tiny;
+                        allValuables.AddRange(levelValuables.small);
+                        allValuables.AddRange(levelValuables.medium);
+                        allValuables.AddRange(levelValuables.big);
+                        allValuables.AddRange(levelValuables.wide);
+                        allValuables.AddRange(levelValuables.tall);
+                        allValuables.AddRange(levelValuables.veryTall);
+
+
+                        foreach (var val in allValuables)
+                        {
+                            output += $"\n{val.PrefabName} - {LevelGenerator.Instance.Level.name}: {val.Prefab.GetComponent<ValuableObject>().physAttributePreset}".Replace("PhysAttribute", "").Replace("()", "");
+                        }
                     }
-                }
                 Debug.Log(output);
             }
 
