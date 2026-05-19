@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -100,7 +101,12 @@ namespace RepoAP
 			{
 				repoPage.ClosePage(true);
 			}, parent, new Vector2(590f, 25f)));
-
+#if DEBUG
+			repoPage.AddElement(parent => MenuAPI.CreateREPOButton("Delete AP Data", () =>
+            {
+				BuildSavesManagerPopup();
+            }, parent, new Vector2(424f, 25f)));
+#endif
             repoPage.OpenPage(true);
 
         }
@@ -113,5 +119,100 @@ namespace RepoAP
 			Plugin.connection.connectingPage = repoPage;
 			repoPage.OpenPage(true);
 		}
-	}
+
+#if DEBUG
+		public static void BuildSavesManagerPopup()
+		{
+            REPOPopupPage saveManagerPage = MenuAPI.CreateREPOPopupPage("Save Manager", shouldCachePage: false, presetSide: REPOPopupPage.PresetSide.Right, pageDimmerVisibility: true);
+			saveManagerPage.AddElement(parent => MenuAPI.CreateREPOButton("Delete Current AP Save", () =>
+            {
+				if (!Plugin.connection.connected) MenuManager.instance.PagePopUp("Not Connected", UnityEngine.Color.red, "Not connected to AP server. Please connect before erasing data.", "OK", true);
+				else DeleteSavesPopup();
+            }, parent, new Vector2(378f, 240f)));
+
+            saveManagerPage.AddElement(parent => MenuAPI.CreateREPOButton("Delete ALL AP Saves", () =>
+            {
+				DeleteSavesPopup(true);
+            }, parent, new Vector2(378f, 160f)));
+
+            saveManagerPage.AddElement(parent => MenuAPI.CreateREPOButton("Close", () =>
+            {
+                saveManagerPage.ClosePage(true);
+            }, parent, new Vector2(590f, 25f)));
+
+            saveManagerPage.OpenPage(true);
+        }
+
+		public static void DeleteSavesPopup(bool deleteAll = false)
+		{
+			string resultString = "";
+
+            REPOPopupPage warningPage = MenuAPI.CreateREPOPopupPage($"Erase {(deleteAll ? "All" : "Current")} Multiworld Data",
+            shouldCachePage: false, pageDimmerVisibility: true);
+
+            warningPage.AddElement(parent => MenuAPI.CreateREPOLabel($"<size=12>Are you SURE you want to delete local data for {(deleteAll ? "ALL multiworlds" : "the current multiworld slot")}? " +
+                $"{(Plugin.connection.connected ? "Proceeding will disconnect you from the multiworld. " : "")}This action is irreversable." +
+				$"{(deleteAll ? " Do not continue unless you have been told to or know what you are doing!" : "")}", parent, new Vector2(380f, 275f)));
+
+            warningPage.AddElement(parent => MenuAPI.CreateREPOButton("Absolutely", () =>
+			{
+				string apSavePath = string.Concat(Application.persistentDataPath, "/archipelago/saves");
+
+				if (!Directory.Exists(apSavePath))
+				{
+					resultString += "No saves to delete!";
+					return;
+				}
+
+                Plugin.connection.TryDisconnect();
+
+                if (deleteAll) 
+				{ 
+					string[] allSaves = Directory.GetFiles(apSavePath);
+					int numSavesDeleted = 0;
+
+					foreach (string file in allSaves)
+					{
+						try
+						{
+							File.Delete(file);
+							numSavesDeleted++;
+						}
+						catch (Exception ex)
+						{
+                            Plugin.Logger.LogWarning($"Unable to delete file {file.Substring(apSavePath.Length, file.Length - apSavePath.Length - 1)}. {ex}");
+						}
+					}
+					int numSavesRemaining = allSaves.Length - numSavesDeleted;
+
+					if (allSaves.Length == 0) resultString += "No saves to delete!";
+                    else resultString += $"Deleted: {numSavesDeleted}{(numSavesRemaining > 0 ? "\nUnable to delete: " + numSavesRemaining : "")}";
+                }
+				else
+				{
+					string filePath = string.Concat(apSavePath, APSave.fileName);
+                    try
+                    {
+                        File.Delete(filePath);
+						resultString += $"Successfully deleted {APSave.fileName}.";
+                    }
+                    catch (Exception ex)
+                    {
+                        Plugin.Logger.LogWarning($"Unable to delete file {APSave.fileName}. {ex}");
+						resultString += $"Unable to delete current multiworld data.";
+                    }
+                }
+				warningPage.ClosePage(false);
+                MenuManager.instance.PagePopUp("Result", UnityEngine.Color.white, resultString, "OK", true);
+            }, parent, new Vector2(378f, 25f)));
+
+            warningPage.AddElement(parent => MenuAPI.CreateREPOButton("Maybe Not", () =>
+            {
+                warningPage.ClosePage(true);
+            }, parent, new Vector2(590f, 25f)));
+
+            warningPage.OpenPage(true);
+        }
+#endif
+    }
 }
