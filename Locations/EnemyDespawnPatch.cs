@@ -10,7 +10,7 @@ namespace RepoAP
         static void OrbNaming(ref string ___enemyName, ref Enemy ___Enemy)
         {
             //if enemy died, not despawned thus if he spawned an orb
-            if (!___Enemy.HasHealth || !___Enemy.Health.spawnValuable || ___Enemy.Health.health > 0)       // EnemyParent.Despawn is only called on the host, so clients don't see the correct name of the orb
+            if (!___Enemy.HasHealth || !___Enemy.Health.spawnValuable || ___Enemy.Health.healthCurrent > 0)       // EnemyParent.Despawn is only called on the host, so clients don't see the correct name of the orb
             {
                 return;
             }
