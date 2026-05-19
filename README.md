@@ -12,26 +12,30 @@ More information at https://archipelago.gg/
 #### Thunderstore instructions
 1) Install a Mod Manager (I personally recommend [r2modman](<https://thunderstore.io/c/repo/p/ebkr/r2modman/>) or [Gale](<https://thunderstore.io/c/repo/p/Kesomannen/GaleModManager/>), but [Thunderstore Mod Manager](https://www.overwolf.com/app/thunderstore-thunderstore_mod_manager) is also an option)
 2) Open the mod manager and create a new profile. Select that profile, then open the tab that lets you browse mods and install Archipelago Randomizer for REPO and it's dependencies. Alternatively, go to https://thunderstore.io/c/repo/p/Automagic/Archipelago_Randomizer_for_REPO/ and click the "Install with Mod Manager" button.
-3) Next, you'll need to make sure 'Hide manager game object' is set to True in the BepInEx config. You may need to run the game with mods once for this to appear. The way you edit mod configs depends on your mod manager:
-    * With Thunderstore Mod manager, click "Edit config" on the Profile page, then click edit on "BepInEx/config/BepInEx.cfg". Under the "Chainloader" section, set "HideManagerGameObject" to true and click save.
-    * With r2modman, select your profile and click "Config editor" on the sidebar to your left. Select "BepInEx/config/BepInEx.cfg", then "Edit Config". Under the "Chainloader" section, set "HideManagerGameObject" to true and click Save.
-    * With Gale, select your profile and click "Edit mod config" on the sidebar to your left. Select "BepInEx", then "ChainLoader", and make sure that the button to the right of "Hide manager game object" has a green checkmark.
-4) Click the Run Modded button to launch R.E.P.O. When the main menu loads, you should see a new button at the bottom of the screen that says "ARCHIPELAGO".
-5) On the main menu, click on the Archipelago button to open the connection menu. Enter your multiworld's address, port, password (if it has one, otherwise leave the box blank), and your slot name, then click CONNECT. If you entered everything correctly, the text above the address box should change from 'Not connected' to 'Connected'.
-6) After a successful connection, start a new save file and begin playing.
+3) Click the Run Modded button to launch R.E.P.O. When the main menu loads, you should see a new button at the bottom of the screen that says "ARCHIPELAGO".
+4) On the main menu, click on the Archipelago button to open the connection menu. Enter your multiworld's address, port, password (if it has one, otherwise leave the box blank), and your slot name, then click CONNECT. If you entered everything correctly, the text above the address box should change from 'Not connected' to 'Connected'.
+5) After a successful connection, start a new save file and begin playing.
 
 #### Manual Client Install Instructions
 1) Download version 5.4.21 of BepInEx from https://thunderstore.io/c/repo/p/BepInEx/BepInExPack/
 2) Follow the instructions on Thunderstore to manually install BepInEx.
 3) Run R.E.P.O. so BepInEx completes its installation.
-4) In your R.E.P.O. game folder, open the BepInEx/config folder and open the BepInEx.cfg file with any text editor
-5) Under [Chainloader] set HideManagerGameObject to true. Then save and close the file.
-3) Download the latest release of the client plugin.
-4) Extract the contents of the downloaded zip folder into the BepInEx/Plugins folder.
+4) Download the latest release of the client plugin.
+5) Extract the contents of the downloaded zip folder into the BepInEx/Plugins folder.
 6) Download MenuLib and REPOLib from Thunderstore and add them to your plugins folder.
 7) Launch R.E.P.O.
 8) On the main menu, click the Archipelago button and enter the server address, port, server password, and player slot name into the listed fields.
 9) After a successful connection, start a new save file and begin playing.
+
+#### Downpatching the Game
+When REPO receives major updates, this mod may not work correctly until it is updated to support the latest game version. If that happens, you will need to downpatch the game to an older version.
+1) Follow the first 6 steps of this guide, but replace the command in step 5 with download_depot 3241660 3241661 180069324351455863
+2) Open your REPO folder (in the steamapps/common folder of Steam)
+3) Open the Depot folder (in steamapps/content)
+4) Drag all the files in the depot folder (including the REPO.exe file) and replace the files in the REPO folder (steamapps/common)
+5) Go into your steam library, right click REPO, click Properties -> Updates, and set it to only update when the game is launched (this will cause it to update if it is launched in Vanilla but not Modded)
+6) In your mod manager or manual installaton, ensure that the versions of REPOLib and MenuLib you have installed are for the previous game version.
+7) If you are using a mod manager, launch the game from it. If you are not using a mod manager, switch steam to Offline mode before launching the game. Once REPO finishes launching, you can switch back online.
 
 #### Randomized Items
 - Upgrades
@@ -47,4 +51,3 @@ More information at https://archipelago.gg/
 
 #### Known Issues
 - Unsecure socket notification in server. This is from an upstream library and causes no gameplay issues currently.
-- Truck messages will currently be displayed redundantly if there is more than one host (connected) player in the same lobby.
