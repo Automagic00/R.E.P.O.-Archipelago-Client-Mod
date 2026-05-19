@@ -80,25 +80,28 @@ namespace RepoAP
                 return;
             List<Item> allPotentialItems = [.. ShopManager.instance.potentialItems.Where(item => IsItemUnlockedInMultiworld(item))];    
             List<Item> allpotentialItemConsumables = [.. ShopManager.instance.potentialItemConsumables.Where(item => IsItemUnlockedInMultiworld(item))];
-            List<Item> allpotentialItemUpgrades = [];
+            List<Item> allpotentialItemUpgrades = ShopManager.instance.potentialItemUpgrades;
             List<Item> allpotentialItemHealthPacks = [.. ShopManager.instance.potentialItemHealthPacks.Where(item => IsItemUnlockedInMultiworld(item))];
             Dictionary<SemiFunc.itemSecretShopType, List<Item>> allPotentialSecretItems = [];
 
             foreach (var secretPair in ShopManager.instance.potentialSecretItems)
                 allPotentialSecretItems[secretPair.Key] = [.. secretPair.Value.Where(item => IsItemUnlockedInMultiworld(item))];
 
-            if (ShopManager.instance.potentialItemUpgrades.Count() == 0)
+            if (allpotentialItemUpgrades.Count() < 6)
             {
+                List<Item> upgrades = [];
                 foreach (Item obj in StatsManager.instance.itemDictionary.Values)
                 {
                     if (obj.itemType == SemiFunc.itemType.item_upgrade && obj != StatsManager.instance.itemDictionary[ItemNames.ap_item])
                     {
-                        allpotentialItemUpgrades.Add(obj);
+                        upgrades.Add(obj);
                     }
                 }
-                allpotentialItemUpgrades.Shuffle<Item>();
+                while (allpotentialItemUpgrades.Count() < 6)
+                {
+                    allpotentialItemUpgrades.Add(upgrades[UnityEngine.Random.Range(0, upgrades.Count - 1)]);
+                }
             }
-            else allpotentialItemUpgrades = ShopManager.instance.potentialItemUpgrades;
 
             int shopItemsToReplace = Math.Min(Plugin.ShopItemsAvailable.Count, allpotentialItemUpgrades.Count);
             for (int i = shopItemsToReplace - 1; i >= 0; i--)
