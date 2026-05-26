@@ -67,7 +67,7 @@ namespace RepoAP
                         CheckValuable(valuableObject);
                     }
                 }
-			}
+            }
 		}
 
 	    public static void SendFirst()
@@ -98,7 +98,9 @@ namespace RepoAP
             }
 
 			ExtractSendCheck.Send();
-		}
+            VehicleInventoryManager.Send();
+
+        }
 		[HarmonyPrefix, HarmonyPatch("DestroyTheFirstPhysObjectsInHaulList")]
 		static void ExtractFirstPatch()
 		{
@@ -122,4 +124,90 @@ namespace RepoAP
             Plugin.customRPCManager.CallSyncSlotDataWithClientsRpc(Plugin.customRPCManagerObject);
         }
     }
+}
+
+[HarmonyPatch(typeof(ItemValuableBox))]
+class VehicleInventoryManager
+{
+
+    internal static Dictionary<ItemValuableBox, List<string>> valuableBoxContents = [];
+
+    public static void Send()
+    {
+        if (!SemiFunc.IsMasterClientOrSingleplayer()) return;
+
+        foreach (var valuableBox in RoundDirector.instance.valuableBoxHaulList)
+        {
+            if (valuableBoxContents.TryGetValue(valuableBox, out List<string> namesInBox))
+            {
+                foreach (string valuableName in namesInBox)
+                {
+                    CheckValuable(valuableName);
+                }
+                valuableBoxContents[valuableBox].Clear();
+            }
+        }
+    }
+
+    private static void CheckValuable(string valuableName)
+    {
+        Plugin.Logger.LogInfo($"Extracting {valuableName}");
+
+        //totalHaulField.SetValue(RoundDirector.instance, totalHaul + (int)valuableObject.GetComponent<ValuableObject>().dollarValueCurrent);
+
+        //If extracted item is a pelly, send a corresponding check
+        if (valuableName.Contains("Pelly"))
+        {
+            Plugin.connection.ActivateCheck(LocationData.PellyNameToID(valuableName + RunManager.instance.levelCurrent.name));
+            APSave.AddPellyGathered(RunManager.instance.levelCurrent.name + valuableName);
+        }
+        else if (valuableName.Contains("Soul"))
+        {
+            long id = LocationData.MonsterSoulNameToID(valuableName);
+            if (0 != LocationData.RemoveBaseId(id))
+            {
+                Plugin.connection.ActivateCheck(id);
+                APSave.AddMonsterSoulGathered(valuableName);
+            }
+        }
+        else if (valuableName.Contains("Valuable"))
+        {
+            long id = LocationData.ValuableNameToID(valuableName);
+            if (0 != LocationData.RemoveBaseId(id))
+            {
+                Plugin.connection.ActivateCheck(id);
+                APSave.AddValuableGathered(valuableName);
+            }
+
+        }
+
+    }
+
+
+    [HarmonyPostfix, HarmonyPatch(nameof(ItemValuableBox.Start))]
+    public static void RegisterVehicleInventory(ItemValuableBox __instance)
+    {
+        if (!SemiFunc.IsMasterClientOrSingleplayer() || valuableBoxContents.ContainsKey(__instance)) return;
+        valuableBoxContents[__instance] = [];
+    }
+
+    [HarmonyPrefix, HarmonyPatch(nameof(ItemValuableBox.StartAbsorbLocal))]
+    public static void AddValuableNameToHauler(ItemValuableBox __instance, ref PhysGrabObject target)
+    {
+        if (!SemiFunc.IsMasterClientOrSingleplayer()) return;
+        Plugin.Logger.LogInfo($"Depositing {target.GetComponent<ValuableObject>().gameObject.name}");
+        valuableBoxContents[__instance].Add(target.GetComponent<ValuableObject>().gameObject.name);
+    }
+
+    [HarmonyPostfix, HarmonyPatch(nameof(ItemValuableBox.OnDestroy))]
+    public static void RemoveValuableBoxWhenDestroyed(ItemValuableBox __instance)
+    {
+        valuableBoxContents.Remove(__instance);
+    }
+    [HarmonyPostfix, HarmonyPatch(nameof(ItemValuableBox.OnDisable))]
+    public static void RemoveValuableBoxWhenDisabled(ItemValuableBox __instance)
+    {
+        valuableBoxContents.Remove(__instance);
+    }
+
 }
