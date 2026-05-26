@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace RepoAP
 {
-    [BepInPlugin("Automagic.ArchipelagoREPO", "Archipelago Randomizer", "0.4.1")]
+    [BepInPlugin("Automagic.ArchipelagoREPO", "Archipelago Randomizer", "0.4.3")]
     [BepInDependency("nickklmao.menulib")]
     [BepInDependency("REPOLib")]
 
