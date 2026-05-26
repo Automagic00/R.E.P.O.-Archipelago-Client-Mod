@@ -62,11 +62,7 @@ namespace RepoAP
             harmony.PatchAll();
             harmony.PatchAll(typeof(DeathLinkPatch));
             harmony.PatchAll(typeof(UpgradeSpawningPatch));
-            harmony.PatchAll(typeof(APItemNamePatch));
-            harmony.PatchAll(typeof(EnemyDespawnPatch));
             harmony.PatchAll(typeof(TrapHandler));
-            harmony.PatchAll(typeof(Events));
-            harmony.PatchAll(typeof(ApUpgradeStandItemsPatch)); // add a patchall to the shop class to cover most of these
 
             REPOLib.BundleLoader.OnAllBundlesLoaded += FixAPStoreItems;
             REPOLib.BundleLoader.OnAllBundlesLoaded += Initialize;

@@ -8,12 +8,12 @@ namespace RepoAP.Core
 {
     public delegate void TickEventHandler(RunManager __instance);
 
+    [HarmonyPatch(typeof(RunManager), "Update")]
     internal class Events
     {
         private static float lastProcessTime = 0f;
         const float TICK_FREQUENCY = 5f;
 
-        [HarmonyPatch(typeof(RunManager), "Update")]
         [HarmonyPostfix]
         static void TickUpdate(RunManager __instance)
         {

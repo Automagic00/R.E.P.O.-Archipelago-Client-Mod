@@ -3,10 +3,10 @@ using UnityEngine;
 using System.Reflection;
 namespace RepoAP
 {
-
+    [HarmonyPatch(typeof(EnemyParent), nameof(EnemyParent.Despawn))]
     class EnemyDespawnPatch
     {
-        [HarmonyPatch(typeof(EnemyParent), nameof(EnemyParent.Despawn)), HarmonyPostfix]
+        [HarmonyPostfix]
         static void OrbNaming(ref string ___enemyName, ref Enemy ___Enemy)
         {
             //if enemy died, not despawned thus if he spawned an orb

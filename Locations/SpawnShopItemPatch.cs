@@ -131,20 +131,21 @@ namespace RepoAP
             APSave.UpdateAvailableItems();
         }
     }
+
+    [HarmonyPatch(typeof(UpgradeStand))]
     class ApUpgradeStandItemsPatch
     {
         static int apShopItemsAvailable = 0;
 
-        [HarmonyPatch(typeof(UpgradeStand), "SpawnNewUpgrades")]
-        [HarmonyPrefix]
+        [HarmonyPrefix, HarmonyPatch(nameof(UpgradeStand.SpawnNewUpgrades))]
         static void RefreshAvailableAPShopItems()
         {
             Plugin.Logger.LogInfo("Refreshing Available AP Shop Items");
             APSave.UpdateAvailableItems();
             apShopItemsAvailable = Plugin.ShopItemsAvailable.Count;
         }
-        [HarmonyPatch(typeof(UpgradeStand), "GetWeightedUpgradeExcluding")]
-        [HarmonyPostfix]
+
+        [HarmonyPostfix, HarmonyPatch(nameof(UpgradeStand.GetWeightedUpgradeExcluding))]
         static void NormalizeItemWeightForApItems(ref Item __result)
         {
             Plugin.Logger.LogInfo($"Ap Shop items available: {apShopItemsAvailable}");
@@ -162,10 +163,10 @@ namespace RepoAP
         }
     }
 
+    [HarmonyPatch(typeof(ItemAttributes))]
     class APItemNamePatch
     {
-        [HarmonyPatch(typeof(ItemAttributes), "Start")]
-        [HarmonyPostfix]
+        [HarmonyPostfix, HarmonyPatch(nameof(ItemAttributes.Start))]
         static void NamePatch(ref string ___itemName, ItemAttributes __instance)
         {
             if (___itemName.Contains("Archipelago"))
@@ -200,8 +201,7 @@ namespace RepoAP
             }
         }
 
-        [HarmonyPatch(typeof(ItemAttributes), "GetItemNameLocalized")]
-        [HarmonyPostfix]
+        [HarmonyPostfix, HarmonyPatch(nameof(ItemAttributes.GetItemNameLocalized))]
         static void ReplaceLocalizedNameOfAPItems(ref string __result, ref string ___itemName, ItemAttributes __instance)
         {
             if (__instance.item.name.Equals(ItemNames.ap_item)) __result = ___itemName;
