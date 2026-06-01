@@ -20,7 +20,7 @@ namespace RepoAP
 		//static int totalHaul;
 	    private static void CheckValuable(GameObject valuableObject)
 	    {
-            Plugin.Logger.LogInfo($"Extracting {valuableObject.name}");
+            Plugin.Logger.LogDebug($"Extracting {valuableObject.name}");
             if (valuableObject && valuableObject.GetComponent<PhysGrabObject>())
             {
                //totalHaulField.SetValue(RoundDirector.instance, totalHaul + (int)valuableObject.GetComponent<ValuableObject>().dollarValueCurrent);
@@ -151,7 +151,7 @@ class VehicleInventoryManager
 
     private static void CheckValuable(string valuableName)
     {
-        Plugin.Logger.LogInfo($"Extracting {valuableName}");
+        Plugin.Logger.LogDebug($"Extracting {valuableName}");
 
         //totalHaulField.SetValue(RoundDirector.instance, totalHaul + (int)valuableObject.GetComponent<ValuableObject>().dollarValueCurrent);
 
@@ -195,7 +195,6 @@ class VehicleInventoryManager
     public static void AddValuableNameToHauler(ItemValuableBox __instance, ref PhysGrabObject target)
     {
         if (!SemiFunc.IsMasterClientOrSingleplayer()) return;
-        Plugin.Logger.LogInfo($"Depositing {target.GetComponent<ValuableObject>().gameObject.name}");
         valuableBoxContents[__instance].Add(target.GetComponent<ValuableObject>().gameObject.name);
     }
 
