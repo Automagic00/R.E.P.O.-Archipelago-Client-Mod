@@ -6,9 +6,6 @@
     <REPO>D:\SteamLibrary\steamapps\common\REPO</REPO>
     <!-- Set this to the location of your BepInEx core folder -->
 	  <BepInCore>$(REPO)\BepInEx\core</BepInCore>
-    <!-- Set these to the folders that contain dlls for MenuLib and REPOLib -->
-    <MenuLib>$(REPO)\BepInEx\plugins\nickklmao-MenuLib</MenuLib>
-    <REPOLib>$(REPO)\BepInEx\plugins\Zehs-REPOLib</REPOLib>
     <!-- Set this to the location you want the mod files copied to for testing (usually a profile in a mod manager) -->
     <OutputFolder>$(REPO)\BepInEx\plugins</OutputFolder>
   </PropertyGroup>

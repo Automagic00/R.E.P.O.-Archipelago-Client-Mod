@@ -8,10 +8,11 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
-      https://api.nuget.org/v3/index.json;
-      https://nuget.bepinex.dev/v3/index.json;
-      https://nuget.samboy.dev/v3/index.json
-    </RestoreAdditionalProjectSources>
+		https://api.nuget.org/v3/index.json;
+		https://nuget.bepinex.dev/v3/index.json;
+		https://nuget.samboy.dev/v3/index.json;
+		https://nuget.windows10ce.com/nuget/v3/index.json
+	</RestoreAdditionalProjectSources>
     <RootNamespace>RepoAP</RootNamespace>
     <DoILRepack>false</DoILRepack>
   </PropertyGroup>
@@ -54,8 +55,8 @@
 	<Reference Include="Mono.Cecil">
         <HintPath>$(BepInCore)\Mono.Cecil.dll</HintPath>
     </Reference>
-    <Reference Include="$(MenuLib)\MenuLib.dll" />
-	  <Reference Include="$(REPOLib)\REPOLib.dll" />
+	  <PackageReference Include="Nickklmao-MenuLib" Version="2.*" />
+	  <PackageReference Include="Zehs-REPOLib" Version="4.*" />
     <Reference Include="netstandard">
       <HintPath>$(Managed)\netstandard.dll</HintPath>
     </Reference>
