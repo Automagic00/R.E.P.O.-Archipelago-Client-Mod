@@ -13,6 +13,7 @@ using Archipelago.MultiClient.Net.Models;
 using Archipelago.MultiClient.Net.Packets;
 using MenuLib.MonoBehaviors;
 using Newtonsoft.Json.Linq;
+using RepoAP.AP_Links;
 using RepoAP.Core;
 using UnityEngine;
 
@@ -38,6 +39,7 @@ namespace RepoAP
 
         public Dictionary<string, object> slotData;
         public DeathLinkService deathLinkService;
+        public DamageLinkService damageLinkService;
         public int ItemIndex = 0;
         private ConcurrentQueue<(ItemInfo NetworkItem, int index)> incomingItems;
         private ConcurrentQueue<SerializableItemInfo> outgoingItems;
@@ -132,12 +134,19 @@ namespace RepoAP
 
                 deathLinkService.OnDeathLinkReceived += HandleIncomingDeathlink;
 
+                damageLinkService = new DamageLinkService(session.Socket, session.ConnectionInfo);
+
                 TickInLevel += DeathLinkPatch.ReceiveDeathLinkPatch;
                 TickInLevel += TrapHandler.UseTrapPatch;
 
                 if (DeathLinkEnabled())
                 {
                     deathLinkService.EnableDeathLink();
+                }
+
+                if (DamageLinkEnabled())
+                {
+                    damageLinkService.EnableDamageLink();
                 }
 
                 //SetupDataStorage();
@@ -236,6 +245,7 @@ namespace RepoAP
                 incomingItems = new ConcurrentQueue<(ItemInfo NetworkItem, int ItemIndex)>();
                 outgoingItems = new ConcurrentQueue<SerializableItemInfo>();
                 deathLinkService = null;
+                damageLinkService = null;
                 slotData = null;
                 ItemIndex = 0;
                 TickInLevel -= DeathLinkPatch.ReceiveDeathLinkPatch;
@@ -555,6 +565,11 @@ namespace RepoAP
         internal bool DeathLinkEnabled()
         {
             return (Plugin.BoundConfig.OverrideMWDeathlink.Value && Plugin.BoundConfig.Deathlink.Value) || (!Plugin.BoundConfig.OverrideMWDeathlink.Value && (bool)Plugin.connection.slotData["death_link"]);
+        }
+
+        internal bool DamageLinkEnabled()
+        {
+            return (Plugin.BoundConfig.OverrideMWDamagelink.Value && Plugin.BoundConfig.Damagelink.Value) || (!Plugin.BoundConfig.OverrideMWDamagelink.Value && (bool)Plugin.connection.slotData["damage_link"]);
         }
 
         // could put something here called TickAPActions that patches RunManager.Update and emits an event every few seconds
