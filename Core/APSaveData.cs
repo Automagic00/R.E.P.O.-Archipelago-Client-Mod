@@ -536,7 +536,7 @@ namespace RepoAP
                 }
                 else
                 {
-                    status += $"<br>{{?}} Pellys - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
+                    status += $"<br>{{?}} Pellys - {collectedCount}/{totalCount}{(collectedCount >= totalCount ? " {check}" : " {X}")}";
                 }
             }
 
@@ -560,7 +560,7 @@ namespace RepoAP
                     }
                 }
 
-                status += $"<br>{{ghost}} Souls - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
+                status += $"<br>{{ghost}} Souls - {collectedCount}/{totalCount}{(collectedCount >= totalCount ? " {check}" : " {X}")}";
             }
 
             //Check if Valuable Hunt is complete
@@ -603,7 +603,7 @@ namespace RepoAP
                     status += $"<br>{{$$$}} {RunManager.instance.levelCurrent.NarrativeName} Valuables - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
                 }
                 else
-                    status += $"<br>{{$$$}} Valuables - {collectedCount}/{totalCount}{(collectedCount == totalCount ? " {check}" : " {X}")}";
+                    status += $"<br>{{$$$}} Valuables - {collectedCount}/{totalCount}{(collectedCount >= totalCount ? " {check}" : " {X}")}";
             }
 
             if(goalMet) Plugin.Logger.LogInfo("All Goals Complete.");
