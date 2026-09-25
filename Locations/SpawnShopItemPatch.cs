@@ -87,28 +87,38 @@ namespace RepoAP
             foreach (var secretPair in ShopManager.instance.potentialSecretItems)
                 allPotentialSecretItems[secretPair.Key] = [.. secretPair.Value.Where(item => IsItemUnlockedInMultiworld(item))];
 
-            if (allpotentialItemUpgrades.Count() < 6)
+
+            if (StatsManager.instance.itemDictionary.TryGetValue(ItemNames.ap_item, out Item apitem))
             {
-                List<Item> upgrades = [];
-                foreach (Item obj in StatsManager.instance.itemDictionary.Values)
+                if (allpotentialItemUpgrades.Count() < 6)
                 {
-                    if (obj.itemType == SemiFunc.itemType.item_upgrade && obj != StatsManager.instance.itemDictionary[ItemNames.ap_item])
+                    List<Item> upgrades = [];
+                    foreach (Item obj in StatsManager.instance.itemDictionary.Values)
                     {
-                        upgrades.Add(obj);
+                        if (obj.itemType == SemiFunc.itemType.item_upgrade && obj != apitem)
+                        {
+                            upgrades.Add(obj);
+                        }
+                    }
+                    while (allpotentialItemUpgrades.Count() < 6)
+                    {
+                        allpotentialItemUpgrades.Add(upgrades[UnityEngine.Random.Range(0, upgrades.Count - 1)]);
                     }
                 }
-                while (allpotentialItemUpgrades.Count() < 6)
+
+                int shopItemsToReplace = Math.Min(Plugin.ShopItemsAvailable.Count, allpotentialItemUpgrades.Count);
+                for (int i = shopItemsToReplace - 1; i >= 0; i--)
                 {
-                    allpotentialItemUpgrades.Add(upgrades[UnityEngine.Random.Range(0, upgrades.Count - 1)]);
+                    allpotentialItemUpgrades.RemoveAt(i);
+                    allpotentialItemUpgrades.Add(StatsManager.instance.itemDictionary[ItemNames.ap_item]);
                 }
             }
-
-            int shopItemsToReplace = Math.Min(Plugin.ShopItemsAvailable.Count, allpotentialItemUpgrades.Count);
-            for (int i = shopItemsToReplace - 1; i >= 0; i--)
+            else
             {
-                allpotentialItemUpgrades.RemoveAt(i);
-                allpotentialItemUpgrades.Add(StatsManager.instance.itemDictionary[ItemNames.ap_item]);
+                allpotentialItemUpgrades = ShopManager.instance.potentialItemUpgrades;
+                Plugin.Logger.LogError("Item Upgrade AP Item not found in itemDictionary. Archipelago items will not spawn in the store!");
             }
+
 
             ShopManager.instance.potentialItems = allPotentialItems;
             ShopManager.instance.potentialItemConsumables = allpotentialItemConsumables;
