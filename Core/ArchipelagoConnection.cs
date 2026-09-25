@@ -131,10 +131,10 @@ namespace RepoAP
                 }
 
                 deathLinkService = session.CreateDeathLinkService();
-
                 deathLinkService.OnDeathLinkReceived += HandleIncomingDeathlink;
 
                 damageLinkService = new DamageLinkService(session.Socket, session.ConnectionInfo);
+                damageLinkService.OnDamageLinkReceived += DamageLinkHandler.DealDamageLinkDamage;
 
                 TickInLevel += DeathLinkPatch.ReceiveDeathLinkPatch;
                 TickInLevel += TrapHandler.UseTrapPatch;

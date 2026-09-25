@@ -9,6 +9,7 @@ using System.Reflection;
 using Archipelago.MultiClient.Net.Models;
 using HarmonyLib;
 using Newtonsoft.Json.Linq;
+using RepoAP.AP_Links;
 
 namespace RepoAP
 {
@@ -70,6 +71,20 @@ namespace RepoAP
             PhotonView photonView = inst.GetComponent<PhotonView>();
             object[] p = new object[] { fieldName, position };
             photonView.RPC(nameof(CustomRPCs.PingClientsWithNoise), RpcTarget.All, p);
+        }
+        public void CallClientTakeDamageFromDamageLink(GameObject inst, /*DamageLink damageLink*/int damageAmount, Vector3 hurtPosition)
+        {
+            Plugin.Logger.LogInfo("Telling clients to hurt themselves");
+            PhotonView photonView = inst.GetComponent<PhotonView>();
+            object[] p = new object[] { /*damageLink.Source, damageLink.UUID, damageLink.DamageAmount*/damageAmount,/* damageLink.Timestamp,*/ hurtPosition };
+            photonView.RPC(nameof(CustomRPCs.ClientTakeDamageFromDamageLink), RpcTarget.All, p);
+        }
+        public void CallClientSendDamageForDamageLink(GameObject inst, int amount)
+        {
+            Plugin.Logger.LogInfo("Telling host to send damage");
+            PhotonView photonView = inst.GetComponent<PhotonView>();
+            object[] p = new object[] { amount };
+            photonView.RPC(nameof(CustomRPCs.ClientSendDamageForDamageLink), RpcTarget.MasterClient, p);
         }
 
 
@@ -136,6 +151,22 @@ namespace RepoAP
             }
             else 
                 noise.Play(position, falloffMultiplier:2);
+        }
+        [PunRPC]
+        public void ClientTakeDamageFromDamageLink(/*string sourcePlayer, string uuid, */int amount,/* DateTime timestamp,*/ Vector3 hurtPosition)
+        {
+            //if (Vector3.Distance(PlayerAvatar.instance.transform.position, hurtPosition) >= 2f) return; // won't work
+            //DamageLinkHandler.ClientIncomingDamageLinks.Add(new DamageLink(sourcePlayer, uuid, amount));
+            Plugin.Logger.LogInfo("Trying to deal damage from DamageLink.");
+            DamageLinkHandler.clientTakingLinkedDamage = true;
+            PlayerAvatar.instance.playerHealth.Hurt(amount, false, -1, false);
+            DamageLinkHandler.clientTakingLinkedDamage = false;
+        }
+        [PunRPC]
+        public void ClientSendDamageForDamageLink(int amount)
+        {
+            Plugin.Logger.LogInfo("Trying to forward damage from another client for DamageLink.");
+            DamageLinkHandler.SendDamageLinkDamage(amount);
         }
     }
 }

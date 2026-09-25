@@ -15,7 +15,13 @@ namespace RepoAP.AP_Links
     public class DamageLinkService
     {
         // taking damage will send 1 point per hp lost
-        // damage needed to hurt players is 2 per 1hp and capped at 100 per instance
+        // damage needed to hurt players is 1 per 1hp and capped at 75 per instance
+
+        //
+        // Summary:
+        //     Creates DamageLinkService.OnDamageLinkReceived
+        //     event for clients to hook into and decide what to do with the received DamageLink
+        public delegate void DamageLinkReceivedHandler(DamageLink damageLink);
 
         private readonly IArchipelagoSocketHelper socket;
         private readonly IConnectionInfoProvider connectionInfoProvider;
@@ -23,6 +29,12 @@ namespace RepoAP.AP_Links
 
         public bool IsDamaging() => _isDamaging;
         public void SetDamaging(bool value) => _isDamaging = value;
+
+        //
+        // Summary:
+        //     Delegate event that supplies the created Archipelago.MultiClient.Net.BounceFeatures.DeathLink.DeathLink
+        //     whenever one is received from the server as a bounce packet.
+        public event DamageLinkReceivedHandler OnDamageLinkReceived;
 
 
         public DamageLinkService(IArchipelagoSocketHelper socket, IConnectionInfoProvider connectionInfoProvider)
@@ -36,21 +48,9 @@ namespace RepoAP.AP_Links
         private void OnPacketReceived(ArchipelagoPacketBase packet)
         {
             if (packet is BouncedPacket bouncedPacket && bouncedPacket.Tags.Contains("SharedDamage") && DamageLink.TryParse(bouncedPacket.Data, out var damageLink) && 
-                damageLink.UUID != connectionInfoProvider.Uuid && (SemiFunc.RunIsLevel() || SemiFunc.RunIsShop()))
+                damageLink.UUID != connectionInfoProvider.Uuid)
             {
-                List<PlayerAvatar> candidatePlayers = GameDirector.instance.PlayerList.Where(player => !player.isDisabled).ToList();
-                if (candidatePlayers.Count < 1)
-                {
-                    _isDamaging = false;
-                    return;
-                }
-                _isDamaging = true;
-                PlayerAvatar playerToHurt = candidatePlayers[UnityEngine.Random.Range(0, candidatePlayers.Count - 1)];
-                if (playerToHurt == PlayerAvatar.instance)
-                    PlayerAvatar.instance.playerHealth.Hurt(damageLink.DamageAmount, false);
-                else
-                    playerToHurt.playerHealth.HurtOther(damageLink.DamageAmount, playerToHurt.transform.position, false);
-                Plugin.Logger.LogInfo("should have taken damage");
+                this.OnDamageLinkReceived(damageLink);
             }
         }
 
@@ -68,12 +68,6 @@ namespace RepoAP.AP_Links
         //     The websocket connection is not alive
         public void SendDamageLink(DamageLink damageLink)
         {
-            if (_isDamaging)
-            {
-                Plugin.Logger.LogDebug("DamageLink damage came from self. Not sending.");
-                return;
-            }
-            Plugin.Logger.LogInfo($"sending {damageLink.DamageAmount} damage");
 
             /*
              * {
@@ -130,22 +124,6 @@ namespace RepoAP.AP_Links
         }
 
 
-    }
-
-    [HarmonyPatch(typeof(PlayerHealth))]
-    class DamageLinkPatches
-    {
-        //[HarmonyPatch(typeof(PlayerHealth), nameof(PlayerHealth.Hurt))]
-        [HarmonyPostfix, HarmonyPatch(nameof(PlayerHealth.Hurt))]
-        static void HurtPlayerPatch(ref int damage)
-        {
-            if (!SemiFunc.IsMasterClientOrSingleplayer() || !Plugin.connection.DamageLinkEnabled() || damage <= 0) return;
-            Plugin.connection.damageLinkService.SendDamageLink(new DamageLink(
-                Plugin.connection.session.Players.ActivePlayer.Name,
-                Plugin.connection.session.ConnectionInfo.Uuid,
-                damage));
-            Plugin.connection.damageLinkService.SetDamaging(false);
-        }
     }
 
 
