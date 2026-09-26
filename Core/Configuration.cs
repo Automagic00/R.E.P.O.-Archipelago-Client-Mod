@@ -14,6 +14,7 @@ namespace RepoAP
         public ConfigEntry<uint> ValuableSubstitutionChance;
         public ConfigEntry<bool> Deathlink;
         public ConfigEntry<bool> OverrideMWDeathlink;
+        public ConfigEntry<bool> DisableCosmeticCrates;
         public ConfigEntry<string> APServerAddress;
         public ConfigEntry<string> APServerPort;
         public ConfigEntry<string> APPassword;
@@ -32,6 +33,7 @@ namespace RepoAP
                 "When you die, everyone who enabled death link dies. Of course, the reverse is true too.");
             OverrideMWDeathlink = cfg.Bind("General", "Override yaml death link option", false,
                 "If true, the mod config will be used to turn death link on/off instead of the yaml option.");
+            DisableCosmeticCrates = cfg.Bind("General", "Disable cosmetic crates", false, "Prevents cosmetic crates from spawning. Useful if finding them during a modded run feels like cheating.");
             APServerAddress = cfg.Bind("Connection", "Address", "archipelago.gg", "The address of the multiworld server (usually archipelago.gg).");
             APServerPort = cfg.Bind("Connection", "Port", "", "The port that the multiworld is hosted on.");
             APPassword = cfg.Bind("Connection", "Password", "", "The password for the multiworld, if it has one.");
