@@ -50,7 +50,8 @@ namespace RepoAP.Core
                             break;
                         case "Audit Trap":
                             if (!SemiFunc.RunIsShop()) break;
-                            SemiFunc.StatSetRunCurrency(StatsManager.instance.GetRunStatCurrency() / 2);
+                            long percentLeft = 100 - (Plugin.connection.slotData.TryGetValue("audit_trap_money_lost", out object val) ? val is long v ? v : 33 : 33);
+                            SemiFunc.StatSetRunCurrency(StatsManager.instance.GetRunStatCurrency() * (int)percentLeft / 100);
                             trapUsed = true;
                             TutorialDirector.instance.ActivateTip("AuditTrap", 0.0f, false);
                             break;
