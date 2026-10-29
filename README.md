@@ -29,10 +29,11 @@ More information at https://archipelago.gg/
 
 #### Downpatching the Game
 When REPO receives major updates, this mod may not work correctly until it is updated to support the latest game version. If that happens, you will need to downpatch the game to an older version.
-1) Follow the first 6 steps of this guide, but replace the command in step 5 with download_depot 3241660 3241661 180069324351455863
+1) Follow the first 6 steps of [this](<https://steamcommunity.com/sharedfiles/filedetails/?id=3042152647>) guide, but replace the command in step 5 with download_depot 3241660 3241661 8225435692675993447
 2) Open your REPO folder (in the steamapps/common folder of Steam)
 3) Open the Depot folder (in steamapps/content)
 4) Drag all the files in the depot folder (including the REPO.exe file) and replace the files in the REPO folder (steamapps/common)
+  * If you still experience issues after doing this, delete everything inside the MonoBleedingEdge and REPO_Data folders *before* replacing them with the versions from the depot
 5) Go into your steam library, right click REPO, click Properties -> Updates, and set it to only update when the game is launched (this will cause it to update if it is launched in Vanilla but not Modded)
 6) In your mod manager or manual installaton, ensure that the versions of REPOLib and MenuLib you have installed are for the previous game version.
 7) If you are using a mod manager, launch the game from it. If you are not using a mod manager, switch steam to Offline mode before launching the game. Once REPO finishes launching, you can switch back online.
