@@ -24,6 +24,7 @@ namespace RepoAP
         static public string headman_manor = "Headman Manor ";
         static public string mcjannek_station = "McJannek Station ";
         static public string museum_of_human_art = "Museum of Human Art ";
+        static public string sunstone_valley_resort = "Sunstone Valley Resort ";
 
         //---- Valuables ----
 
@@ -192,6 +193,44 @@ namespace RepoAP
         public const string blender = "Blender";
         public const string traffic_light = "Traffic Light";
 
+        //- Sunstone Valley Resort
+        public const string golden_coin = "Golden Coin";
+        public const string golden_horse_shoe = "Golden Horse Shoe";
+        public const string golden_lock = "Golden lock";
+        public const string lighter = "Lighter";
+        public const string magnet = "Magnet";
+        public const string snow_globe = "Snow globe";
+        public const string mouth_harp = "Mouth Harp";
+        public const string fossil = "Fossil";
+        public const string gold_bar = "Gold Bar";
+        public const string horse_on_wheels = "Horse on wheels";
+        public const string lunch_box = "Lunch box";
+        public const string post_card = "Post card";
+        public const string sippy_cup = "Sippy cup";
+        public const string snake_in_a_can = "Snake in a can";
+        public const string harmonica = "Harmonica";
+        public const string pan_flute = "Pan Flute";
+        public const string backpack = "Backpack";
+        public const string cowboy_action_figure = "Cowboy action figure";
+        public const string cowboy_boot_trophy = "Cowboy boot trophy";
+        public const string fluffy_buddy = "Fluffy Buddy";
+        public const string mineral_case = "Mineral case";
+        public const string rattlesnake = "Rattlesnake";
+        public const string suitcase = "Suitcase";
+        public const string banjo = "Banjo";
+        public const string golden_shovel = "Golden Shovel";
+        public const string golden_wheel = "Golden Wheel";
+        public const string energy_crystal_chunk = "Energy Crystal Chunk";
+        public const string rocking_chair = "Rocking Chair";
+        public const string distillery = "Distillery";
+        public const string popcorn_stand = "Popcorn stand";
+        public const string golfcart = "Golfcart";
+        public const string shooting_cowboy = "Shooting Cowboy";
+        public const string bird_cage = "Bird Cage";
+        public const string explosive_tower = "Explosive Tower";
+        public const string zero_grav_crystal = "Zero Grav crystal";
+
+
         public static readonly ReadOnlyCollection<string> all_pellys = new ReadOnlyCollection<string>(new List<string>()
         {
            standard_pelly,
@@ -204,7 +243,8 @@ namespace RepoAP
            "Wizard",
            "Manor",
            "Arctic",
-           "Museum"
+           "Museum",
+           "Desert"
         });
 
         public static readonly ReadOnlyCollection<string> all_levels = new ReadOnlyCollection<string>(new List<string>
@@ -212,7 +252,8 @@ namespace RepoAP
             swiftbroom_academy,
             headman_manor,
             mcjannek_station,
-            museum_of_human_art
+            museum_of_human_art,
+            sunstone_valley_resort
         });
 
         public static readonly ReadOnlyCollection<string> all_valuables = new ReadOnlyCollection<string>(new List<string>
@@ -377,6 +418,42 @@ namespace RepoAP
             tall_guy,
             blender,
             traffic_light,
+
+            golden_coin,
+            golden_horse_shoe,
+            golden_lock,
+            lighter,
+            magnet,
+            snow_globe,
+            mouth_harp,
+            fossil,
+            gold_bar,
+            horse_on_wheels,
+            lunch_box,
+            post_card,
+            sippy_cup,
+            snake_in_a_can,
+            harmonica,
+            pan_flute,
+            backpack,
+            cowboy_action_figure,
+            cowboy_boot_trophy,
+            fluffy_buddy,
+            mineral_case,
+            rattlesnake,
+            suitcase,
+            banjo,
+            golden_shovel,
+            golden_wheel,
+            energy_crystal_chunk,
+            rocking_chair,
+            distillery,
+            popcorn_stand,
+            golfcart,
+            shooting_cowboy,
+            bird_cage,
+            explosive_tower,
+            zero_grav_crystal
         });
 
         // ---- Monster Souls ----
@@ -407,6 +484,7 @@ namespace RepoAP
         public const string tick_soul = "Tick Soul";      // only drops if the tick absorbs enough health from the player to reach 100hp
         public const string trudge_soul = "Trudge Soul";
         public const string upscream_soul = "Upscream Soul";
+        public const string pony_soul = "Pony Soul";
 
         public static readonly ReadOnlyCollection<string> all_monster_souls = new ReadOnlyCollection<string>(new List<string>
         {
@@ -436,7 +514,8 @@ namespace RepoAP
             spewer_soul,
             tick_soul,
             trudge_soul,
-            upscream_soul
+            upscream_soul,
+            pony_soul
         });
     }
 }

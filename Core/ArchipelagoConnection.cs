@@ -116,7 +116,7 @@ namespace RepoAP
                 slotData = LoginSuccess.SlotData;
 
                 Plugin.Logger.LogInfo("Successfully connected to Archipelago Multiworld server!");
-                string version = slotData.TryGetValue("worldversion", out object ver_str) ? (string)ver_str : "";
+                string version = slotData.TryGetValue("world_version", out object ver_str) ? (string)ver_str : "";
                 Plugin.Logger.LogInfo($"Mod version is '{MyPluginInfo.PLUGIN_VERSION}'. Apworld version is '{version}'.");
                 APSave.Init();
                 APSave.ScoutLocations();

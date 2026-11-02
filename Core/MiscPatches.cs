@@ -20,7 +20,7 @@ namespace RepoAP.Core
         }
     }
 
-    [HarmonyPatch(typeof(SteamManager), nameof(SteamManager.JoinSteamLobby))]
+    [HarmonyPatch(typeof(SteamLobbyManager), nameof(SteamLobbyManager.JoinSteamLobby))]
     internal class DisconnectWhenNotHostPatch
     {
         [HarmonyPostfix]

@@ -39,6 +39,9 @@ namespace RepoAP
             ids.Add(3);
  			names.Add(LocationNames.museum_of_human_art);
 
+            ids.Add(4);
+            names.Add(LocationNames.sunstone_valley_resort);
+
             // ---- AP Function Items ----
             ids.Add(base_shop_offset++);
             names.Add(ItemNames.shop_stock);
@@ -239,6 +242,17 @@ namespace RepoAP
 
             ids.Add(base_shop_offset++);
             names.Add(ItemNames.semibot_walkies);
+
+            // Sunstone Update
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.human_adventure_cable);
+
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.human_gun);
+
+            ids.Add(base_shop_offset++);
+            names.Add(ItemNames.recharge_orb);
+
 
             for (int i = 0; i < ids.Count;i++)
             {

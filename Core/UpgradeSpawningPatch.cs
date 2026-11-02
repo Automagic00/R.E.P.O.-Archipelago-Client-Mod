@@ -19,7 +19,7 @@ namespace RepoAP.Core
         /**
          * The goal here is to create new spots for upgrades to spawn along the shelf on the side of the truck.
          */
-        [HarmonyPatch(typeof(PunManager), nameof(PunManager.TruckPopulateItemVolumes))]
+        [HarmonyPatch(typeof(PunManager), nameof(PunManager.TruckPopulateItemVolumes), argumentTypes: typeof(List<PunManager.ItemSpawn>))]
         [HarmonyPrefix]
         internal static void PrepareNewTruckItemVolumes(PunManager __instance, ItemManager ___itemManager)
         {

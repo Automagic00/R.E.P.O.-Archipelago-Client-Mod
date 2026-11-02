@@ -60,11 +60,11 @@ namespace RepoAP.Locations
             }
         }
     }
-    [HarmonyPatch(typeof(ValuableDirector), "SpawnValuable")]  // LevelGenerator.Generate performs all steps of generation. In the valuables phase, it calls ValuableDirector.SetupHost
+    [HarmonyPatch(typeof(ValuableDirector), nameof(ValuableDirector.SpawnValuable))]  // LevelGenerator.Generate performs all steps of generation. In the valuables phase, it calls ValuableDirector.SetupHost
     class AdjustValuableOddsPatch
     {
         [HarmonyPrefix]
-        static void ReplaceFoundValuableWithChance(ref ValuableDirector __instance, ref PrefabRef _valuable, ref ValuableVolume _volume, ref string _path)
+        static void ReplaceFoundValuableWithChance(ref ValuableDirector __instance, ref PrefabRef _valuable, ref ValuableVolume _volume)
         {
             bool willReplaceValuable = UnityEngine.Random.Range(0, 100) < Mathf.Clamp(Plugin.BoundConfig.ValuableSubstitutionChance.Value, 0, 100);
             var volumeType = _volume.VolumeType;

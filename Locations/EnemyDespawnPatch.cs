@@ -15,9 +15,9 @@ namespace RepoAP
                 return;
             }
             if (!SemiFunc.IsMultiplayer())
-                ChangeEnemyOrbNames(___enemyName);
+                ChangeEnemyOrbNames(___enemyName.Equals("Snatcher") ? "Pony" : ___enemyName);
             else 
-                Plugin.customRPCManager.CallClientChangeMonsterOrbName(Plugin.customRPCManagerObject, ___enemyName);
+                Plugin.customRPCManager.CallClientChangeMonsterOrbName(Plugin.customRPCManagerObject, ___enemyName.Equals("Snatcher") ? "Pony" : ___enemyName);
         }
         internal static void ChangeEnemyOrbNames(string enemyName)
         {

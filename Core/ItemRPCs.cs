@@ -40,6 +40,7 @@ namespace RepoAP.Core
         {
             yield return null;
             inst.itemName = newItemName.Replace("_", " ");
+            inst.RefreshLocalizations();
         }
     }
 }

@@ -4,7 +4,7 @@
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>RepoAP</AssemblyName>
     <Product>Archipelago Randomizer</Product>
-    <Version>0.4.4</Version>
+    <Version>0.4.5</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
@@ -55,7 +55,7 @@
 	<Reference Include="Mono.Cecil">
         <HintPath>$(BepInCore)\Mono.Cecil.dll</HintPath>
     </Reference>
-	  <PackageReference Include="Nickklmao-MenuLib" Version="2.*" />
+	  <PackageReference Include="REPOModding-MenuLib" Version="2.6.*" />
 	  <PackageReference Include="Zehs-REPOLib" Version="4.*" />
     <Reference Include="netstandard">
       <HintPath>$(Managed)\netstandard.dll</HintPath>

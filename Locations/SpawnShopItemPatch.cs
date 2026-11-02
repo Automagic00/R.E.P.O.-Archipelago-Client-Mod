@@ -131,7 +131,7 @@ namespace RepoAP
     /*
      * Refreshes available shop items once per visit
      */
-    [HarmonyPatch(typeof(PunManager), nameof(PunManager.ShopPopulateItemVolumes))]
+    [HarmonyPatch(typeof(PunManager), nameof(PunManager.ShopPopulateItemVolumes), argumentTypes: typeof(List<PunManager.ItemSpawn>))]
     class ApStoreItemsPatch
 	{
         [HarmonyPrefix]
@@ -206,15 +206,16 @@ namespace RepoAP
                     else
                     {
                         __instance.itemName = newItemName;
+                        __instance.RefreshLocalizations();
                     }
                 }
             }
         }
 
-        [HarmonyPostfix, HarmonyPatch(nameof(ItemAttributes.GetItemNameLocalized))]
-        static void ReplaceLocalizedNameOfAPItems(ref string __result, ref string ___itemName, ItemAttributes __instance)
+        [HarmonyPostfix, HarmonyPatch(nameof(ItemAttributes.RefreshLocalizations))]
+        static void ReplaceLocalizedNameOfAPItems(ref string ___cachedItemName, ref string ___itemName, ItemAttributes __instance)
         {
-            if (__instance.item.name.Equals(ItemNames.ap_item)) __result = ___itemName;
+            if (__instance.item.name.Equals(ItemNames.ap_item)) __instance.cachedItemName = ___itemName;
         }
 
     }

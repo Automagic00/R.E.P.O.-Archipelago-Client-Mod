@@ -10,9 +10,9 @@ using UnityEngine;
 
 namespace RepoAP
 {
-    [BepInPlugin("Automagic.ArchipelagoREPO", "Archipelago Randomizer", "0.4.4")]
+    [BepInPlugin("Automagic.ArchipelagoREPO", "Archipelago Randomizer", "0.4.5")]
     [BepInDependency("nickklmao.menulib")]
-    [BepInDependency("REPOLib")]
+    [BepInDependency(REPOLib.MyPluginInfo.PLUGIN_GUID)]
 
     public class Plugin : BaseUnityPlugin
     {
@@ -60,7 +60,7 @@ namespace RepoAP
             harmony.PatchAll(typeof(DeathLinkPatch));
             harmony.PatchAll(typeof(UpgradeSpawningPatch));
             harmony.PatchAll(typeof(TrapHandler));
-
+            
             REPOLib.BundleLoader.OnAllBundlesLoaded += FixAPStoreItems;
             REPOLib.BundleLoader.OnAllBundlesLoaded += Initialize;
 

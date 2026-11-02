@@ -38,6 +38,9 @@ namespace RepoAP
         static public string sledge_hammer = "Sledge Hammer Unlock";
         static public string sword = "Sword Unlock";
         static public string inflatable_hammer = "Inflatable Hammer Unlock";
+        static public string human_adventure_cable = "Human Adventure Cable Unlock";
+        static public string human_gun = "Human Gun Unlock";
+        static public string recharge_orb = "Recharge Orb Unlock";
 
         // Ranged Weapons
         static public string gun = "Gun Unlock";
