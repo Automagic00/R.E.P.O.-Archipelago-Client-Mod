@@ -37,141 +37,7 @@ namespace RepoAP
                 }
             }
         }
-    }*/
-
-    [HarmonyPatch(typeof(PlayerController), "Update")]
-    class DebugKeys
-    {
-        [HarmonyPrefix]
-        static void Prefix()
-        {
-            //MenuToggle
-#if DEBUG
-            if (Input.GetKeyDown(KeyCode.Insert))
-            {
-                Plugin.showMenu = !Plugin.showMenu;
-                Debug.Log("Toggle Menu");
-            }
-
-            if (Input.GetKeyDown(KeyCode.F1))
-            {
-                Debug.Log("F1 Pressed");
-                RunManager.instance.ChangeLevel(true, false, _changeLevelType: RunManager.ChangeLevelType.Shop);
-            }
-            if (Input.GetKeyDown(KeyCode.F2))
-            {
-                Debug.Log("F2 Pressed");
-
-                SemiFunc.StatSetRunCurrency(100000);
-            }
-            if (Input.GetKeyDown(KeyCode.F3))
-            {
-                Debug.Log("F3 Pressed");
-                foreach (var item in StatsManager.instance.itemDictionary.Keys)
-                {
-                    Debug.Log($"{item}");
-                }
-
-            }
-
-            if (Input.GetKeyDown(KeyCode.F4))
-            {
-                Debug.Log("F4 Pressed");
-
-                StatsManager.instance.itemsPurchased[ItemNames.upgrade_strength] = 15;
-                //StatsManager.instance.
-            }
-
-            if (Input.GetKeyDown(KeyCode.F5))
-            {
-                Debug.Log("Try Connect");
-                Plugin.connection.TryConnect(Plugin.apAddress, Int32.Parse(Plugin.apPort), Plugin.apPassword, Plugin.apSlot);    // despite what the compiler is telling us, we don't want or need to
-                                                                                                                                 // await this call
-            }
-            if (Input.GetKeyDown(KeyCode.F6))
-            {
-                string completionOutput = "-- Completetion Data --";
-                completionOutput += $"\nLevel Quota: {APSave.saveData.levelQuota}";
-
-                completionOutput += $"\nPellys Required: {APSave.saveData.pellysRequired}";
-
-                completionOutput += ("\n\nPellys Gathered: ");
-                foreach (string pelly in APSave.saveData.pellysGathered)
-                {
-                    completionOutput += ($"\n- {pelly}");
-                }
-                completionOutput += "\n\nValuables Gathered: ";
-                foreach (string valuable in APSave.saveData.valuablesGathered)
-                {
-                    completionOutput += $"\n- {valuable}";
-                }
-                completionOutput += "\n\nValuables Missing: ";
-                foreach (string valuable in LocationNames.all_valuables)
-                {
-                    if (!APSave.saveData.valuablesGathered.Contains(valuable))
-                    {
-                        completionOutput += $"\n- Missing {valuable}";
-                    }
-                }
-                completionOutput += "\n\nMonster Souls Missing: ";
-                foreach (string soul in LocationNames.all_monster_souls)
-                {
-                    if (!APSave.saveData.monsterSoulsGathered.Contains(soul))
-                    {
-                        completionOutput += $"\n- Missing {soul}";
-                    }
-                }
-                completionOutput += "\n\nMonster Souls Gathered: ";
-                foreach (string soul in APSave.saveData.monsterSoulsGathered)
-                {
-                    completionOutput += $"\n- {soul}";
-                }
-
-                Debug.Log(completionOutput);
-            }
-            if (Input.GetKeyDown(KeyCode.F8))
-            {
-                Debug.Log(RunManager.instance.levelCurrent.name);
-            }
-            if (Input.GetKeyDown(KeyCode.F9))
-            {
-                Debug.Log(APSave.saveData.shopStockReceived);
-            }
-
-            if (Input.GetKeyDown(KeyCode.F10))
-            {
-                    string output = "--- Valuable Weights ---";
-                    foreach (var levelValuables in LevelGenerator.Instance.Level.ValuablePresets)
-                    {
-                        var allValuables = levelValuables.tiny;
-                        allValuables.AddRange(levelValuables.small);
-                        allValuables.AddRange(levelValuables.medium);
-                        allValuables.AddRange(levelValuables.big);
-                        allValuables.AddRange(levelValuables.wide);
-                        allValuables.AddRange(levelValuables.tall);
-                        allValuables.AddRange(levelValuables.veryTall);
-
-
-                        foreach (var val in allValuables)
-                        {
-                            output += $"\n{val.PrefabName} - {LevelGenerator.Instance.Level.name}: {val.Prefab.GetComponent<ValuableObject>().physAttributePreset}".Replace("PhysAttribute", "").Replace("()", "");
-                        }
-                    }
-                Debug.Log(output);
-            }
-
-            if (Input.GetKeyDown(KeyCode.F11))
-            {
-                var items = APSave.GetItemsReceived();
-
-                foreach (var item in items)
-                {
-                    Debug.Log(ItemData.itemIDToName[ItemData.RemoveBaseId(item.Key)]);
-                }
-            }
-#endif
-        }
-    } 
+    }*/ 
 
     class DebugCommands
     {
@@ -196,6 +62,7 @@ namespace RepoAP
                 LogValuableWeightInfo, Suggest, SemiFunc.RunIsLevel);
             var logReceivedItemsCommand = new DebugCommandHandler.ChatCommand("logreceiveditems", "Prints the names of all items received from the multiworld in the output log.",
                 LogAPItemsReceived, Suggest, delegate { return Plugin.connection.connected; });
+            //var logEnemiesCommand = new DebugCommandHandler.ChatCommand("logenemies", "Prints the names and mass of all enemies in the output log.", LogEnemyMass, Suggest, SemiFunc.RunIsLevel);
 
             REPOLib.Modules.Commands.RegisterCommand(logStoreItemsCommand);
             REPOLib.Modules.Commands.RegisterCommand(tryConnectCommand);
@@ -204,6 +71,7 @@ namespace RepoAP
             REPOLib.Modules.Commands.RegisterCommand(logShopStockCommand);
             REPOLib.Modules.Commands.RegisterCommand(logValuableWeightsCommand);
             REPOLib.Modules.Commands.RegisterCommand(logReceivedItemsCommand);
+            //REPOLib.Modules.Commands.RegisterCommand(logEnemiesCommand);
         }
 
 
@@ -292,6 +160,68 @@ namespace RepoAP
             Plugin.Logger.LogInfo(output);
             DebugCommandHandler.instance?.CommandSuccessEffect();
         }
+
+        private static void LogEnemyMass(bool isDebugConsole, string[] args)
+        {
+            // need a way to get the enemy's default strength threshold and the threshold when stunned
+            string output = "--- Enemy Weights ---";
+            foreach(var enemy in REPOLib.Modules.Enemies.AllEnemies)
+            {
+                if (enemy.spawnObjects.Count == 0 || enemy.spawnObjects.Count > 1) continue;
+                EnemyParent parent = enemy.spawnObjects[0].Prefab.GetComponent<EnemyParent>();
+                if (parent != null)
+                {
+                    output += $"\n{parent.enemyName}: ";
+                    Enemy realEnemy = parent.GetComponentInChildren<Enemy>();
+                    if (realEnemy != null)
+                    {
+                        Plugin.Logger.LogInfo("got Enemy");
+                        EnemyRigidbody body = realEnemy.Rigidbody;
+                        if (body != null)
+                        {
+                            Plugin.Logger.LogInfo("got EnemyRigidBody");
+                            PhysGrabObject grabObject = body.GetComponentInChildren<PhysGrabObject>();
+                            if (grabObject != null)
+                            {
+                                Plugin.Logger.LogInfo(grabObject.rb.mass);
+                                Plugin.Logger.LogInfo("got PhysGrabObject");
+                                float mass = grabObject.massOriginal;
+                                Plugin.Logger.LogInfo($"Mass: {mass}"); // looking for stunMassOverrideMultiplier as well
+                            }
+                        }
+                    }
+                }
+
+                // call GrabStrengthGet on EnemyParent.Enemy.Rigidbody.PhysGrabObject
+
+
+                // what that method looks like:
+                /*double mass = 8.0;
+                int strength = 1;
+                int dividerLimit = 30;
+
+                float num1 = (double)mass < 2.0 ? 7f : 20f;
+                float b1 = (float)(1.0 + (double)num1 * 0.5);
+                for (int index = 0; index < 3; ++index)
+                {
+                    float num2 = (float)(1.0 / (1.0 + (double)b1));
+                    float num3 = (float)((double)b1 - 1.0 + (double)num2 * (double)num2 - (double)num1 * 0.5);
+                    b1 -= num3 / (float)(1.0 - 2.0 * (double)num2 * (double)num2 * (double)num2);
+                }
+                float a1 = Mathf.Min(strength, b1);
+                float t1 = Mathf.Min((a1 - 1f) / num1, 0.9f);
+                double a2 = (double)Mathf.Lerp(a1, a1 / (1f + a1), t1);
+                float t2 = Mathf.Min((strength - 1f) / num1, 0.9f);
+                double b2 = (double)Mathf.Lerp(strength, strength / (1f + Mathf.Min(strength, dividerLimit)), t2);
+                Log(Mathf.Max((float)a2, (float)b2));*/
+
+
+
+                //"{parent.GetComponentInChildren<Enemy>()?.Rigidbody.physGrabObject.massOriginal}";    // the Enemy field is null in the prefabs
+            }
+            Plugin.Logger.LogInfo("Output");
+        }
+
         private static void LogAPItemsReceived(bool isDebugConsole, string[] args)
         {
             if (!Plugin.connection.connected)
