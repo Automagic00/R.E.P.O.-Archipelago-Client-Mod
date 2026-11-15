@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Models;
 using HarmonyLib;
 using Photon.Pun;
@@ -176,6 +177,11 @@ namespace RepoAP
     [HarmonyPatch(typeof(ItemAttributes))]
     class APItemNamePatch
     {
+        const string prog_color = "#AF99EF";
+        const string useful_color = "#6D8BE8";
+        const string filler_color = "#00EEEE";
+        const string trap_color = "#FA8072";
+
         [HarmonyPostfix, HarmonyPatch(nameof(ItemAttributes.Start))]
         static void NamePatch(ref string ___itemName, ItemAttributes __instance)
         {
@@ -197,7 +203,16 @@ namespace RepoAP
                     name = new string(name.Where(x => char.IsDigit(x)).ToArray());
 
                     SerializableItemInfo itemInfo = APSave.GetScoutedShopItem(LocationData.AddBaseId(Int64.Parse(name)));
-                    string newItemName = $"{itemInfo.Player}'s {itemInfo.ItemName}";
+                    string colorString;
+                    if (itemInfo.Flags.HasFlag(ItemFlags.Advancement))
+                        colorString = prog_color;
+                    else if (itemInfo.Flags.HasFlag(ItemFlags.NeverExclude))
+                        colorString = useful_color;
+                    else if (itemInfo.Flags.HasFlag(ItemFlags.Trap))
+                        colorString = trap_color;
+                    else colorString = filler_color;
+
+                    string newItemName = $"{itemInfo.Player}'s <color={colorString}>{itemInfo.ItemName}";
 
                     if (GameManager.instance.gameMode == 1 && __instance.gameObject.GetComponent<ItemRPCs>() != null)
                     {
