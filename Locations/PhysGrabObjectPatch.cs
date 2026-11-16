@@ -1,9 +1,9 @@
-﻿using Archipelago.MultiClient.Net.Models;
-using Archipelago.MultiClient.Net.Packets;
-using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Archipelago.MultiClient.Net.Enums;
+using Archipelago.MultiClient.Net.Models;
+using HarmonyLib;
 using Photon.Pun;
 using UnityEngine;
 using static ModulePropSwitch;
@@ -21,6 +21,12 @@ namespace RepoAP
             const string negcol = "#ef8a62";
             //const string hintedcol = "#edf03c";   // for eventual use if we want to show that a location is hinted
             const string unknowncol = "#9c9c9c";
+
+            const string prog_color = "#AF99EF";
+            const string useful_color = "#6D8BE8";
+            const string filler_color = "#00EEEE";
+            const string trap_color = "#FA8072";
+
             string name = __instance.gameObject.name;
 
             bool hasSoul = name.Contains("Soul");
@@ -78,7 +84,15 @@ namespace RepoAP
                     {
                         try
                         {
-                            label = $"<br><color={/*(LocationData.IsLocationHinted(id) ? hintedcol : */negcol}>{iInfo.Player}'s {iInfo.ItemName}";
+                            string colorString;
+                            if (iInfo.Flags.HasFlag(ItemFlags.Advancement))
+                                colorString = prog_color;
+                            else if (iInfo.Flags.HasFlag(ItemFlags.NeverExclude))
+                                colorString = useful_color;
+                            else if (iInfo.Flags.HasFlag(ItemFlags.Trap))
+                                colorString = trap_color;
+                            else colorString = filler_color;
+                            label = $"<br><color=#ffffff>{iInfo.Player}'s <color={colorString}>{iInfo.ItemName}";
                         }
                         catch (Exception e)
                         {
