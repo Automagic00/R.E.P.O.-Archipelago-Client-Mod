@@ -11,6 +11,7 @@ using HarmonyLib;
 using Photon.Pun;
 using RepoAP.Core;
 using UnityEngine;
+using static SemiFunc;
 
 namespace RepoAP
 {
@@ -30,7 +31,7 @@ namespace RepoAP
         }
     }
 
-    [HarmonyPatch(typeof(ShopManager), "GetAllItemsFromStatsManager")]
+    [HarmonyPatch(typeof(ShopManager), nameof(ShopManager.GetAllItemsFromStatsManager))]
     class CreateShopItemListPatch
     {
         static bool IsItemUnlockedInMultiworld(Item itemToCheck)
@@ -88,6 +89,38 @@ namespace RepoAP
             foreach (var secretPair in ShopManager.instance.potentialSecretItems)
                 allPotentialSecretItems[secretPair.Key] = [.. secretPair.Value.Where(item => IsItemUnlockedInMultiworld(item))];
 
+
+            if (!APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.energy_crystal])))
+            {
+                foreach (Item potShopitem in StatsManager.instance.itemDictionary.Values)
+                {
+                    if (!potShopitem.prefab.Prefab.TryGetComponent<ItemBattery>(out _) || allPotentialItems.Contains(potShopitem)) continue;
+                    List<string> indeces = [];
+                    foreach (string key in StatsManager.instance.item.Keys)
+                    {
+                        if (key.Contains('/'))
+                        {
+                            string[] strArray = key.Split('/');
+                            if (strArray[0] == potShopitem.name)
+                            {
+                                indeces.Add(key);
+                            }
+                        }
+                    }
+                    if (indeces.Count < 1) continue;
+                    int minBattery = 100;
+                    foreach (string index in indeces)
+                    {
+                        int batteryLevel = StatsManager.instance.GetBatteryLevel(index);
+                        if (batteryLevel < minBattery) minBattery = batteryLevel;
+                    }
+                    if (minBattery < 100)
+                    {
+                        // now we know that this item should spawn a duplicate
+                        allPotentialItems.Add(potShopitem);
+                    }
+                }
+            }
 
             if (StatsManager.instance.itemDictionary.TryGetValue(ItemNames.ap_item, out Item apitem))
             {
@@ -175,7 +208,7 @@ namespace RepoAP
     }
 
     [HarmonyPatch(typeof(ItemAttributes))]
-    class APItemNamePatch
+    class ItemAttributesPatch
     {
         const string prog_color = "#AF99EF";
         const string useful_color = "#6D8BE8";
@@ -183,7 +216,7 @@ namespace RepoAP
         const string trap_color = "#FA8072";
 
         [HarmonyPostfix, HarmonyPatch(nameof(ItemAttributes.Start))]
-        static void NamePatch(ref string ___itemName, ItemAttributes __instance)
+        static void ApItemNamePatch(ref string ___itemName, ItemAttributes __instance)
         {
             if (___itemName.Contains("Archipelago"))
             {
@@ -228,12 +261,82 @@ namespace RepoAP
         }
 
         [HarmonyPostfix, HarmonyPatch(nameof(ItemAttributes.RefreshLocalizations))]
-        static void ReplaceLocalizedNameOfAPItems(ref string ___cachedItemName, ref string ___itemName, ItemAttributes __instance)
+        static void ReplaceLocalizedNameOfAPItemsPatch(ref string ___cachedItemName, ref string ___itemName, ItemAttributes __instance)
         {
             if (__instance.item.name.Equals(ItemNames.ap_item)) __instance.cachedItemName = ___itemName;
         }
 
+        [HarmonyPostfix, HarmonyPatch(nameof(ItemAttributes.GetValue))]
+        static void ApplyDuplicateItemDiscountPatch(ItemAttributes __instance)
+        {
+            if (APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.energy_crystal])) || !__instance.item.prefab.Prefab.TryGetComponent<ItemBattery>(out _)) return;
+            List<string> indeces = [];
+            foreach (string key in StatsManager.instance.item.Keys)
+            {
+                if (key.Contains('/'))
+                {
+                    string[] strArray = key.Split('/');
+                    if (strArray[0] == __instance.item.name)
+                    {
+                        indeces.Add(key);
+                    }
+                }
+            }
+            if (indeces.Count < 1) return;
+            int minBattery = 100;
+            foreach (string index in indeces)
+            {
+                int batteryLevel = StatsManager.instance.GetBatteryLevel(index);
+                if (batteryLevel < minBattery) minBattery = batteryLevel;
+            }
+            if (minBattery < 100)
+            {
+                // scale the price between 20% and 70% of the original depending on the amount of charge left
+                __instance.ValueDiscount(0.3f + minBattery / 100f * 0.5f);
+                __instance.cachedItemName = $"<sprite=48> {__instance.cachedItemName} Recharge <sprite=48>";
+            }
+        }
+
     }
 
+    [HarmonyPatch(typeof(StatsManager))]
+    class PurchaseItemPatch
+    {
+        [HarmonyPrefix, HarmonyPatch(typeof(StatsManager), nameof(StatsManager.ItemPurchase))]
+        static bool RechargeTruckItemPatch(string itemName)
+        {
+            if (APSave.IsItemReceived(ItemData.AddBaseId(ItemData.itemNameToID[ItemNames.energy_crystal]))) return true;
+            List<string> indeces = [];
+            foreach (string key in StatsManager.instance.item.Keys)
+            {
+                if (key.Contains('/'))
+                {
+                    string[] strArray = key.Split('/');
+                    if (strArray[0] == itemName)
+                    {
+                        indeces.Add(key);
+                    }
+                }
+            }
+            if (indeces.Count < 1) return true;
+            int minBattery = 100;
+            string minIndex = "";
+            foreach (string index in indeces)
+            {
+                int batteryLevel = StatsManager.instance.GetBatteryLevel(index);
+                if (batteryLevel < minBattery)
+                {
+                    minBattery = batteryLevel;
+                    minIndex = index;
+                }
+            }
+            if (minBattery < 100)
+            {
+                StatsManager.instance.SetBatteryLevel(minIndex, 100);
+                return false;   // we don't want normal purchase behavior here
+            }
+            return true;
+        }
+    }
 
 }
