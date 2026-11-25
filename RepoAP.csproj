@@ -39,22 +39,10 @@
   </ItemGroup>
   
   <ItemGroup>
-	<Reference Include="$(BepInCore)\0Harmony.dll" />
-	<Reference Include="$(BepInCore)\BepInEx.dll" />
-	<Reference Include="$(BepInCore)\MonoMod.Utils.dll" />
 
     <Reference Include="$(Managed)\Assembly-CSharp.dll" Publicize="true"/>
     <Reference Include="$(Managed)\Assembly-CSharp-firstpass.dll" />
     <Reference Include="$(Managed)\PhotonUnityNetworking.dll" />
-	<Reference Include="BepInEx.Preloader">
-		<HintPath>$(BepInCore)\BepInEx.Preloader.dll</HintPath>
-	</Reference>
-	<Reference Include="HarmonyXInterop">
-		<HintPath>$(BepInCore)\HarmonyXInterop.dll</HintPath>
-	</Reference>
-	<Reference Include="Mono.Cecil">
-        <HintPath>$(BepInCore)\Mono.Cecil.dll</HintPath>
-    </Reference>
 	  <PackageReference Include="REPOModding-MenuLib" Version="2.6.*" />
 	  <PackageReference Include="Zehs-REPOLib" Version="4.*" />
     <Reference Include="netstandard">
