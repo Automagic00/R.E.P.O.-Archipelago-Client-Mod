@@ -6,7 +6,6 @@ using System.Xml.Linq;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEngine.UIElements.UIR.Implementation.UIRStylePainter;
 
 namespace RepoAP.Locations
 {

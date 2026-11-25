@@ -9,7 +9,6 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static System.Collections.Specialized.BitVector32;
-using static UnityEngine.UIElements.UIR.Implementation.UIRStylePainter;
 
 namespace RepoAP.Core
 {
